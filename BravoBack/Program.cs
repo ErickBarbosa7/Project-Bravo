@@ -61,7 +61,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 // 5. Otros Servicios
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Esto le dice al serializador que ignore los bucles infinitos
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
@@ -75,7 +80,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Para servir imágenes (fotos)
+app.UseStaticFiles();
 app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
 app.UseAuthentication();

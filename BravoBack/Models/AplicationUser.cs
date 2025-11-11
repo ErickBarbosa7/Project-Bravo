@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-namespace BravoBack.Models; // <== Namespace actualizado
+namespace BravoBack.Models;
+
 public class ApplicationUser : IdentityUser
 {
     public string FullName { get; set; } = string.Empty;

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BravoBack")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28e35089e78fd41b5c383f569ae711dea20630df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5c41b086db3aed80ecadaa64f110ad80009f27f8")]
 [assembly: System.Reflection.AssemblyProductAttribute("BravoBack")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BravoBack")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
