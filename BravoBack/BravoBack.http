@@ -1,0 +1,6 @@
+@BravoBack_HostAddress = http://localhost:5079
+
+GET {{BravoBack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
