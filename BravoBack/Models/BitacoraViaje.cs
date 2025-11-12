@@ -1,4 +1,4 @@
-namespace BravoBack.Models; // <== Namespace actualizado
+namespace BravoBack.Models;
 public class BitacoraViaje
 {
     public int Id { get; set; }

@@ -1,3 +1,8 @@
-namespace BravoBack.Models; 
+namespace BravoBack.Models;
 
-public enum TipoIncidente { Leve, Moderado, Grave }
+public enum TipoIncidente
+{
+    Leve,
+    Moderado,
+    Grave
+}

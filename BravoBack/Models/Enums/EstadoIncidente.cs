@@ -1,3 +1,8 @@
-namespace BravoBack.Models; 
+namespace BravoBack.Models;
 
-public enum EstadoIncidente { Reportado, EnReparacion, Resuelto }
+public enum EstadoIncidente
+{
+    Reportado,
+    EnReparacion,
+    Resuelto
+}

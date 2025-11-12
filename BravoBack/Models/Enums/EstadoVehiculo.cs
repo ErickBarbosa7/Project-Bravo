@@ -1,3 +1,9 @@
-namespace BravoBack.Models; // <== Namespace actualizado
+namespace BravoBack.Models;
 
-public enum EstadoVehiculo { Disponible, EnRuta, EnTaller, NecesitaServicio }
+public enum EstadoVehiculo
+{
+    Disponible,
+    EnRuta,
+    EnTaller,
+    NecesitaServicio
+}

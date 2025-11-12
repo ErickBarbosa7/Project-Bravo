@@ -146,3 +146,7 @@ C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\obj\
 C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\obj\Debug\net9.0\BravoBack.pdb
 C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\obj\Debug\net9.0\BravoBack.genruntimeconfig.cache
 C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\obj\Debug\net9.0\ref\BravoBack.dll
+C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\FluentValidation.dll
+C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\FluentValidation.AspNetCore.dll
+C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\BravoBack.staticwebassets.runtime.json

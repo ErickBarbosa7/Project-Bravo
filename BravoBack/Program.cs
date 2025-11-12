@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
-using BravoBack.Data;  
+using BravoBack.Data; 
 using BravoBack.Models;
+using FluentValidation.AspNetCore;
+using BravoBack.Services;       
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,19 +66,29 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Esto le dice al serializador que ignore los bucles infinitos
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    })
+    .AddFluentValidation(config =>
+    {
+        config.RegisterValidatorsFromAssembly(typeof(Program).Assembly);
+        config.AutomaticValidationEnabled = false; 
     });
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.AddHttpContextAccessor();
+
+
+//builder.Services.AddEndpointsApiExplorer(); 
+//builder.Services.AddSwaggerGen(); 
 
 var app = builder.Build();
 
 // 6. Pipeline
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
+    //app.UseSwagger(); 
+    //app.UseSwaggerUI(); 
 }
 
 app.UseHttpsRedirection();

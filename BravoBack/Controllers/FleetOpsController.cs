@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using FluentValidation; 
+using BravoBack.Services;
 
 namespace BravoBack.Controllers;
 
@@ -23,33 +25,26 @@ public class FleetOpsController : ControllerBase
     // --- Endpoint del Conductor: CHECK-OUT ---
     [HttpPost("checkout")]
     [Authorize(Roles = "Conductor")]
-    public async Task<IActionResult> CheckOut([FromBody] CheckOutDto checkOutDto)
+    public async Task<IActionResult> CheckOut(
+        [FromBody] CheckOutDto checkOutDto,
+        [FromServices] IValidator<CheckOutDto> validator) 
     {
-        // 1. Encontrar el vehículo
+        // --- VALIDACIÓN ASÍNCRONA ---
+        var validationResult = await validator.ValidateAsync(checkOutDto);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
+
         var vehiculo = await _context.Vehiculos.FindAsync(checkOutDto.VehiculoId);
-        if (vehiculo == null)
-        {
-            return NotFound(new { message = "Vehículo no encontrado." });
-        }
-
-        // 2. Lógica de Negocio: Verificar que esté DISPONIBLE
-        if (vehiculo.Estado != EstadoVehiculo.Disponible)
-        {
-            return BadRequest(new { message = $"El vehículo no está disponible. Estado actual: {vehiculo.Estado}" });
-        }
-
-        // 3. Obtener el ID del Conductor desde el Token
         var conductorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // 4. Iniciar la transacción
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            // Paso A: Cambiar el estado del vehículo
             vehiculo.Estado = EstadoVehiculo.EnRuta;
             _context.Vehiculos.Update(vehiculo);
 
-            // Paso B: Crear la nueva bitácora de viaje
             var bitacora = new BitacoraViaje
             {
                 VehiculoId = vehiculo.Id,
@@ -63,8 +58,13 @@ public class FleetOpsController : ControllerBase
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            // Devolvemos el ticket de bitácora
-            return Ok(bitacora);
+            return Ok(new 
+            { 
+                bitacora.Id, 
+                bitacora.FechaSalida, 
+                bitacora.KilometrajeSalida,
+                bitacora.Destino 
+            });
         }
         catch (Exception ex)
         {
@@ -76,39 +76,32 @@ public class FleetOpsController : ControllerBase
     // --- Endpoint del Conductor: CHECK-IN ---
     [HttpPost("checkin")]
     [Authorize(Roles = "Conductor")]
-    public async Task<IActionResult> CheckIn([FromBody] CheckInDto checkInDto)
+    public async Task<IActionResult> CheckIn(
+        [FromBody] CheckInDto checkInDto,
+        [FromServices] IValidator<CheckInDto> validator) 
     {
-        // 1. Obtener el viaje y su vehículo
+        var validationResult = await validator.ValidateAsync(checkInDto);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
+
+
         var bitacora = await _context.BitacoraViajes
             .Include(b => b.Vehiculo) 
-            .FirstOrDefaultAsync(b => b.Id == checkInDto.BitacoraViajeId);
-
-        if (bitacora == null)
-        {
-            return NotFound(new { message = "Registro de viaje no encontrado." });
-        }
-
-        // 2. Lógica de Negocio: Validar kilometraje
-        if (checkInDto.KilometrajeFinal < bitacora.KilometrajeSalida)
-        {
-            return BadRequest(new { message = "Error: El kilometraje final no puede ser menor al de salida." });
-        }
+            .FirstAsync(b => b.Id == checkInDto.BitacoraViajeId); 
 
         var vehiculo = bitacora.Vehiculo;
 
-        // 3. Iniciar la transacción
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            // Paso A: Actualizar la bitácora
             bitacora.FechaLlegada = DateTime.UtcNow;
             bitacora.KilometrajeLlegada = checkInDto.KilometrajeFinal;
             _context.BitacoraViajes.Update(bitacora);
 
-            // Paso B: Actualizar el vehículo
             vehiculo.KilometrajeActual = checkInDto.KilometrajeFinal;
 
-            // Paso C: ¡El Trigger! Revisar si necesita servicio
             if (vehiculo.KilometrajeActual >= vehiculo.SiguienteServicioKm)
             {
                 vehiculo.Estado = EstadoVehiculo.NecesitaServicio;
@@ -134,25 +127,24 @@ public class FleetOpsController : ControllerBase
     // --- Endpoint del Gerente: SERVICIO COMPLETADO ---
     [HttpPost("service-completed")]
     [Authorize(Roles = "Gerente")]
-    public async Task<IActionResult> ServiceCompleted([FromBody] ServiceCompletedDto serviceDto)
+    public async Task<IActionResult> ServiceCompleted(
+        [FromBody] ServiceCompletedDto serviceDto,
+        [FromServices] IValidator<ServiceCompletedDto> validator) 
     {
-        var vehiculo = await _context.Vehiculos.FindAsync(serviceDto.VehiculoId);
-        if (vehiculo == null)
+        var validationResult = await validator.ValidateAsync(serviceDto);
+        if (!validationResult.IsValid)
         {
-            return NotFound(new { message = "Vehículo no encontrado." });
+            return BadRequest(validationResult.ToDictionary());
         }
+        var vehiculo = await _context.Vehiculos.FindAsync(serviceDto.VehiculoId);
 
-        // Iniciar transacción
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            // Paso A: Actualizar el vehículo
             vehiculo.Estado = EstadoVehiculo.Disponible;
-            // ¡Recalcular el próximo servicio!
             vehiculo.SiguienteServicioKm = vehiculo.KilometrajeActual + vehiculo.IntervaloServicioKm;
             _context.Vehiculos.Update(vehiculo);
 
-            // Paso B: Registrar el servicio
             var registro = new RegistroServicio
             {
                 VehiculoId = vehiculo.Id,
