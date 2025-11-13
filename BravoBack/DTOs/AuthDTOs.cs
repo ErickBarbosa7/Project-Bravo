@@ -5,28 +5,15 @@ namespace BravoBack.DTOs;
 // Lo que esperamos recibir cuando un usuario se registra
 public class RegisterDto
 {
-    [Required]
-    [EmailAddress]
     public string Email { get; set; } = null!;
-
-    [Required]
     public string Password { get; set; } = null!;
-
-    [Required]
     public string FullName { get; set; } = null!;
-
-    [Required]
-    public string Role { get; set; } = null!; // "Gerente" o "Conductor"
+    public string Role { get; set; } = null!;
 }
 
-// Lo que esperamos recibir cuando un usuario inicia sesión
 public class LoginDto
 {
-    [Required]
-    [EmailAddress]
     public string Email { get; set; } = null!;
-
-    [Required]
     public string Password { get; set; } = null!;
 }
 

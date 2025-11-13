@@ -39,7 +39,7 @@ public class CreateIncidenteDtoValidator : AbstractValidator<CreateIncidenteDto>
     
     private bool ValidarTipoImagen(IFormFile? file)
     {
-        if (file == null) return true; // Opcional
+        if (file == null) return true; 
 
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
         return extension == ".jpg" || extension == ".jpeg" || extension == ".png";
@@ -47,7 +47,7 @@ public class CreateIncidenteDtoValidator : AbstractValidator<CreateIncidenteDto>
 
     private bool ValidarTamañoImagen(IFormFile? file)
     {
-        if (file == null) return true; // Opcional
+        if (file == null) return true; 
         
         return file.Length <= 5 * 1024 * 1024; // 5MB
     }

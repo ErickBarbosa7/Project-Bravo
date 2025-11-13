@@ -15,17 +15,14 @@ public class CreateVehiculoDtoValidator : AbstractValidator<CreateVehiculoDto>
     {
         _context = context; 
 
-        // Regla que reemplaza a [Required] y [StringLength]
         RuleFor(v => v.Nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio.")
             .MaximumLength(100).WithMessage("El nombre no puede exceder los 100 caracteres.");
 
-        // Regla que reemplaza a [Required] y [StringLength]
         RuleFor(v => v.Placa)
             .NotEmpty().WithMessage("La placa es obligatoria.")
             .Length(6, 10).WithMessage("La placa debe tener entre 6 y 10 caracteres.");
             
-        // Regla que reemplaza tu 'if (AnyAsync...)' manual
         if (!forUpdate)
         {
             RuleFor(v => v.Placa)
@@ -62,9 +59,6 @@ public class UpdateVehiculoDtoValidator : AbstractValidator<UpdateVehiculoDto>
         // 1. Incluimos todas las reglas simples del validador de "Create"
         // (Nombre, Kilometraje, Intervalo, etc.)
         Include(new CreateVehiculoDtoValidator(_context, forUpdate: true));
-
-        // 2. Añadimos la regla de "Update" para la placa,
-        // que es más compleja porque debe ignorar el ID actual.
         RuleFor(dto => dto) 
             .MustAsync(PlacaNoExistaEnOtroVehiculo)
             .WithMessage("La placa ya está registrada en otro vehículo.")
@@ -74,8 +68,7 @@ public class UpdateVehiculoDtoValidator : AbstractValidator<UpdateVehiculoDto>
     // Método de ayuda para la regla asíncrona (PUT)
     private async Task<bool> PlacaNoExistaEnOtroVehiculo(UpdateVehiculoDto dto, CancellationToken token)
     {
-        // Devuelve 'true' (es válido) si no existe NINGÚN OTRO vehículo
-        // (v.Id != dto.Id) con esta misma placa.
+        // Devuelve 'true' si no existe NINGÚN OTRO vehículo
         return !await _context.Vehiculos
             .AnyAsync(v => v.Placa == dto.Placa && v.Id != dto.Id, token);
     }

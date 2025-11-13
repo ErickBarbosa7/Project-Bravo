@@ -150,3 +150,4 @@ C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\
 C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\FluentValidation.AspNetCore.dll
 C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll
 C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\BravoBack.staticwebassets.runtime.json
+C:\Users\Victus\Documents\10MO\Sistemas-Propietarios\ProjectBravo\BravoBack\bin\Debug\net9.0\SixLabors.ImageSharp.dll
