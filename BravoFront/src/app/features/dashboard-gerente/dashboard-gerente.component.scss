@@ -1,0 +1,25 @@
+$color-primary: #c22047;      // rojo vino brillante
+$color-primary-light: #ea284b; // acento/hover
+$color-secondary: #7f1e47;     // para botones secundarios
+$color-bg: #43204a;           // fondo oscuro principal
+$color-bg-alt: #422343;       // fondo de cards o secciones
+$color-text: #f8f7f6;         // texto claro crema
+$color-text-muted: #cfcfcf;   // texto secundario
+
+:host {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1; /* Ocupa el resto del espacio */
+  background: $color-bg; /* Fondo principal */
+  padding: 2rem;
+  overflow-y: auto; // Permite scroll
+}

@@ -1,0 +1,13 @@
+<div class="dashboard-layout">
+  
+  <app-sidebar 
+    [userEmail]="currentUser()?.email || 'Usuario'"
+    [navLinks]="gerenteLinks"
+    (onLogout)="logout()">
+  </app-sidebar>
+
+  <main class="main-content">
+    <router-outlet />
+  </main>
+  
+</div>

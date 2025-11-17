@@ -1,0 +1,100 @@
+$font-main: 'Inter', Arial, Helvetica, sans-serif; // tipografía más moderna
+$color-primary: #c22047;      
+$color-primary-light: #ea284b; 
+$color-secondary: #7f1e47;     
+$color-bg: #43204a;           
+$color-bg-alt: #422343;       
+$color-text: #f8f7f6;         
+$color-text-muted: #cfcfcf;   
+$color-danger: $color-primary-light;
+
+:host {
+  display: block;
+  font-family: $font-main;
+}
+
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: $color-bg-alt;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.25);
+  border-radius: 0 20px 20px 0; // bordes suaves
+  box-sizing: border-box;
+
+  h3 {
+    color: $color-primary;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .user-welcome {
+    color: $color-text-muted;
+    font-size: 0.85rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid lighten($color-bg-alt, 10%);
+
+    strong {
+      color: $color-text;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+
+    li a {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      color: $color-text-muted;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.25s ease;
+      font-size: 0.95rem;
+
+      i {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        background: lighten($color-bg-alt, 8%);
+        color: $color-text;
+      }
+
+      &.active-link {
+        background: $color-primary;
+        color: $color-text;
+      }
+    }
+  }
+
+  .logout-btn {
+    margin-top: auto;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background: $color-secondary;
+    color: $color-text;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    &:hover {
+      background: $color-primary-light;
+    }
+  }
+}

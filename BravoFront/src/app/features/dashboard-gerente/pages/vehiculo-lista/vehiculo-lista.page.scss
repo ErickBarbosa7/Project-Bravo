@@ -1,0 +1,128 @@
+$color-primary: #c22047;      // rojo vino brillante
+$color-primary-light: #ea284b; // acento/hover
+$color-secondary: #7f1e47;     // para botones secundarios
+$color-bg: #43204a;           // fondo oscuro principal
+$color-bg-alt: #422343;       // fondo de cards o secciones
+$color-text: #f8f7f6;         // texto claro crema
+$color-text-muted: #cfcfcf;   // texto secundario
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    margin: 0;
+    color: $color-text;
+  }
+}
+.vehiculo-thumb {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+// Botón de Añadir
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: $color-primary;
+  color: $color-text;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: $color-primary-light;
+  }
+}
+
+// Tabla
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: $color-bg-alt;
+  border-radius: 8px;
+  overflow: hidden;
+
+  th,
+  td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid $color-bg;
+  }
+
+  thead th {
+    background: lighten($color-bg-alt, 5%);
+    color: $color-text-muted;
+    font-size: 0.9rem;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: lighten($color-bg-alt, 3%);
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-icon {
+    background: none;
+    border: 1px solid $color-text-muted;
+    color: $color-text-muted;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+
+    &.btn-edit:hover {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-text;
+    }
+
+    &.btn-delete:hover {
+      background: $color-secondary;
+      border-color: $color-secondary;
+      color: $color-text;
+    }
+  }
+}
+
+// Insignias de Estado
+.status-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+
+  &.status-disponible {
+    background-color: #28a745;
+  }
+  &.status-enruta {
+    background-color: #007bff;
+  }
+  &.status-necesitaservicio {
+    background-color: #fd7e14;
+  }
+  &.status-entaller {
+    background-color: #dc3545;
+  }
+}

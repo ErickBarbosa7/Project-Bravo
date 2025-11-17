@@ -1,0 +1,20 @@
+<nav class="sidebar">
+  <h3>Bravo</h3>
+  <p class="user-welcome">
+    Hola, <strong>{{ userEmail }}</strong>
+  </p>
+
+  <ul>
+    @for (link of navLinks; track link.path) {
+      <li>
+        <a [routerLink]="link.path" routerLinkActive="active-link">
+          <i [class]="link.icon"></i> {{ link.label }}
+        </a>
+      </li>
+    }
+  </ul>
+  
+  <button (click)="logoutClicked()" class="logout-btn">
+    <i class="pi pi-sign-out"></i> Cerrar Sesión
+  </button>
+</nav>

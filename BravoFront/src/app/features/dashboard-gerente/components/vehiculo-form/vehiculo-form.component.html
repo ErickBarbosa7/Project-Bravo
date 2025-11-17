@@ -1,0 +1,93 @@
+<div class="form-container">
+  
+  <div class="form-header">
+    @if (editMode()) {
+      <h1>Editar Vehículo</h1>
+    } @else {
+      <h1>Añadir Nuevo Vehículo</h1>
+    }
+    <a routerLink="/gerente/vehiculos" class="btn-secondary">
+      <i class="pi pi-times"></i> Cancelar
+    </a>
+  </div>
+
+  @if (isLoading() && editMode()) {
+    <div class="loading-shade">
+      <span class="spinner"></span>
+      <p>Cargando datos del vehículo...</p>
+    </div>
+  }
+
+  <form [formGroup]="vehiculoForm" (ngSubmit)="onSubmit()">
+    
+    <div class="form-grid">
+      
+      <div class="form-group span-2"> <label for="nombre">Nombre Descriptivo</label>
+        <input id="nombre" type="text" formControlName="nombre" class="form-control" placeholder="Ej: Camioneta Toyota 1">
+        @if (vehiculoForm.get('nombre')?.invalid && vehiculoForm.get('nombre')?.touched) {
+          <small class="text-danger">El nombre es requerido.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="placa">Placa</label>
+        <input id="placa" type="text" formControlName="placa" class="form-control" placeholder="ABC-123">
+        @if (vehiculoForm.get('placa')?.invalid && vehiculoForm.get('placa')?.touched) {
+          <small class="text-danger">Placa requerida (6-10 caracteres).</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="marca">Marca</label>
+        <input id="marca" type="text" formControlName="marca" class="form-control" placeholder="Ej: Toyota">
+      </div>
+
+      <div class="form-group">
+        <label for="modelo">Modelo</label>
+        <input id="modelo" type="text" formControlName="modelo" class="form-control" placeholder="Ej: Hilux">
+      </div>
+
+      <div class="form-group">
+        <label for="año">Año</label>
+        <input id="año" type="number" formControlName="año" class="form-control" placeholder="Ej: 2024">
+        @if (vehiculoForm.get('año')?.invalid && vehiculoForm.get('año')?.touched) {
+          <small class="text-danger">Año inválido.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="kilometrajeActual">Kilometraje Actual</label>
+        <input id="kilometrajeActual" type="number" formControlName="kilometrajeActual" class="form-control">
+         @if (vehiculoForm.get('kilometrajeActual')?.invalid && vehiculoForm.get('kilometrajeActual')?.touched) {
+          <small class="text-danger">Debe ser 0 o más.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="intervaloServicioKm">Intervalo de Servicio (km)</label>
+        <input id="intervaloServicioKm" type="number" formControlName="intervaloServicioKm" class="form-control">
+         @if (vehiculoForm.get('intervaloServicioKm')?.invalid && vehiculoForm.get('intervaloServicioKm')?.touched) {
+          <small class="text-danger">Debe ser mayor a 100km.</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="btn-primary" 
+        [disabled]="isLoading() || vehiculoForm.invalid"
+      >
+        @if (isLoading()) {
+          <span class="spinner"></span> Guardando...
+        } @else {
+          @if (editMode()) {
+            <span>Actualizar Vehículo</span>
+          } @else {
+            <span>Crear Vehículo</span>
+          }
+        }
+      </button>
+    </div>
+  </form>
+</div>
