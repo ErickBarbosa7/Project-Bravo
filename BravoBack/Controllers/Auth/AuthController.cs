@@ -51,7 +51,9 @@ public class AuthController : ControllerBase
             Email = registerDto.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
             UserName = registerDto.Email, // Usamos el email como username
-            FullName = registerDto.FullName
+            FirstName = registerDto.FirstName,
+            PaternalLastName = registerDto.PaternalLastName,
+            MaternalLastName = registerDto.MaternalLastName
         };
 
         // 3. Crear el usuario en la BD (tabla AspNetUsers)
