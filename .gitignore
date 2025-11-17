@@ -1,0 +1,7 @@
+# Ignorar binarios de .NET
+BravoBack/bin/
+BravoBack/obj/
+
+# Node/Angular
+node_modules/
+dist/
