@@ -115,7 +115,8 @@ public class IncidentesController : ControllerBase
                 EstadoIncidente = i.EstadoIncidente.ToString(),
                 CostoReparacion = i.CostoReparacion,
                 VehiculoId = i.VehiculoId,
-                ConductorNombre = i.Conductor.FullName 
+                ConductorNombre = $"{i.Conductor.FirstName} {i.Conductor.PaternalLastName} {i.Conductor.MaternalLastName}"
+
             })
             .OrderByDescending(i => i.Fecha)
             .ToListAsync();

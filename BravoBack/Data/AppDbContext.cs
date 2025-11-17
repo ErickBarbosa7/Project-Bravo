@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BravoBack.Models;
 
-namespace BravoBack.Data; // <== Namespace actualizado
+namespace BravoBack.Data; 
 
 public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
