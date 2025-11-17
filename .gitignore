@@ -1,7 +1,10 @@
-# Ignorar binarios de .NET
-BravoBack/bin/
-BravoBack/obj/
+# .NET build folders
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
 
-# Node/Angular
+# Node / Angular
 node_modules/
+.angular/
 dist/
