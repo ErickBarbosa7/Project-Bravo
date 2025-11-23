@@ -4,45 +4,39 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
+using System.Text.Json.Serialization; // Agregado para JsonOptions
 using BravoBack.Data; 
 using BravoBack.Models;
+using BravoBack.Services; // Importante para tus servicios
 using FluentValidation.AspNetCore;
-using BravoBack.Services;       
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. CORS
-var myAllowSpecificOrigins = "_bravoAppPolicy";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: myAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:4200")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                      });
-});
-
-// 2. DB Context (MySQL)
+// ==========================================
+// 1. CONFIGURACIÓN DE BASE DE DATOS
+// ==========================================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-// 3. Identity
+// ==========================================
+// 2. IDENTITY Y SEGURIDAD (ROLES Y PASSWORD)
+// ==========================================
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
 })
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
-// 4. JWT Authentication
+// ==========================================
+// 3. AUTENTICACIÓN JWT
+// ==========================================
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,44 +52,78 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)) 
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+        )
     };
 });
 
-// 5. Otros Servicios
+
+// INYECCIÓN DE DEPENDENCIAS 
+builder.Services.AddScoped<AuthService>();      // auth
+builder.Services.AddScoped<VehiculoService>();  // Vehiculos y pagos de servicio
+builder.Services.AddScoped<ConductorService>(); 
+
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     })
     .AddFluentValidation(config =>
     {
         config.RegisterValidatorsFromAssembly(typeof(Program).Assembly);
-        config.AutomaticValidationEnabled = false; 
+        config.AutomaticValidationEnabled = false;
     });
 
-builder.Services.AddScoped<IFileService, FileService>();
+var myAllowSpecificOrigins = "_bravoAppPolicy";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
-builder.Services.AddHttpContextAccessor();
 
-
-//builder.Services.AddEndpointsApiExplorer(); 
-//builder.Services.AddSwaggerGen(); 
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 6. Pipeline
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger(); 
-    //app.UseSwaggerUI(); 
+    // app.UseSwagger();
+    // app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// Configuración de Carpeta de Imágenes (/uploads)
+var uploadsPath = Path.Combine(app.Environment.WebRootPath ?? app.Environment.ContentRootPath, "wwwroot", "uploads");
+// Nota: Ajusté la ruta para asegurar que apunte a wwwroot/uploads correctamente
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(); 
+// app.UseStaticFiles(new StaticFileOptions
+// {
+//    FileProvider = new PhysicalFileProvider(uploadsPath),
+//    RequestPath = "/uploads"
+// });
+
 app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
-app.UseAuthentication();
-app.UseAuthorization();
+
+app.UseAuthentication(); // Quien inicio sesion
+app.UseAuthorization();  // Que puedes hacer segun el rol
+
 app.MapControllers();
+
 app.Run();

@@ -2,38 +2,38 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BravoBack.DTOs;
 
-// Lo que esperamos recibir cuando un usuario se registra
+
+// DTO que representa lo que esperamos recibir cuando un usuario se registras
 public class RegisterDto
 {
     [Required, EmailAddress]
     public string Email { get; set; } = null!;
-
     [Required, MinLength(6)]
     public string Password { get; set; } = null!;
-
     [Required]
     public string FirstName { get; set; } = null!;
-
     [Required]
     public string PaternalLastName { get; set; } = null!;
+    public string? MaternalLastName { get; set; } = null!;
 
-    public string MaternalLastName { get; set; } = null!; 
-
+    // Rol del usuario solo puede ser Gerente o Conductor
     [Required]
+    [RegularExpression("Gerente|Conductor", ErrorMessage = "Rol inválido.")]
     public string Role { get; set; } = null!;
 }
 
 
+// DTO para el inicio de sesion (login)
 public class LoginDto
 {
     [Required, EmailAddress]
     public string Email { get; set; } = null!;
-
     [Required]
     public string Password { get; set; } = null!;
 }
 
-// Lo que le devolveremos al usuario si el login es exitoso
+
+// DTO que le devolveremos al usuario después de un login correcto
 public class UserTokenDto
 {
     public string Token { get; set; } = null!;
@@ -42,13 +42,19 @@ public class UserTokenDto
     public string Role { get; set; } = null!;
 }
 
-//devolver info completa del usuario
+
+// DTO para devolver información mas completa del usuario
 public class UserInfoDto
 {
     public string FirstName { get; set; } = null!;
     public string PaternalLastName { get; set; } = null!;
-    public string MaternalLastName { get; set; } = null!;
+    public string? MaternalLastName { get; set; }
     public string Email { get; set; } = null!;
     public string Role { get; set; } = null!;
-    public string FullName => $"{FirstName} {PaternalLastName} {MaternalLastName}".Trim();
+
+    // Nombre completo construido
+    public string FullName => string.Join(" ",
+        new[] { FirstName, PaternalLastName, MaternalLastName }
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+    );
 }

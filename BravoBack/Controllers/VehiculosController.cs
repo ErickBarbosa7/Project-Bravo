@@ -1,176 +1,134 @@
-using BravoBack.Data;
 using BravoBack.DTOs;
-using BravoBack.Models;
-using Microsoft.AspNetCore.Authorization; 
+using BravoBack.Services;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using FluentValidation; 
 
-namespace BravoBack.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-[Authorize] 
-public class VehiculosController : ControllerBase
+namespace BravoBack.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public VehiculosController(AppDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class VehiculosController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly VehiculoService _vehiculoService;
 
-    // GET: api/vehiculos 
-    [HttpGet]
-    [Authorize(Roles = "Gerente,Conductor")]
-    public async Task<ActionResult<IEnumerable<VehiculoDto>>> GetVehiculos()
-    {
-        var vehiculos = await _context.Vehiculos
-            .Select(v => new VehiculoDto
+        public VehiculosController(VehiculoService vehiculoService)
+        {
+            _vehiculoService = vehiculoService;
+        }
+
+        // GET: api/vehiculos
+        [HttpGet]
+        [Authorize(Roles = "Gerente,Conductor")]
+        public async Task<ActionResult<IEnumerable<VehiculoDto>>> GetVehiculos()
+        {
+            var vehiculos = await _vehiculoService.ObtenerTodos();
+            return Ok(vehiculos);
+        }
+
+        // GET: api/vehiculos/5
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Gerente,Conductor")]
+        public async Task<ActionResult<VehiculoDto>> GetVehiculo(int id)
+        {
+            var vehiculo = await _vehiculoService.ObtenerPorId(id);
+
+            if (vehiculo == null)
+                return NotFound();
+
+            return Ok(vehiculo);
+        }
+
+        // POST: api/vehiculos
+        [HttpPost]
+        [Authorize(Roles = "Gerente")]
+        public async Task<ActionResult<VehiculoDto>> CreateVehiculo(
+            [FromBody] CreateVehiculoDto createDto,
+            [FromServices] IValidator<CreateVehiculoDto> validator)
+        {
+            // 1. Validación de entrada (Responsabilidad del Controller/Middleware)
+            var validationResult = await validator.ValidateAsync(createDto);
+            if (!validationResult.IsValid)
             {
-                Id = v.Id,
-                Placa = v.Placa,
-                Nombre = v.Nombre,
-                Marca = v.Marca,
-                Modelo = v.Modelo,
-                Año = v.Año,
-                FotoUrl = v.FotoUrl,
-                KilometrajeActual = v.KilometrajeActual,
-                Estado = v.Estado.ToString(),
-                IntervaloServicioKm = v.IntervaloServicioKm,
-                SiguienteServicioKm = v.SiguienteServicioKm
-            })
-            .ToListAsync();
+                return BadRequest(validationResult.ToDictionary());
+            }
 
-        return Ok(vehiculos);
-    }
+            // 2. Lógica de negocio (Responsabilidad del Service)
+            var nuevoVehiculo = await _vehiculoService.CrearVehiculo(createDto);
 
-    // GET: api/vehiculos/5 
-    [HttpGet("{id}")]
-    [Authorize(Roles = "Gerente,Conductor")]
-    public async Task<ActionResult<VehiculoDto>> GetVehiculo(int id)
-    {
-        var v = await _context.Vehiculos.FindAsync(id);
-        if (v == null) return NotFound();
-       
-        var vehiculoDto = new VehiculoDto
-        {
-            Id = v.Id,
-            Placa = v.Placa,
-            Nombre = v.Nombre,
-            Marca = v.Marca,
-            Modelo = v.Modelo,
-            Año = v.Año,
-            FotoUrl = v.FotoUrl,
-            KilometrajeActual = v.KilometrajeActual,
-            Estado = v.Estado.ToString(),
-            IntervaloServicioKm = v.IntervaloServicioKm,
-            SiguienteServicioKm = v.SiguienteServicioKm
-        };
-        return Ok(vehiculoDto);
-    }
-
-    [HttpPost]
-[Authorize(Roles = "Gerente")]
-public async Task<ActionResult<VehiculoDto>> CreateVehiculo(
-    [FromBody] CreateVehiculoDto createDto,
-    [FromServices] IValidator<CreateVehiculoDto> validator)
-{
-    var validationResult = await validator.ValidateAsync(createDto);
-    if (!validationResult.IsValid)
-    {
-        return BadRequest(validationResult.ToDictionary());
-    }
-
-    var vehiculo = new Vehiculo
-    {
-        Placa = createDto.Placa,
-        Nombre = createDto.Nombre,
-        Marca = createDto.Marca,
-        Modelo = createDto.Modelo,
-        Año = createDto.Año,
-        KilometrajeActual = createDto.KilometrajeActual,
-        IntervaloServicioKm = createDto.IntervaloServicioKm,
-        SiguienteServicioKm = createDto.KilometrajeActual + createDto.IntervaloServicioKm,
-        Estado = EstadoVehiculo.Disponible
-    };
-
-    _context.Vehiculos.Add(vehiculo);
-    await _context.SaveChangesAsync();
-
-    // En lugar de castear, creamos el DTO
-    var vehiculoDto = new VehiculoDto
-    {
-        Id = vehiculo.Id,
-        Placa = vehiculo.Placa,
-        Nombre = vehiculo.Nombre,
-        Marca = vehiculo.Marca,
-        Modelo = vehiculo.Modelo,
-        Año = vehiculo.Año,
-        FotoUrl = vehiculo.FotoUrl,
-        KilometrajeActual = vehiculo.KilometrajeActual,
-        Estado = vehiculo.Estado.ToString(),
-        IntervaloServicioKm = vehiculo.IntervaloServicioKm,
-        SiguienteServicioKm = vehiculo.SiguienteServicioKm
-    };
-
-    return CreatedAtAction(nameof(GetVehiculo), new { id = vehiculo.Id }, vehiculoDto);
-}
-    
-    // PUT api/vehiculos/5 
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Gerente")]
-    public async Task<IActionResult> UpdateVehiculo(
-        int id, 
-        [FromBody] UpdateVehiculoDto updateDto,
-        [FromServices] IValidator<UpdateVehiculoDto> validator) 
-    {
-        // Llenamos el ID en el DTO para que el validador pueda usarlo
-        updateDto.Id = id;
-
-        var validationResult = await validator.ValidateAsync(updateDto);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.ToDictionary());
+            return CreatedAtAction(nameof(GetVehiculo), new { id = nuevoVehiculo.Id }, nuevoVehiculo);
         }
 
-        var vehiculo = await _context.Vehiculos.FindAsync(id);
-        if (vehiculo == null)
+        // PUT: api/vehiculos/5
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Gerente")]
+        public async Task<IActionResult> UpdateVehiculo(
+            int id,
+            [FromBody] UpdateVehiculoDto updateDto,
+            [FromServices] IValidator<UpdateVehiculoDto> validator)
         {
-            return NotFound(); 
+            updateDto.Id = id;
+
+            // 1. Validación
+            var validationResult = await validator.ValidateAsync(updateDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.ToDictionary());
+            }
+
+            // 2. Lógica de negocio
+            var vehiculoActualizado = await _vehiculoService.ActualizarVehiculo(id, updateDto);
+
+            if (vehiculoActualizado == null)
+                return NotFound();
+
+            return Ok(vehiculoActualizado);
         }
 
-        // Mapear campos
-        vehiculo.Placa = updateDto.Placa;
-        vehiculo.Nombre = updateDto.Nombre;
-        vehiculo.Marca = updateDto.Marca;
-        vehiculo.Modelo = updateDto.Modelo;
-        vehiculo.Año = updateDto.Año;
-        vehiculo.KilometrajeActual = updateDto.KilometrajeActual;
-        vehiculo.IntervaloServicioKm = updateDto.IntervaloServicioKm;
-        vehiculo.SiguienteServicioKm = updateDto.KilometrajeActual + updateDto.IntervaloServicioKm;
-
-        _context.Vehiculos.Update(vehiculo);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    // DELETE api/vehiculos/5 
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Gerente")]
-    public async Task<IActionResult> DeleteVehiculo(int id)
-    {
-        var vehiculo = await _context.Vehiculos.FindAsync(id);
-        if (vehiculo == null)
+        // DELETE: api/vehiculos/5
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Gerente")]
+        public async Task<IActionResult> DeleteVehiculo(int id)
         {
-            return NotFound();
+            var eliminado = await _vehiculoService.EliminarVehiculo(id);
+
+            if (!eliminado)
+                return NotFound();
+
+            return Ok(new { message = "Vehículo eliminado correctamente" });
         }
 
-        _context.Vehiculos.Remove(vehiculo);
-        await _context.SaveChangesAsync();
 
-        return NoContent();
-    
+        // GET: api/vehiculos/{id}/estatus-servicio
+        [HttpGet("{id}/estatus-servicio")]
+        [Authorize(Roles = "Gerente,Conductor")]
+        public async Task<ActionResult<ReporteMantenimientoDto>> GetEstatusServicio(int id)
+        {
+            var reporte = await _vehiculoService.ObtenerEstadoServicio(id);
+
+            if (reporte.Estatus == Models.Enums.EstatusMantenimiento.Desconocido)
+                return NotFound(new { message = reporte.Mensaje });
+
+            return Ok(reporte);
+        }
+
+        [HttpPost("simular-pago")]
+        [Authorize(Roles = "Gerente")]
+        public async Task<IActionResult> PagarServicio([FromBody] PagoServicioDTO pagoDto)
+        {
+            var resultado = await _vehiculoService.SimularPagoServicio(pagoDto);
+            if (resultado.StartsWith("Error")) return BadRequest(new { message = resultado });
+
+            return Ok(new { message = resultado });
+        }
+        // GET: api/vehiculos/proyeccion-gastos
+        [HttpGet("proyeccion-gastos")]
+        [Authorize(Roles = "Gerente")]
+        public async Task<IActionResult> GetProyeccionGastos()
+        {
+            var reporte = await _vehiculoService.CalcularProyeccionMensual();
+            return Ok(reporte);
+        }
     }
 }

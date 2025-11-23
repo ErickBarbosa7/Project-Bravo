@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BravoBack.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialBravoSchema : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,7 +40,11 @@ namespace BravoBack.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FullName = table.Column<string>(type: "longtext", nullable: false)
+                    FirstName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PaternalLastName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MaternalLastName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -85,7 +89,7 @@ namespace BravoBack.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Modelo = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Año = table.Column<int>(type: "int", nullable: true),
+                    Anio = table.Column<int>(type: "int", nullable: true),
                     FotoUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     KilometrajeActual = table.Column<int>(type: "int", nullable: false),
@@ -228,7 +232,38 @@ namespace BravoBack.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "BitacoraViajes",
+                name: "BitacorasUso",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VehiculoId = table.Column<int>(type: "int", nullable: false),
+                    ConductorId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    KilometrosRecorridos = table.Column<int>(type: "int", nullable: false),
+                    LitrosConsumidos = table.Column<double>(type: "double", nullable: false),
+                    FechaUso = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BitacorasUso", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BitacorasUso_AspNetUsers_ConductorId",
+                        column: x => x.ConductorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BitacorasUso_Vehiculos_VehiculoId",
+                        column: x => x.VehiculoId,
+                        principalTable: "Vehiculos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "BitacorasViaje",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -245,15 +280,15 @@ namespace BravoBack.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BitacoraViajes", x => x.Id);
+                    table.PrimaryKey("PK_BitacorasViaje", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BitacoraViajes_AspNetUsers_ConductorId",
+                        name: "FK_BitacorasViaje_AspNetUsers_ConductorId",
                         column: x => x.ConductorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BitacoraViajes_Vehiculos_VehiculoId",
+                        name: "FK_BitacorasViaje_Vehiculos_VehiculoId",
                         column: x => x.VehiculoId,
                         principalTable: "Vehiculos",
                         principalColumn: "Id",
@@ -262,61 +297,23 @@ namespace BravoBack.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "IncidenteReportes",
+                name: "RegistrosServicio",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Descripcion = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    FotoUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    TipoIncidente = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    EstadoIncidente = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CostoReparacion = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     VehiculoId = table.Column<int>(type: "int", nullable: false),
-                    ConductorId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IncidenteReportes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_IncidenteReportes_AspNetUsers_ConductorId",
-                        column: x => x.ConductorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_IncidenteReportes_Vehiculos_VehiculoId",
-                        column: x => x.VehiculoId,
-                        principalTable: "Vehiculos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "RegistroServicios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    FechaServicio = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Descripcion = table.Column<string>(type: "longtext", nullable: false)
+                    MontoPagado = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Estado = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Costo = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    KilometrajeEnServicio = table.Column<int>(type: "int", nullable: false),
-                    VehiculoId = table.Column<int>(type: "int", nullable: false)
+                    KilometrajeServicio = table.Column<int>(type: "int", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RegistroServicios", x => x.Id);
+                    table.PrimaryKey("PK_RegistrosServicio", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RegistroServicios_Vehiculos_VehiculoId",
+                        name: "FK_RegistrosServicio_Vehiculos_VehiculoId",
                         column: x => x.VehiculoId,
                         principalTable: "Vehiculos",
                         principalColumn: "Id",
@@ -362,28 +359,28 @@ namespace BravoBack.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BitacoraViajes_ConductorId",
-                table: "BitacoraViajes",
+                name: "IX_BitacorasUso_ConductorId",
+                table: "BitacorasUso",
                 column: "ConductorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BitacoraViajes_VehiculoId",
-                table: "BitacoraViajes",
+                name: "IX_BitacorasUso_VehiculoId",
+                table: "BitacorasUso",
                 column: "VehiculoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IncidenteReportes_ConductorId",
-                table: "IncidenteReportes",
+                name: "IX_BitacorasViaje_ConductorId",
+                table: "BitacorasViaje",
                 column: "ConductorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IncidenteReportes_VehiculoId",
-                table: "IncidenteReportes",
+                name: "IX_BitacorasViaje_VehiculoId",
+                table: "BitacorasViaje",
                 column: "VehiculoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegistroServicios_VehiculoId",
-                table: "RegistroServicios",
+                name: "IX_RegistrosServicio_VehiculoId",
+                table: "RegistrosServicio",
                 column: "VehiculoId");
         }
 
@@ -406,13 +403,13 @@ namespace BravoBack.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BitacoraViajes");
+                name: "BitacorasUso");
 
             migrationBuilder.DropTable(
-                name: "IncidenteReportes");
+                name: "BitacorasViaje");
 
             migrationBuilder.DropTable(
-                name: "RegistroServicios");
+                name: "RegistrosServicio");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

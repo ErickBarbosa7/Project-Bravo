@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BravoBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251111024758_InitialBravoSchema")]
-    partial class InitialBravoSchema
+    [Migration("20251121181843_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,7 +44,7 @@ namespace BravoBack.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -53,6 +53,10 @@ namespace BravoBack.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("MaternalLastName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -63,6 +67,10 @@ namespace BravoBack.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PaternalLastName")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
@@ -91,6 +99,39 @@ namespace BravoBack.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("BravoBack.Models.BitacoraUso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConductorId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("FechaUso")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("KilometrosRecorridos")
+                        .HasColumnType("int");
+
+                    b.Property<double>("LitrosConsumidos")
+                        .HasColumnType("double");
+
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConductorId");
+
+                    b.HasIndex("VehiculoId");
+
+                    b.ToTable("BitacorasUso");
                 });
 
             modelBuilder.Entity("BravoBack.Models.BitacoraViaje", b =>
@@ -129,52 +170,7 @@ namespace BravoBack.Migrations
 
                     b.HasIndex("VehiculoId");
 
-                    b.ToTable("BitacoraViajes");
-                });
-
-            modelBuilder.Entity("BravoBack.Models.IncidenteReporte", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConductorId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<decimal?>("CostoReparacion")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("EstadoIncidente")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("FotoUrl")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TipoIncidente")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("VehiculoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConductorId");
-
-                    b.HasIndex("VehiculoId");
-
-                    b.ToTable("IncidenteReportes");
+                    b.ToTable("BitacorasViaje");
                 });
 
             modelBuilder.Entity("BravoBack.Models.RegistroServicio", b =>
@@ -185,18 +181,18 @@ namespace BravoBack.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("Costo")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<string>("Descripcion")
+                    b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("FechaServicio")
+                    b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("KilometrajeEnServicio")
+                    b.Property<int>("KilometrajeServicio")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("MontoPagado")
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<int>("VehiculoId")
                         .HasColumnType("int");
@@ -205,7 +201,7 @@ namespace BravoBack.Migrations
 
                     b.HasIndex("VehiculoId");
 
-                    b.ToTable("RegistroServicios");
+                    b.ToTable("RegistrosServicio");
                 });
 
             modelBuilder.Entity("BravoBack.Models.Vehiculo", b =>
@@ -216,7 +212,7 @@ namespace BravoBack.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Año")
+                    b.Property<int?>("Anio")
                         .HasColumnType("int");
 
                     b.Property<string>("Estado")
@@ -386,6 +382,25 @@ namespace BravoBack.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BravoBack.Models.BitacoraUso", b =>
+                {
+                    b.HasOne("BravoBack.Models.ApplicationUser", "Conductor")
+                        .WithMany()
+                        .HasForeignKey("ConductorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BravoBack.Models.Vehiculo", "Vehiculo")
+                        .WithMany()
+                        .HasForeignKey("VehiculoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conductor");
+
+                    b.Navigation("Vehiculo");
+                });
+
             modelBuilder.Entity("BravoBack.Models.BitacoraViaje", b =>
                 {
                     b.HasOne("BravoBack.Models.ApplicationUser", "Conductor")
@@ -398,25 +413,6 @@ namespace BravoBack.Migrations
                         .WithMany("BitacoraViajes")
                         .HasForeignKey("VehiculoId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Conductor");
-
-                    b.Navigation("Vehiculo");
-                });
-
-            modelBuilder.Entity("BravoBack.Models.IncidenteReporte", b =>
-                {
-                    b.HasOne("BravoBack.Models.ApplicationUser", "Conductor")
-                        .WithMany()
-                        .HasForeignKey("ConductorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BravoBack.Models.Vehiculo", "Vehiculo")
-                        .WithMany("Incidentes")
-                        .HasForeignKey("VehiculoId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Conductor");
@@ -489,8 +485,6 @@ namespace BravoBack.Migrations
             modelBuilder.Entity("BravoBack.Models.Vehiculo", b =>
                 {
                     b.Navigation("BitacoraViajes");
-
-                    b.Navigation("Incidentes");
 
                     b.Navigation("RegistrosServicio");
                 });

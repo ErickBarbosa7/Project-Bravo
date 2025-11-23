@@ -2,47 +2,54 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BravoBack.Models;
 
-namespace BravoBack.Data; 
-
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+namespace BravoBack.Data
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-    public DbSet<Vehiculo> Vehiculos { get; set; }
-    public DbSet<BitacoraViaje> BitacoraViajes { get; set; }
-    public DbSet<RegistroServicio> RegistroServicios { get; set; }
-    public DbSet<IncidenteReporte> IncidenteReportes { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder builder)
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
-        base.OnModelCreating(builder);
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Relaciones
-        builder.Entity<Vehiculo>()
-            .HasMany(v => v.BitacoraViajes)
-            .WithOne(b => b.Vehiculo)
-            .HasForeignKey(b => b.VehiculoId)
-            .OnDelete(DeleteBehavior.Restrict);
+        // Tablas
+        public DbSet<Vehiculo> Vehiculos { get; set; }
+        public DbSet<RegistroServicio> RegistrosServicio { get; set; } 
+        public DbSet<BitacoraUso> BitacorasUso { get; set; }
+        public DbSet<BitacoraViaje> BitacorasViaje { get; set; }
 
-        builder.Entity<Vehiculo>()
-            .HasMany(v => v.RegistrosServicio)
-            .WithOne(s => s.Vehiculo)
-            .HasForeignKey(s => s.VehiculoId)
-            .OnDelete(DeleteBehavior.Cascade);
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
 
-        builder.Entity<Vehiculo>()
-            .HasMany(v => v.Incidentes)
-            .WithOne(i => i.Vehiculo)
-            .HasForeignKey(i => i.VehiculoId)
-            .OnDelete(DeleteBehavior.Cascade);
+            // RELACIONES
+            
+            // Vehiculo <-> BitacoraViaje
+            builder.Entity<Vehiculo>()
+                .HasMany(v => v.BitacoraViajes)
+                .WithOne(b => b.Vehiculo)
+                .HasForeignKey(b => b.VehiculoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        // Decimales
-        builder.Entity<RegistroServicio>().Property(s => s.Costo).HasColumnType("decimal(10, 2)");
-        builder.Entity<IncidenteReporte>().Property(i => i.CostoReparacion).HasColumnType("decimal(10, 2)");
+            // Vehiculo <-> RegistroServicio
+            builder.Entity<Vehiculo>()
+                .HasMany(v => v.RegistrosServicio)
+                .WithOne(s => s.Vehiculo)
+                .HasForeignKey(s => s.VehiculoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-        // Enums como Strings
-        builder.Entity<Vehiculo>().Property(v => v.Estado).HasConversion<string>();
-        builder.Entity<IncidenteReporte>().Property(i => i.TipoIncidente).HasConversion<string>();
-        builder.Entity<IncidenteReporte>().Property(i => i.EstadoIncidente).HasConversion<string>();
+
+            // CONFIGURACIÓN DE DECIMALES 
+            
+            builder.Entity<RegistroServicio>()
+                .Property(s => s.MontoPagado)
+                .HasColumnType("decimal(10, 2)");
+
+            // CONFIGURACIÓN DE ENUMS 
+            builder.Entity<Vehiculo>()
+                .Property(v => v.Estado)
+                .HasConversion<string>();
+
+            builder.Entity<RegistroServicio>()
+                .Property(s => s.Estado)
+                .HasConversion<string>();
+
+        }
     }
 }

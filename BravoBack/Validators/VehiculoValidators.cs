@@ -10,7 +10,6 @@ public class CreateVehiculoDtoValidator : AbstractValidator<CreateVehiculoDto>
 {
     private readonly AppDbContext _context;
 
-    // 'forUpdate' nos permite REUTILIZAR estas reglas en el validador de Update
     public CreateVehiculoDtoValidator(AppDbContext context, bool forUpdate = false)
     {
         _context = context; 
@@ -38,10 +37,8 @@ public class CreateVehiculoDtoValidator : AbstractValidator<CreateVehiculoDto>
             .GreaterThan(100).WithMessage("El intervalo de servicio debe ser al menos 100 km.");
     }
 
-    // Método de ayuda para la regla asíncrona (POST)
     private async Task<bool> PlacaNoExista(string placa, CancellationToken token)
     {
-        // Devuelve 'true' (es válido) si la placa NO existe
         return !await _context.Vehiculos.AnyAsync(v => v.Placa == placa, token);
     }
 }
@@ -56,19 +53,15 @@ public class UpdateVehiculoDtoValidator : AbstractValidator<UpdateVehiculoDto>
     {
         _context = context;
 
-        // 1. Incluimos todas las reglas simples del validador de "Create"
-        // (Nombre, Kilometraje, Intervalo, etc.)
         Include(new CreateVehiculoDtoValidator(_context, forUpdate: true));
         RuleFor(dto => dto) 
             .MustAsync(PlacaNoExistaEnOtroVehiculo)
             .WithMessage("La placa ya está registrada en otro vehículo.")
-            .WithName("Placa"); // Asigna el error a la propiedad "Placa"
+            .WithName("Placa"); 
     }
 
-    // Método de ayuda para la regla asíncrona (PUT)
     private async Task<bool> PlacaNoExistaEnOtroVehiculo(UpdateVehiculoDto dto, CancellationToken token)
     {
-        // Devuelve 'true' si no existe NINGÚN OTRO vehículo
         return !await _context.Vehiculos
             .AnyAsync(v => v.Placa == dto.Placa && v.Id != dto.Id, token);
     }

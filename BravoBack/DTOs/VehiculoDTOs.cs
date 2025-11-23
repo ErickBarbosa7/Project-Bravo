@@ -6,7 +6,8 @@ public class CreateVehiculoDto
     public string Nombre { get; set; } = string.Empty;
     public string? Marca { get; set; }
     public string? Modelo { get; set; }
-    public int? Año { get; set; }
+    public int? Anio { get; set; }
+    public string? FotoUrl {get; set;}
     public int KilometrajeActual { get; set; }
     public int IntervaloServicioKm { get; set; }
 }
@@ -19,7 +20,7 @@ public class VehiculoDto
     public string Nombre { get; set; } = string.Empty;
     public string? Marca { get; set; }
     public string? Modelo { get; set; }
-    public int? Año { get; set; }
+    public int? Anio { get; set; }
     public string? FotoUrl { get; set; }
     public int KilometrajeActual { get; set; }
     public string Estado { get; set; } = string.Empty; 

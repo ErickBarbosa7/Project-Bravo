@@ -1,9 +1,10 @@
-namespace BravoBack.Models;
-
-public enum EstadoVehiculo
+namespace BravoBack.Models.Enums // Namespace actualizado
 {
-    Disponible,
-    EnRuta,
-    EnTaller,
-    NecesitaServicio
+    public enum EstadoVehiculo
+    {
+        Disponible = 0,
+        EnRuta = 1,
+        EnTaller = 2,
+        NecesitaServicio = 3
+    }
 }
