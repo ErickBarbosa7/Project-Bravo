@@ -1,0 +1,229 @@
+@import '../../../../../../../styles/_variables.scss';
+
+.page-header {
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 1.8rem;
+    color: $text-white;
+  }
+
+  p {
+    color: $text-muted;
+  }
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  min-height: 500px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.driver-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s;
+  border: 1px solid transparent;
+  margin-bottom: 6px;
+  background-color: rgba(255, 255, 255, 0.02);
+  position: relative;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background-color: rgba($primary, 0.12);
+    border-color: rgba($primary, 0.5);
+
+    .name {
+      color: $primary;
+    }
+
+    .avatar {
+      background: linear-gradient(135deg, $primary 0%, lighten($primary, 10%) 100%);
+      color: #fff;
+      box-shadow: 0 0 10px rgba($primary, 0.4);
+    }
+
+    // BAR RIGHT
+    &::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: $primary;
+      border-radius: 0 14px 14px 0;
+    }
+  }
+
+  .avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: darken($bg-input, 6%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: lighten($text-muted, 10%);
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .name {
+      font-weight: 600;
+      color: $text-white;
+      font-size: 0.95rem;
+    }
+
+    small {
+      color: $text-muted;
+      font-size: 0.78rem;
+    }
+  }
+
+  .chevron {
+    color: $text-muted;
+    font-size: 1.1rem;
+    opacity: 0.6;
+    padding-left: 6px;
+  }
+.list-body {
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+
+}
+
+// --- REPORTE ---
+.report-panel {
+  background-color: $bg-input;
+  border-radius: 16px;
+  border: 1px solid $border-color;
+  padding: 2rem;
+  position: relative;
+
+  .empty-state,
+  .loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: $text-muted;
+    text-align: center;
+
+    .icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .report-header {
+    margin-bottom: 2rem;
+
+    h3 {
+      color: $text-muted;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .driver-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $text-white;
+    }
+  }
+
+  // Barra de Progreso
+  .bar-chart-container {
+    margin-bottom: 2rem;
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      color: $text-white;
+      font-weight: 500;
+    }
+
+    .progress-bg {
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+
+      .progress-fill {
+        height: 100%;
+        background-color: $primary;
+        border-radius: 6px;
+        transition: width 1s ease-out;
+      }
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .stat-box {
+      background-color: darken($bg-input, 3%);
+      padding: 1.5rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+
+      small {
+        color: $text-muted;
+        margin-bottom: 0.5rem;
+      }
+
+      strong {
+        font-size: 1.5rem;
+        color: $text-white;
+      }
+
+      &.muted strong {
+        color: $text-muted;
+      }
+    }
+  }
+
+  .ai-message {
+    background-color: rgba($primary, 0.1);
+    border: 1px solid rgba($primary, 0.2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    gap: 1rem;
+    color: lighten($text-muted, 10%);
+    line-height: 1.5;
+  }
+}

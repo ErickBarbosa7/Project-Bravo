@@ -1,0 +1,249 @@
+@import '../../../../styles/_variables.scss'; 
+
+// Componente host
+:host {
+  display: block;
+  font-family: $font-main; // Fuente global
+}
+
+// Layout principal: split entre visual y formulario
+.split-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: $bg-dark; // Fondo base
+}
+
+// --- Lado izquierdo (Visual) ---
+.visual-side {
+  display: none; 
+  width: 50%;
+  position: relative;
+  background-color: #000; // Fondo negro detras de la imagen
+  
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4rem;
+  }
+
+  // Imagen de fondo
+  .bg-image {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.4;          // Imagen sutil
+    filter: grayscale(100%); // Sin color
+  }
+
+  // Overlay para mejor contraste del texto
+  .overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    background: linear-gradient(
+      to bottom, 
+      rgba($bg-dark, 0.3) 0%, 
+      rgba($bg-dark, 0.9) 100%
+    );
+  }
+
+  // Contenido principal
+  .content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: $text-white;
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .hero-text {
+      h1 {
+        font-size: 3.5rem;
+        font-weight: 600;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        letter-spacing: -1px;
+      }
+      p {
+        font-size: 1.1rem;
+        font-weight: 300;
+        color: $text-muted; // Texto gris
+        border-left: 3px solid $primary; 
+        padding-left: 1rem;
+      }
+    }
+  }
+}
+
+// --- Lado derecho (Formulario) ---
+.form-side {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-dark; // Fondo igual que lado visual
+  padding: 2rem;
+  border-left: 1px solid $border-color; // Linea divisoria sutil
+
+  @media (min-width: 1024px) {
+    width: 50%;
+  }
+
+  .form-container {
+    width: 100%;
+    max-width: 380px;
+
+    .header {
+      margin-bottom: 3rem;
+      h2 {
+        color: $text-white;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      p {
+        color: $text-muted;
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+// --- Inputs ---
+.input-wrapper {
+  margin-bottom: 1.5rem;
+
+  // Label
+  label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $text-muted;
+  }
+
+  // Input base
+  input {
+    width: 100%;
+    background-color: $bg-input;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 1rem;
+    color: $text-white;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &::placeholder { color: darken($text-muted, 10%); }
+
+    &:focus {
+      border-color: $primary;
+      background-color: lighten($bg-input, 3%);
+      box-shadow: 0 0 0 4px rgba($primary, 0.1); // Glow suave
+    }
+  }
+
+  // Input password con icono
+  .password-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    input { flex: 1; }
+
+    // Boton ojo (mostrar/ocultar)
+    .btn-eye-ghost {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: $text-muted;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      outline: none;
+
+      svg { width: 24px; height: 24px; }
+
+      &:hover {
+        color: $text-white;
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 5px rgba($primary, 0.5));
+      }
+
+      &:active { transform: scale(0.95); }
+    }
+  }
+}
+
+// --- Boton principal ---
+.btn-primary {
+  width: 100%;
+  background-color: $primary; 
+  color: $text-white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: $primary-hover;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// --- Footer ---
+.footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: $text-muted;
+
+  a {
+    color: $primary;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.3rem;
+    &:hover { color: $primary-hover; }
+  }
+}
+
+// --- Spinner ---
+.loader {
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}

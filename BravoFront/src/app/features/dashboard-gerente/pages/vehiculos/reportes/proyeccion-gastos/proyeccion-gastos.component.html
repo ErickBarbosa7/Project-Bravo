@@ -1,0 +1,34 @@
+<div class="report-container">
+  <div class="header">
+    <h2>Proyección Financiera</h2>
+    <p>Análisis predictivo para el próximo mes.</p>
+  </div>
+
+  <div *ngIf="loading()" class="loader">Calculando...</div>
+
+  <div *ngIf="!loading() && data()" class="report-content">
+    
+    <div class="main-card">
+      <h3>Presupuesto Sugerido</h3>
+      <div class="big-number">{{ data()?.presupuestoSugerido | currency:'USD' }}</div>
+      <p class="subtext">Reserva aproximada para mantenimiento</p>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <span>Costo Histórico / Km</span>
+        <strong>{{ data()?.costoPromedioPorKm | currency:'USD' }}</strong>
+      </div>
+      <div class="detail-item">
+        <span>Actividad Reciente</span>
+        <strong>{{ data()?.kmRecorridosUltimoMes | number }} km</strong>
+      </div>
+    </div>
+
+    <div class="ai-insight">
+      <span class="icon">🤖</span>
+      <p>{{ data()?.mensaje }}</p>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,362 @@
+
+@import '../../../../../../styles/_variables.scss';
+// --- Header ---
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+
+  .title-area {
+    h2 { font-size: 1.8rem; margin-bottom: 0.2rem; font-weight: 700; }
+    .subtitle { color: $text-muted; font-size: 0.95rem; }
+  }
+
+  .btn-primary {
+    background-color: $primary;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover { background-color: lighten($primary, 5%); transform: translateY(-2px); }
+    span { font-size: 1.2rem; line-height: 0; }
+  }
+}
+
+.controls-section {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; // Espacio vertical entre Toggles y Buscador
+
+  // 1. Fila de Toggles
+  .toggles-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .helper-text {
+      color: $text-muted;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .view-toggles {
+      display: flex;
+      background-color: $bg-input;
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid $border-color;
+      gap: 4px;
+
+      button {
+        background: none;
+        border: none;
+        color: $text-muted;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        &:hover { color: $text-white; }
+        
+        &.active {
+          background-color: $border-color;
+          color: $primary;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+      }
+    }
+  }
+
+  // 2. Buscador (Ahora ocupa todo el ancho o un max-width mayor)
+  
+}
+// --- Toolbar (Search + Toggles) ---
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .search-wrapper {
+    flex: 1;
+    position: relative;
+    
+    input {
+      width: 100%;
+      background-color: $bg-input;
+      border: 1px solid $border-color;
+      padding: 0.8rem 1rem 0.8rem 2.5rem; // Espacio para icono
+      border-radius: 10px;
+      color: $text-white;
+      outline: none;
+      
+      &:focus { border-color: $primary; }
+    }
+
+    .icon-search {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-style: normal;
+      opacity: 0.5;
+    }
+  }
+
+  .view-toggles {
+    display: flex;
+    background-color: $bg-input;
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid $border-color;
+    gap: 4px; // Espacio pequeño entre botones
+
+    button {
+      background: none;
+      border: none;
+      color: $text-muted;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      // Para centrar el SVG
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      // Tamaño del ícono
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover { color: $text-white; }
+      
+      &.active {
+        background-color: $border-color; // O un tono gris intermedio
+        color: $primary; // Se ilumina morado al estar activo
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+    }
+  }
+}
+
+// --- VISTA 1: TABLA ---
+.table-container {
+  overflow-x: auto; // Scroll horizontal si es necesario
+  background-color: $bg-input;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+
+    th {
+      text-align: left;
+      padding: 1rem 1.5rem;
+      color: $text-muted;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid $border-color;
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba($border-color, 0.5);
+      color: $text-white;
+      vertical-align: middle;
+
+      &.fw-bold { font-weight: 600; }
+      &.highlight { color: $primary; font-family: monospace; font-size: 1.1rem; }
+      &.text-muted { color: $text-muted; }
+      &.text-end { text-align: right; }
+    }
+
+    tbody tr {
+      transition: background-color 0.2s;
+      &:hover { background-color: rgba($primary, 0.05); }
+      &:last-child td { border-bottom: none; }
+    }
+
+    // Mini imagen en tabla
+    .vehicle-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      .mini-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        object-fit: cover;
+        background-color: #000;
+      }
+    }
+  }
+}
+
+// --- VISTA 2: GRID (CARDS) ---
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+
+  .vehicle-card {
+    background-color: $bg-input;
+    border: 1px solid $border-color;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-5px);
+      border-color: $primary;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .card-header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .placa {
+        font-family: monospace;
+        font-weight: 700;
+        color: $primary;
+        background: rgba($primary, 0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .card-image {
+      height: 160px;
+      width: 100%;
+      background-color: #000;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.9;
+        transition: opacity 0.3s;
+      }
+    }
+    &:hover .card-image img { opacity: 1; }
+
+    .card-body {
+      padding: 1.2rem;
+      flex: 1; // Empuja el footer abajo
+
+      h3 { font-size: 1.1rem; margin-bottom: 0.2rem; }
+      .year { color: $text-muted; font-size: 0.9rem; margin-bottom: 1rem; }
+
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        background-color: rgba(0,0,0,0.2);
+        padding: 0.8rem;
+        border-radius: 8px;
+
+        .stat {
+          display: flex;
+          flex-direction: column;
+          small { color: $text-muted; font-size: 0.75rem; }
+          strong { color: $text-white; font-size: 0.95rem; }
+        }
+      }
+    }
+
+    .card-actions {
+      padding: 1rem;
+      border-top: 1px solid $border-color;
+      display: flex;
+      gap: 10px;
+
+      .btn-secondary {
+        flex: 1;
+        background: transparent;
+        border: 1px solid $border-color;
+        color: $text-white;
+        padding: 0.6rem;
+        border-radius: 6px;
+        cursor: pointer;
+        &:hover { background-color: $border-color; }
+      }
+    }
+  }
+}
+.mt-4 { margin-top: 1.5rem; }
+
+.btn-workshop {
+  background-color: #f59e0b; // Color Naranja/Amber (Taller)
+  color: #000; // Texto oscuro para contraste
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover {
+    background-color: lighten(#f59e0b, 10%);
+    transform: translateY(-2px);
+  }
+}
+// --- Botones Comunes ---
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  
+  color: rgba(255, 255, 255, 0.7); 
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff; 
+  }
+  
+  &.danger:hover {
+    background-color: rgba(226, 45, 45, 0.527);
+    color: #ef4444; 
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: $text-muted;
+  border: 2px dashed $border-color;
+  border-radius: 12px;
+}

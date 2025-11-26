@@ -1,0 +1,150 @@
+@import '../../../../../styles/_variables.scss';
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: $bg-dark; // Fondo general negro
+  color: $text-white;
+  overflow: hidden;
+}
+
+// --- SIDEBAR ---
+.sidebar {
+  width: 260px;
+  background-color: #000000; // Sidebar más oscura
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  
+  .logo-area {
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .role-badge {
+      background: rgba($primary, 0.2);
+      color: $primary;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.8rem 1rem;
+      color: $text-muted;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-weight: 500;
+
+      svg { width: 20px; height: 20px; }
+
+      &:hover {
+        background-color: $bg-input;
+        color: $text-white;
+      }
+
+      // Clase automática de Angular cuando estás en la ruta
+      &.active {
+        background-color: $primary;
+        color: white;
+        box-shadow: 0 4px 12px rgba($primary, 0.3);
+      }
+    }
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    color: #ef4444; // Rojo para logout
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+    margin-top: auto; // Empuja al fondo
+
+    svg { width: 20px; height: 20px; }
+
+    &:hover {
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+// --- CONTENIDO PRINCIPAL ---
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // Para que el scroll sea interno
+
+  .top-bar {
+    height: 70px;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    background-color: rgba($bg-dark, 0.8);
+    backdrop-filter: blur(10px); // Efecto vidrio
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .avatar {
+        width: 35px;
+        height: 35px;
+        background-color: $bg-input;
+        border: 1px solid $border-color;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: $primary;
+      }
+
+      .username {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .page-wrapper {
+    flex: 1;
+    overflow-y: auto; // Scroll solo en el contenido
+    padding: 2rem;
+  }
+}

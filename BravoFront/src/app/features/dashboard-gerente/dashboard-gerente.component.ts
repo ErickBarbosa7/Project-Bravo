@@ -19,20 +19,25 @@ import { SidebarComponent } from "../../layout/sidebar/sidebar.component";
     styleUrls: ['./dashboard-gerente.component.scss']
 })
 export class DashboardGerenteComponent {
+    // Inyectamos el servicio de autenticacion
     authService = inject(AuthService);
-    currentUser = this.authService.currentUser;
+    currentUser = this.authService.currentUser; // señal para usuario actual
 
-    // Define los datos para el Sidebar ---
-  gerenteLinks: NavLink[] = [
-    { path: 'vehiculos', label: 'Vehículos', icon: 'pi pi-car' },
-    { path: 'alertas', label: 'Alertas de Servicio', icon: 'pi pi-exclamation-triangle' },
-    { path: 'incidentes', label: 'Incidentes', icon: 'pi pi-shield' }
-   
-  ];
-  
-    // El componente padre maneja el logout ---
-  logout() {
-    // Llama al servicio que importaste
-    this.authService.logout(); 
-  }
+    // Definimos los enlaces del sidebar para el gerente
+    gerenteLinks: NavLink[] = [
+        { path: 'vehiculos', label: 'Vehículos', icon: 'pi pi-car' },
+        { path: 'alertas', label: 'Alertas de Servicio', icon: 'pi pi-exclamation-triangle' },
+        { path: 'incidentes', label: 'Incidentes', icon: 'pi pi-shield' }
+    ];
+
+    // Computed para mostrar el nombre completo en la UI
+    get userFullName(): string {
+        const user = this.authService.currentUser(); 
+        return user ? `${user.firstName} ${user.paternalLastName}` : '';
+    }
+
+    // Metodo para cerrar sesion
+    logout() {
+        this.authService.logout(); // llama al metodo del servicio
+    }
 }

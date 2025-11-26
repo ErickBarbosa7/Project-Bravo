@@ -1,0 +1,114 @@
+@import '../../../../../styles/_variables.scss'; 
+
+.card {
+  // Contenedor principal de la tarjeta
+  position: relative;
+  background: linear-gradient(145deg, lighten($bg-input, 2%) 0%, $bg-input 100%); // Gradiente sutil para dar volumen
+  border: 1px solid $border-color;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between; // Separa info y icono a los extremos
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Animacion suave
+  overflow: hidden; // Para efectos de brillo
+
+  // --- Hover general ---
+  &:hover {
+    transform: translateY(-4px); // Levanta la tarjeta
+    background: lighten($bg-input, 2%); // Aclara un poco
+  }
+
+  // --- Info izquierda ---
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 1; // Encima de decoraciones
+
+    .label {
+      color: $text-muted;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px; // Estilo tecnico
+    }
+
+    .number {
+      color: $text-white;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+  }
+
+  // --- Icono derecha ---
+  .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03); // Fondo casi transparente
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s ease;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      transition: stroke 0.3s;
+    }
+  }
+
+  // Icono crece al hover de la tarjeta
+  &:hover .icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  // --- Variantes de color ---
+
+  // Morado (general)
+  &.purple {
+    .icon-wrapper svg { color: $primary; }
+    
+    &:hover {
+      border-color: $primary;
+      box-shadow: 0 8px 24px rgba($primary, 0.15); // Brillo morado
+    }
+  }
+
+  // Verde (disponibles)
+  &.green {
+    $color-green: #10b981;
+    .icon-wrapper svg { color: $color-green; }
+    
+    &:hover {
+      border-color: $color-green;
+      box-shadow: 0 8px 24px rgba($color-green, 0.15);
+    }
+  }
+
+  // Rojo (mantenimiento)
+  &.red {
+    $color-red: #ef4444;
+    .icon-wrapper svg { color: $color-red; }
+    
+    &:hover {
+      border-color: $color-red;
+      box-shadow: 0 8px 24px rgba($color-red, 0.15);
+    }
+  }
+
+  // Azul (opcional)
+  &.blue {
+    $color-blue: #3b82f6;
+    .icon-wrapper svg { color: $color-blue; }
+    
+    &:hover {
+      border-color: $color-blue;
+      box-shadow: 0 8px 24px rgba($color-blue, 0.15);
+    }
+  }
+}

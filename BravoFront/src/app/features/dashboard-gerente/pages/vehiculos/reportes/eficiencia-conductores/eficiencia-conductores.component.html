@@ -1,0 +1,96 @@
+<div class="page-header">
+  <div>
+    <h2>Eficiencia de Conductores</h2>
+    <p>Análisis de consumo individual vs. global.</p>
+  </div>
+</div>
+
+<div class="layout-grid">
+
+  <!-- LISTA DE CONDUCTORES -->
+  <div class="drivers-list">
+    <div class="list-header">
+      <h3>Personal</h3>
+    </div>
+
+    <div class="list-body" [class.loading]="isLoadingList()">
+      
+      <div *ngIf="isLoadingList()" class="loader-box">Cargando...</div>
+
+      <ng-container *ngIf="!isLoadingList()">
+        <div 
+          *ngFor="let c of conductores()" 
+          class="driver-card"
+          [class.active]="selectedConductorId() === c.id"
+          (click)="selectConductor(c.id)"
+        >
+          <div class="avatar">{{ c.nombreCompleto.charAt(0) }}</div>
+
+          <div class="info">
+            <span class="name">{{ c.nombreCompleto }}</span>
+            <small>{{ c.email }}</small>
+          </div>
+
+          <div class="chevron">›</div>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+
+  <!-- PANEL DE REPORTE -->
+  <div class="report-panel">
+
+    <!-- Estado vacío -->
+    <div *ngIf="!selectedConductorId() && !isLoadingReport()" class="empty-state">
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h3m6-9v3M7.8 7.8L5.6 5.6m10.6 2.2l2.2-2.2M7.8 16.2l-2.2 2.2M12 12l9 3l-4 2l-2 4z"/></svg></span>
+      <p>Selecciona un conductor para ver su rendimiento.</p>
+    </div>
+
+    <!-- Estado cargando -->
+    <div *ngIf="isLoadingReport()" class="loader-box">
+      Analizando datos...
+    </div>
+
+    <!-- Contenido del reporte -->
+    <div *ngIf="reporteData()" class="report-content">
+
+      <!-- Header -->
+      <div class="report-header">
+        <h3>Reporte de Consumo</h3>
+        <span class="driver-name">{{ reporteData().conductor }}</span>
+      </div>
+
+      <!-- Barra -->
+      <div class="bar-chart-container">
+        <div class="bar-label">
+          <span>Porcentaje del Total de la Flota</span>
+          <strong>{{ reporteData().porcentajeDelTotal }}%</strong>
+        </div>
+        <div class="progress-bg">
+          <div class="progress-fill" [style.width.%]="reporteData().porcentajeDelTotal"></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-box">
+          <small>Consumo Propio</small>
+          <strong>{{ reporteData().litrosConsumidos }} L</strong>
+        </div>
+
+        <div class="stat-box muted">
+          <small>Total Empresa</small>
+          <strong>{{ reporteData().totalEmpresa }} L</strong>
+        </div>
+      </div>
+
+      <!-- Mensaje de IA -->
+      <div class="ai-message">
+        <p>{{ reporteData().mensaje }}</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>

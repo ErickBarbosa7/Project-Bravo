@@ -1,0 +1,40 @@
+<div class="card-form">
+  <div class="header">
+    <h2>Registrar Carga</h2>
+    <p>Ingresa los datos del ticket y odómetro.</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    
+    <div class="input-group">
+      <label>Vehículo</label>
+      <div class="select-wrapper">
+        <select formControlName="vehiculoId">
+          <option value="" disabled selected>Selecciona tu unidad</option>
+          <option *ngFor="let v of vehiculos()" [value]="v.id">
+            {{ v.marca }} {{ v.modelo }} ({{ v.placa }})
+          </option>
+        </select>
+        <div class="chevron">▼</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Kilómetros Recorridos</label>
+      <input type="number" formControlName="kilometrosRecorridos" placeholder="Ej. 150">
+      <small class="hint">Distancia desde la última carga</small>
+    </div>
+
+    <div class="input-group">
+      <label>Litros Cargados</label>
+      <input type="number" formControlName="litrosConsumidos" placeholder="Ej. 40.5">
+      <small class="hint">Según el ticket de la gasolinera</small>
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="isLoading()">
+      <span *ngIf="!isLoading()">Registrar Carga</span>
+      <span *ngIf="isLoading()" class="loader"></span>
+    </button>
+
+  </form>
+</div>

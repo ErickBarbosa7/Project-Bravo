@@ -8,13 +8,12 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
     standalone:true,
     imports: [CommonModule, RouterLink,RouterLinkActive],
     templateUrl:'./sidebar.component.html',
-    styleUrl:'./sidebar.component.scss'
+    styleUrls:['./sidebar.component.scss']
 })
 
 export class SidebarComponent{
     // Recibe el email del usuario para mostrarlo
-    @Input({required: false}) fullName: string = '';
-    @Input({required: true}) userEmail: string = '';
+    @Input({required: true}) userName: string = '';
     // Recibe la lista de enlaces
     @Input({required: true}) navLinks: NavLink[] = [];
     //Emite un evento cuando se hace clic en cerrar sesion

@@ -1,0 +1,76 @@
+@import '../../../../../styles/_variables.scss'; 
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px; // Pill shape
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  white-space: nowrap; // Que no se rompa el texto
+
+  // El punto brillante (animado)
+  .glow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor; // Toma el color del texto
+    box-shadow: 0 0 8px currentColor; // Resplandor
+    animation: pulse 2s infinite;
+  }
+
+  // --- VARIANTES ---
+
+  // 0. Disponible (Verde Tech)
+  &.green {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  // 1. En Ruta (Azul Tech)
+  &.blue {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+
+  // 2. En Taller (Naranja Tech)
+  &.orange {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.2);
+    
+    // En taller no parpadea, es estático
+    .glow-dot { animation: none; opacity: 0.8; }
+  }
+
+  // 3. Urgente (Rojo Alerta)
+  &.red {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.1); // Glow externo suave
+
+    // Animación rápida para urgencia
+    .glow-dot { animation: pulse 1s infinite; }
+  }
+
+  // Default
+  &.gray {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+  }
+}
+
+// Animación de respiración del punto
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}

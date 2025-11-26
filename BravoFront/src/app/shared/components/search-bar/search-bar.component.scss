@@ -1,0 +1,36 @@
+
+@import './../../../../styles/_variables.scss';
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    
+    input {
+      width: 100%;
+      background-color: $bg-input;
+      border: 1px solid $border-color;
+      padding: 1rem 1rem 1rem 2.8rem; // Más padding para el icono
+      border-radius: 12px; // Bordes más redondeados
+      color: $text-white;
+      outline: none;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+      
+      &:focus { 
+        border-color: $primary; 
+        background-color: lighten($bg-input, 2%);
+      }
+      
+      &::placeholder { color: darken($text-muted, 10%); }
+    }
+
+    .icon-search {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-style: normal;
+      opacity: 0.5;
+      font-size: 1.2rem;
+    }
+  }

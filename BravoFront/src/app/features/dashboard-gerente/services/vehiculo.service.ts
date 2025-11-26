@@ -1,93 +1,129 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { tap, catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { Vehiculo, CreateVehiculoDto, UpdateVehiculoDto } from '../../../core/models/vehiculo.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VehiculoService {
 
+  private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/api/vehiculos`;
-  // Signals SOLO para la lista
-  loading = signal(false);
-  error = signal<string | null>(null);
-  vehiculos = signal<any[]>([]);
 
-  constructor(private http: HttpClient) {}
+  // State (signals)
+  public vehiculos = signal<Vehiculo[]>([]);
+  public loading = signal<boolean>(false);
+  public error = signal<string | null>(null);
 
-  // -------------------------
-  // GET LISTA (usa signals)
-  // -------------------------
-  loadVehiculos() {
+  constructor() {}
+
+  // Cargar vehiculos
+  loadVehiculos(): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.http.get<Vehiculo[]>(this.apiUrl).subscribe({
       next: (data) => {
         this.vehiculos.set(data);
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Error al cargar vehículos');
+        console.error('Error cargando vehículos:', err);
+        this.error.set('No se pudo cargar la lista de vehículos.');
         this.loading.set(false);
       }
     });
   }
-  getVehiculos(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
-      catchError(err => {
-        console.error('Error en getVehiculos():', err);
-        return throwError(() => err);
+
+  // Obtener vehiculo por id
+  getVehiculoById(id: number): Observable<Vehiculo> {
+    return this.http.get<Vehiculo>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Crear vehiculo
+  createVehiculo(dto: CreateVehiculoDto): Observable<Vehiculo> {
+    this.loading.set(true);
+    return this.http.post<Vehiculo>(this.apiUrl, dto).pipe(
+      tap((nuevoVehiculo) => {
+        this.vehiculos.update(lista => [...lista, nuevoVehiculo]);
+        this.loading.set(false);
+      }),
+      catchError((err) => {
+        this.loading.set(false);
+        return this.handleError(err);
       })
     );
   }
 
-  // -------------------------
-  // GET /vehiculos/:id
-  // -------------------------
-  getVehiculoById(id: number) {
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
-      catchError(err => {
-        console.error('Error obteniendo vehículo:', err);
-        return throwError(() => err);
+  // Actualizar vehiculo
+  updateVehiculo(id: number, dto: UpdateVehiculoDto): Observable<Vehiculo> {
+    this.loading.set(true);
+    return this.http.put<Vehiculo>(`${this.apiUrl}/${id}`, dto).pipe(
+      tap((vehiculoActualizado) => {
+        this.vehiculos.update(lista =>
+          lista.map(v => v.id === id ? vehiculoActualizado : v)
+        );
+        this.loading.set(false);
+      }),
+      catchError((err) => {
+        this.loading.set(false);
+        return this.handleError(err);
       })
     );
   }
 
-  // -------------------------
-  // POST /vehiculos
-  // -------------------------
-  createVehiculo(dto: any) {
-    return this.http.post<any>(this.apiUrl, dto).pipe(
-      catchError(err => {
-        console.error('Error creando vehículo:', err);
-        return throwError(() => err);
+  // Eliminar vehiculo
+  deleteVehiculo(id: number): Observable<void> {
+    this.loading.set(true);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        this.vehiculos.update(lista => lista.filter(v => v.id !== id));
+        this.loading.set(false);
+      }),
+      catchError((err) => {
+        this.loading.set(false);
+        return this.handleError(err);
       })
     );
   }
 
-  // -------------------------
-  // PUT /vehiculos/:id
-  // -------------------------
-  updateVehiculo(id: number, dto: any) {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, dto).pipe(
-      catchError(err => {
-        console.error('Error actualizando vehículo:', err);
-        return throwError(() => err);
-      })
+  // Obtener estatus del servicio, por ejemplo cuanto le falta para el proximo servicio
+  getEstatusServicio(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/estatus-servicio`).pipe(
+      catchError(this.handleError)
     );
   }
 
-  // -------------------------
-  // DELETE /vehiculos/:id
-  // -------------------------
-  deleteVehiculo(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
-      catchError(err => {
-        console.error('Error eliminando vehículo:', err);
-        return throwError(() => err);
-      })
+  // Obtener proyeccion de gastos
+  getProyeccionGastos(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/proyeccion-gastos`).pipe(
+      catchError(this.handleError)
     );
+  }
+
+  // Simular pago
+  simularPago(dto: { vehiculoId: number; monto: number; concepto: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/simular-pago`, dto).pipe(
+      tap(() => this.loadVehiculos()),
+      catchError(this.handleError)
+    );
+  }
+
+  // Enviar a taller
+  enviarATaller(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/enviar-taller`, {}).pipe(
+      tap(() => this.loadVehiculos()),
+      catchError(this.handleError)
+    );
+  }
+
+  // Helper manejo de errores
+  private handleError(error: any) {
+    console.error('Error en VehiculoService:', error);
+    return throwError(() => new Error(error.error?.message || 'Error en el servidor'));
   }
 }

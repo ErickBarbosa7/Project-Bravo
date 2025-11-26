@@ -1,0 +1,29 @@
+<div class="dashboard-header">
+  <h1>Resumen Operativo</h1>
+  <p>Estado actual de la flota en tiempo real.</p>
+</div>
+
+<div class="kpi-grid">
+  
+  <app-kpi-card 
+    title="Total Flota" 
+    [value]="totalFlota()" 
+    iconName="car" 
+    variant="purple">
+  </app-kpi-card>
+
+  <app-kpi-card 
+    title="Disponibles" 
+    [value]="autosDisponibles()" 
+    iconName="check" 
+    variant="green">
+  </app-kpi-card>
+
+  <app-kpi-card 
+    title="En Mantenimiento" 
+    [value]="autosEnServicio()" 
+    iconName="tool" 
+    variant="red">
+  </app-kpi-card>
+
+</div>

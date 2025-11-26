@@ -1,12 +1,13 @@
-$font-main: 'Inter', Arial, Helvetica, sans-serif; // tipografía más moderna
-$color-primary: #c22047;      
-$color-primary-light: #ea284b; 
-$color-secondary: #7f1e47;     
-$color-bg: #43204a;           
-$color-bg-alt: #422343;       
-$color-text: #f8f7f6;         
-$color-text-muted: #cfcfcf;   
-$color-danger: $color-primary-light;
+// --- Paleta de Colores y Fuente ---
+$font-main: Arial, Helvetica, sans-serif;
+
+$color-primary: #2563eb;       // Azul "Royal" vibrante
+$color-primary-light: #60a5fa; // Azul cielo intenso (hover)
+$color-secondary: #1e40af;     // Azul oscuro para botones secundarios
+$color-bg: #0f172a;            // Fondo "Slate" muy oscuro (casi negro azulado)
+$color-bg-alt: #1e293b;        // Fondo de cards (gris azulado oscuro)
+$color-text: #f1f5f9;          // Blanco hielo
+$color-text-muted: #94a3b8;    // Gris acero
 
 :host {
   display: block;

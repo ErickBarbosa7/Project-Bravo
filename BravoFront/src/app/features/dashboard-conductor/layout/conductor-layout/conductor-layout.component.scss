@@ -1,0 +1,53 @@
+@use '../../../../../styles/variables' as *;
+
+.mobile-layout {
+    min-height: 100vh;
+    background-color: $bg-dark;
+    color: $text-white;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $border-color;
+    background-color: #000;
+}
+
+.brand {
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.role {
+    font-size: 0.7rem;
+    background: rgba($primary, 0.2);
+    color: $primary;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-left: 5px;
+}
+
+.btn-logout {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+}
+
+.content {
+    padding: 1.5rem;
+}
+
+.user-greeting {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    color: $text-muted;
+
+    strong {
+        color: $text-white;
+    }
+}

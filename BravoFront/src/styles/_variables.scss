@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
-$color-primary: #c22047;      // rojo vino brillante
-$color-primary-light: #ea284b; // acento/hover
-$color-secondary: #7f1e47;     // para botones secundarios
-$color-bg: #43204a;           // fondo oscuro principal
-$color-bg-alt: #422343;       // fondo de cards o secciones
-$color-text: #f8f7f6;         // texto claro crema
-$color-text-muted: #cfcfcf;   // texto secundario
+// PALETA MORADITA
+// Colores principales usados en la app
+$bg-dark: #241d31;         // Fondo oscuro profundo (ej. lado derecho o sidebar)
+$bg-input: #1c1c24;        // Fondo de inputs y formularios
+$primary: #7c3aed;         // Color principal, botones y highlights
+$primary-hover: #6d28d9;   // Color al pasar el mouse sobre elementos primarios
+$text-white: #ffffff;       // Texto blanco
+$text-muted: #9ca3af;       // Texto gris para info secundaria
+$border-color: #2d2d3b;    // Bordes de cajas o separadores
+$bg-page: #2b2b38;         // Fondo general de la pagina
+
+// Fuente principal de la app
+$font-main: 'Inter', sans-serif;

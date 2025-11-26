@@ -11,23 +11,24 @@ import { LocalstorageService } from '../../../core/services/localstorage.service
 })
 export class AuthService {
 
+  // Inyecciones de Angular
   private http = inject(HttpClient);
   private router = inject(Router);
   private localStorage = inject(LocalstorageService);
   private apiUrl = environment.apiUrl;
 
-  // Token en signal
+  // Token del usuario en un signal para reactividad
   private _token = signal<string | null>(null);
   token = this._token;
 
-  // Usuario actual
+  // Usuario actual en signal
   public currentUser = signal<UserToken | null>(null);
 
   constructor() {
-    this.loadUserFromStorage();
+    this.loadUserFromStorage(); // Cargar info del localStorage al iniciar
   }
 
-  // Cargar token + usuario
+  // Carga token y usuario del localStorage si existe
   private loadUserFromStorage() {
     const token = this.localStorage.getToken();
     const user = this.localStorage.getUser();
@@ -41,7 +42,7 @@ export class AuthService {
     }
   }
 
-  // LOGIN
+  // LOGIN: devuelve el token y usuario, guarda en signal y localStorage
   login(request: LoginRequest): Observable<UserToken> {
     return this.http.post<UserToken>(`${this.apiUrl}/api/auth/login`, request).pipe(
       tap((res) => {
@@ -54,12 +55,12 @@ export class AuthService {
     );
   }
 
-  // REGISTRO
+  // REGISTRO: llama al endpoint de registro
   register(request: RegisterRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/auth/register`, request);
   }
 
-  // LOGOUT
+  // LOGOUT: limpia todo y redirige a login
   logout() {
     this._token.set(null);
     this.currentUser.set(null);
@@ -69,11 +70,17 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  // Helpers
+  // Devuelve el nombre completo del usuario actual
+  getFullName(): string {
+    const user = this.currentUser();
+    return user ? `${user.firstName} ${user.paternalLastName}` : '';
+  }
+
+  // Helpers para saber si esta logueado y obtener rol
   isLoggedIn(): boolean {
     return !!this._token();
   }
-
+  // Devuelve el rol
   getUserRole(): string | null {
     return this.currentUser()?.role ?? null;
   }
