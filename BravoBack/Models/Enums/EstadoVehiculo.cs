@@ -1,4 +1,4 @@
-namespace BravoBack.Models.Enums // Namespace actualizado
+namespace BravoBack.Models.Enums
 {
     public enum EstadoVehiculo
     {

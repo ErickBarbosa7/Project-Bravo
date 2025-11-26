@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using BravoBack.Data; 
 
-namespace BravoBack.Data; // Puedes ponerlo en el mismo namespace
+namespace BravoBack.Data; 
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {

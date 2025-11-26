@@ -15,7 +15,7 @@ namespace BravoBack.Services
             _context = context;
         }
 
-        // 1. OBTENER TODOS
+        // Obtiene todos los vehiculos y los transforma en DTO
         public async Task<List<VehiculoDto>> ObtenerTodos()
         {
             return await _context.Vehiculos
@@ -35,12 +35,13 @@ namespace BravoBack.Services
                 })
                 .ToListAsync();
         }
-    
-        // 2. OBTENER POR ID
+
+        // Busca un vehiculo por su id y lo convierte en DTO
         public async Task<VehiculoDto?> ObtenerPorId(int id)
         {
             var v = await _context.Vehiculos.FindAsync(id);
             if (v == null) return null;
+
             return new VehiculoDto
             {
                 Id = v.Id,
@@ -57,20 +58,21 @@ namespace BravoBack.Services
             };
         }
 
-        // 3. CREAR VEHÍCULO
+        // Crea un nuevo vehiculo en la base de datos
         public async Task<VehiculoDto> CrearVehiculo(CreateVehiculoDto dto)
         {
+            // Se arma la entidad usando los datos del DTO
             var vehiculo = new Vehiculo
             {
                 Placa = dto.Placa,
-                Nombre = dto.Nombre,
                 Marca = dto.Marca,
                 Modelo = dto.Modelo,
+                Nombre = $"{dto.Marca} {dto.Modelo}", // Se genera un nombre compuesto
                 Anio = dto.Anio,
                 FotoUrl = dto.FotoUrl,
                 KilometrajeActual = dto.KilometrajeActual,
                 IntervaloServicioKm = dto.IntervaloServicioKm,
-                // Lógica de negocio: Calcular siguiente servicio
+                // Calcula cuando tocara el siguiente servicio
                 SiguienteServicioKm = dto.KilometrajeActual + dto.IntervaloServicioKm,
                 Estado = EstadoVehiculo.Disponible
             };
@@ -78,25 +80,26 @@ namespace BravoBack.Services
             _context.Vehiculos.Add(vehiculo);
             await _context.SaveChangesAsync();
 
-            return await ObtenerPorId(vehiculo.Id)!; // Reutilizamos el método para devolver el DTO completo
+            return await ObtenerPorId(vehiculo.Id)!;
         }
 
-        // 4. ACTUALIZAR VEHÍCULO
+        // Actualiza un vehiculo existente
         public async Task<VehiculoDto?> ActualizarVehiculo(int id, UpdateVehiculoDto dto)
         {
             var vehiculo = await _context.Vehiculos.FindAsync(id);
             if (vehiculo == null) return null;
 
-            // Actualizar campos
+            // Se actualizan los campos principales del vehiculo
             vehiculo.Placa = dto.Placa;
-            vehiculo.Nombre = dto.Nombre;
+            vehiculo.Nombre = $"{dto.Marca} {dto.Modelo}";
             vehiculo.Marca = dto.Marca;
             vehiculo.Modelo = dto.Modelo;
             vehiculo.Anio = dto.Anio;
             vehiculo.FotoUrl = dto.FotoUrl;
             vehiculo.KilometrajeActual = dto.KilometrajeActual;
             vehiculo.IntervaloServicioKm = dto.IntervaloServicioKm;
-            
+
+            // Se recalcula cuando le toca el siguiente servicio
             vehiculo.SiguienteServicioKm = dto.KilometrajeActual + dto.IntervaloServicioKm;
 
             _context.Vehiculos.Update(vehiculo);
@@ -105,7 +108,7 @@ namespace BravoBack.Services
             return await ObtenerPorId(vehiculo.Id);
         }
 
-        // 5. ELIMINAR VEHÍCULO
+        // Elimina un vehiculo de la base de datos
         public async Task<bool> EliminarVehiculo(int id)
         {
             var vehiculo = await _context.Vehiculos.FindAsync(id);
@@ -116,55 +119,59 @@ namespace BravoBack.Services
             return true;
         }
 
-        // 6. Obtener Estado Servicio
+        // Calcula el estado del servicio segun los kilometros restantes
         public async Task<ReporteMantenimientoDto> ObtenerEstadoServicio(int vehiculoId)
         {
             var vehiculo = await _context.Vehiculos.FindAsync(vehiculoId);
-            
-            // Si no existe, devolvemos un estado nulo o lanzamos excepción. 
-            // Para este ejemplo, manejamos un default.
-            if (vehiculo == null) 
+
+            // Si no existe, devuelve un estado desconocido
+            if (vehiculo == null)
             {
-                return new ReporteMantenimientoDto { Mensaje = "Vehículo no encontrado", Estatus = EstatusMantenimiento.Desconocido };
+                return new ReporteMantenimientoDto
+                {
+                    Mensaje = "Vehiculo no encontrado",
+                    Estatus = EstatusMantenimiento.Desconocido
+                };
             }
 
+            // Se calcula cuantos kilometros faltan para el servicio
             int kmRestantes = vehiculo.SiguienteServicioKm - vehiculo.KilometrajeActual;
 
-            // Objeto base
             var reporte = new ReporteMantenimientoDto
             {
                 KmRestantes = kmRestantes
             };
 
-            // Lógica del Semáforo 
+            // Asigna el color e informacion segun el estado del vehiculo
             if (kmRestantes <= 0)
             {
                 reporte.Estatus = EstatusMantenimiento.Vencido;
                 reporte.Color = "ROJO";
-                reporte.Mensaje = $"URGENTE: El servicio venció hace {Math.Abs(kmRestantes)} km.";
+                reporte.Mensaje = $"El servicio ya vencio hace {Math.Abs(kmRestantes)} km.";
             }
             else if (kmRestantes <= 1000)
             {
                 reporte.Estatus = EstatusMantenimiento.Preventivo;
                 reporte.Color = "AMARILLO";
-                reporte.Mensaje = $"Atención: Servicio próximo en {kmRestantes} km.";
+                reporte.Mensaje = $"El servicio esta proximo en {kmRestantes} km.";
             }
             else
             {
                 reporte.Estatus = EstatusMantenimiento.Optimo;
                 reporte.Color = "VERDE";
-                reporte.Mensaje = $"Estado óptimo. Faltan {kmRestantes} km para servicio.";
+                reporte.Mensaje = $"Aun faltan {kmRestantes} km para el proximo servicio.";
             }
 
             return reporte;
         }
 
-        // 7. Simular Pago
+        // Guarda un pago de servicio y reinicia el contador
         public async Task<string> SimularPagoServicio(PagoServicioDTO pagoDto)
         {
             var vehiculo = await _context.Vehiculos.FindAsync(pagoDto.VehiculoId);
-            if (vehiculo == null) return "Error: Vehículo no encontrado.";
+            if (vehiculo == null) return "Error: Vehiculo no encontrado.";
 
+            // Se registra un nuevo servicio en el historial
             var nuevoRegistro = new RegistroServicio
             {
                 VehiculoId = vehiculo.Id,
@@ -175,57 +182,124 @@ namespace BravoBack.Services
             };
 
             _context.RegistrosServicio.Add(nuevoRegistro);
-            
-            // Reiniciar contador
+
+            // Se reinicia el kilometraje para el proximo servicio
             vehiculo.SiguienteServicioKm = vehiculo.KilometrajeActual + vehiculo.IntervaloServicioKm;
             await _context.SaveChangesAsync();
 
-            return "Pago procesado correctamente.";
+            return "Pago registrado correctamente.";
         }
 
-        // PREDICCIÓN DE PRESUPUESTO 
+        // Cambia el estado de un vehiculo para enviarlo al taller
+        public async Task<bool> EnviarATaller(int id)
+        {
+            var vehiculo = await _context.Vehiculos.FindAsync(id);
+            if (vehiculo == null) return false;
+
+            vehiculo.Estado = EstadoVehiculo.EnTaller;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // Calcula una proyeccion mensual de mantenimiento
         public async Task<ProyeccionGastosDto> CalcularProyeccionMensual()
         {
-            // 1. Calcular el Costo Histórico por Kilómetro
-            // Sumamos todo el dinero gastado en servicios en la historia
+            // Suma del dinero gastado en toda la historia de servicios
             decimal totalGastado = await _context.RegistrosServicio.SumAsync(r => r.MontoPagado);
-            
-            // Sumamos todos los Km recorridos en la historia (según bitácoras)
-            int totalKmRecorridosHistorico = await _context.BitacorasUso.SumAsync(b => b.KilometrosRecorridos);
 
-            // Validación para evitar división entre cero (si el sistema es nuevo)
-            if (totalKmRecorridosHistorico == 0)
+            // Suma del total de kilometros recorridos historicos
+            int totalKmRecorridos = await _context.BitacorasUso.SumAsync(b => b.KilometrosRecorridos);
+
+            // Si no hay datos no se pueden generar proyecciones
+            if (totalKmRecorridos == 0)
             {
-                return new ProyeccionGastosDto 
-                { 
-                    Mensaje = "No hay suficientes datos históricos de kilometraje para calcular proyecciones." 
+                return new ProyeccionGastosDto
+                {
+                    Mensaje = "No hay datos suficientes para generar una proyeccion."
                 };
             }
 
-            // Fórmula: ¿Cuánto nos cuesta cada Km que avanza la flota?
-            // Convertimos a decimal para precisión monetaria
-            decimal costoPorKm = totalGastado / (decimal)totalKmRecorridosHistorico;
+            // Costo por kilometro basado en la historia completa
+            decimal costoPorKm = totalGastado / (decimal)totalKmRecorridos;
 
-
-            // 2. Calcular la Actividad Reciente (Últimos 30 días)
+            // Se obtienen los kilometros del ultimo mes
             DateTime haceUnMes = DateTime.UtcNow.AddDays(-30);
-            
+
             int kmUltimoMes = await _context.BitacorasUso
                 .Where(b => b.FechaUso >= haceUnMes)
                 .SumAsync(b => b.KilometrosRecorridos);
 
-
-            // 3. Proyectar el Futuro
+            // Multiplica lo recorrido por el costo promedio
             decimal proyeccion = costoPorKm * kmUltimoMes;
 
             return new ProyeccionGastosDto
             {
-                CostoPromedioPorKm = Math.Round(costoPorKm, 2), // Ej: $0.50
-                KmRecorridosUltimoMes = kmUltimoMes,            // Ej: 2000 km
-                PresupuestoSugerido = Math.Round(proyeccion, 2), // Ej: $1000.00
-                Mensaje = $"Basado en que la flota recorrió {kmUltimoMes} km el último mes y el costo promedio es de ${costoPorKm:F2}/km, se recomienda reservar ${proyeccion:F2} para mantenimiento."
+                CostoPromedioPorKm = Math.Round(costoPorKm, 2),
+                KmRecorridosUltimoMes = kmUltimoMes,
+                PresupuestoSugerido = Math.Round(proyeccion, 2),
+                Mensaje = $"Se recomienda reservar {proyeccion:F2} basado en la actividad del ultimo mes."
             };
         }
-       
+        public async Task<List<RecomendacionVehiculoDto>> RecomendarVehiculos(int distanciaViaje)
+        {
+            // 1. Traemos los vehiculos disponibles
+            // Incluimos las bitacoras para calcular eficiencia despues
+            var candidatos = await _context.Vehiculos
+                .Where(v => v.Estado == EstadoVehiculo.Disponible)
+                .Include(v => v.BitacoraViajes) // O BitacorasUso segun como tengas la relacion
+                .ToListAsync();
+
+            var recomendaciones = new List<RecomendacionVehiculoDto>();
+
+            foreach (var v in candidatos)
+            {
+                // Evitamos autos que puedan pasar el proximo servicio o queden muy justos
+                int kmAlFinalizarViaje = v.KilometrajeActual + distanciaViaje;
+                if (kmAlFinalizarViaje + 100 >= v.SiguienteServicioKm)
+                {
+                    continue; // Saltamos este auto, no es seguro para el viaje
+                }
+
+                // Traemos historial de consumo de este auto
+                var logs = await _context.BitacorasUso
+                    .Where(b => b.VehiculoId == v.Id)
+                    .ToListAsync();
+
+                double rendimientoPromedio = 0;
+
+                if (logs.Any())
+                {
+                    double totalKm = logs.Sum(l => l.KilometrosRecorridos);
+                    double totalLitros = logs.Sum(l => l.LitrosConsumidos);
+                    // Evitamos division entre cero
+                    rendimientoPromedio = totalLitros > 0 ? totalKm / totalLitros : 0;
+                }
+                else
+                {
+                    // Si no hay datos, usamos un promedio estimado (10 km/l)
+                    rendimientoPromedio = 10;
+                }
+
+                // Agregamos el auto a la lista de aprobados
+                recomendaciones.Add(new RecomendacionVehiculoDto
+                {
+                    VehiculoId = v.Id,
+                    Placa = v.Placa,
+                    Modelo = $"{v.Marca} {v.Modelo}",
+                    FotoUrl = v.FotoUrl ?? "",
+                    KmRestantesParaServicio = v.SiguienteServicioKm - v.KilometrajeActual,
+
+                    // Datos calculados
+                    RendimientoKmPorLitro = Math.Round(rendimientoPromedio, 2),
+                    // Estimacion de litros para el viaje
+                    LitrosEstimadosParaViaje = Math.Round(distanciaViaje / (rendimientoPromedio > 0 ? rendimientoPromedio : 10), 1)
+                });
+            }
+
+            // Ordenamos los autos por mayor rendimiento primero
+            return recomendaciones.OrderByDescending(r => r.RendimientoKmPorLitro).ToList();
+        }
+
     }
 }

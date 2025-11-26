@@ -40,6 +40,9 @@ public class UserTokenDto
     public DateTime Expiration { get; set; }
     public string Email { get; set; } = null!;
     public string Role { get; set; } = null!;
+    public string FirstName { get; set; } = string.Empty;
+    public string PaternalLastName { get; set; } = string.Empty;
+    public string MaternalLastName { get; set; } = string.Empty;
 }
 
 

@@ -12,17 +12,14 @@ using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ==========================================
-// 1. CONFIGURACIÓN DE BASE DE DATOS
-// ==========================================
+// CONFIGURACIÓN DE BASE DE DATOS
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-// ==========================================
-// 2. IDENTITY Y SEGURIDAD (ROLES Y PASSWORD)
-// ==========================================
+
+// IDENTITY Y SEGURIDAD (ROLES Y PASSWORD)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -34,9 +31,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
-// ==========================================
-// 3. AUTENTICACIÓN JWT
-// ==========================================
+
+// AUTENTICACION JWT
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -105,7 +102,7 @@ app.UseHttpsRedirection();
 
 // Configuración de Carpeta de Imágenes (/uploads)
 var uploadsPath = Path.Combine(app.Environment.WebRootPath ?? app.Environment.ContentRootPath, "wwwroot", "uploads");
-// Nota: Ajusté la ruta para asegurar que apunte a wwwroot/uploads correctamente
+
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);

@@ -17,15 +17,17 @@ namespace BravoBack.Controllers
         {
             _conductorService = conductorService;
         }
-        // GET: api/conductores
+
+        // Obtiene la lista completa de conductores
         [HttpGet]
-        [Authorize(Roles = "Gerente")] 
+        [Authorize(Roles = "Gerente")]
         public async Task<ActionResult<IEnumerable<ConductorDto>>> GetConductores()
         {
             var lista = await _conductorService.ObtenerListaConductores();
             return Ok(lista);
         }
-        // GET: api/conductores/{id}/combustible
+
+        // Obtiene el porcentaje de combustible usado por un conductor
         [HttpGet("{id}/combustible")]
         [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> GetRendimientoCombustible(string id)
@@ -40,13 +42,13 @@ namespace BravoBack.Controllers
 
             return Ok(resultado);
         }
-        // POST: api/conductores/registrar-uso
+
+        // Registra el uso de un vehiculo por parte del conductor
         [HttpPost("registrar-uso")]
-        [Authorize(Roles = "Conductor,Gerente")] // Ambos pueden manejar
+        [Authorize(Roles = "Conductor,Gerente")]
         public async Task<IActionResult> RegistrarUso([FromBody] RegistrarUsoDto dto)
         {
-            // 1. Extraer el ID del usuario desde el Token (Claim)
-            // Esto asegura que quien hace la petición es quien queda registrado
+            // Obtiene el id del usuario desde el token
             var conductorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(conductorId))
@@ -54,15 +56,16 @@ namespace BravoBack.Controllers
                 return Unauthorized("No se pudo identificar al usuario.");
             }
 
-            // 2. Llamar al servicio
+            // Envia la informacion al servicio
             var resultado = await _conductorService.RegistrarUsoVehiculo(dto, conductorId);
 
-            if (resultado.StartsWith("Error")) return BadRequest(new { message = resultado });
+            if (resultado.StartsWith("Error")) 
+                return BadRequest(new { message = resultado });
 
             return Ok(new { message = resultado });
         }
 
-        // GET: api/conductores/reporte-general
+        // Obtiene el reporte general de los conductores
         [HttpGet("reporte-general")]
         [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> GetReporteGeneral()

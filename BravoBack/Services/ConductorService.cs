@@ -16,16 +16,14 @@ namespace BravoBack.Services
             _context = context;
         }
 
-        // ==========================================
-        // LISTAR TODOS LOS CONDUCTORES 
-        // ==========================================
+        // Lista todos los conductores registrados con rol "Conductor"
         public async Task<List<ConductorDto>> ObtenerListaConductores()
         {
-            // Hacemos un Join entre Usuarios, Roles y la tabla intermedia
+            // Se hace join entre usuarios, roles y relacion intermedia
             var query = from user in _context.Users
                         join userRole in _context.UserRoles on user.Id equals userRole.UserId
                         join role in _context.Roles on userRole.RoleId equals role.Id
-                        where role.Name == "Conductor" 
+                        where role.Name == "Conductor"
                         select new ConductorDto
                         {
                             Id = user.Id,
@@ -35,62 +33,64 @@ namespace BravoBack.Services
 
             return await query.ToListAsync();
         }
-        // CALCULAR RENDIMIENTO DE COMBUSTIBLE
+
+        // Calcula el porcentaje de combustible que gasto un conductor respecto al total de la empresa
         public async Task<object> CalcularPorcentajeCombustible(string conductorId)
         {
-            // Validar que el conductor exista
+            // Primero validamos que el conductor exista
             var conductor = await _context.Users.FindAsync(conductorId);
             if (conductor == null)
             {
                 return new { Error = "Conductor no encontrado" };
             }
 
-            // Obtener el total de litros consumidos por TODA la empresa
+            // Litros consumidos por toda la empresa
             double totalEmpresa = await _context.BitacorasUso.SumAsync(b => b.LitrosConsumidos);
 
+            // Si no hay registros se devuelve un mensaje
             if (totalEmpresa == 0)
             {
-                return new 
-                { 
-                    Mensaje = "No hay registros de consumo de combustible en la empresa aún.",
-                    TotalEmpresa = 0 
+                return new
+                {
+                    Mensaje = "No hay consumo registrado en la empresa aun",
+                    TotalEmpresa = 0
                 };
             }
 
-            // 3. Obtener el total de litros de ESTE conductor
+            // Litros consumidos por el conductor especifico
             double totalConductor = await _context.BitacorasUso
                 .Where(b => b.ConductorId == conductorId)
                 .SumAsync(b => b.LitrosConsumidos);
 
-            // 4. Calcular porcentaje
+            // Porcentaje calculado respecto al total
             double porcentaje = (totalConductor / totalEmpresa) * 100;
 
-            // 5. Retornar un objeto con los datos detallados
             return new
             {
                 Conductor = $"{conductor.FirstName} {conductor.PaternalLastName}",
                 LitrosConsumidos = totalConductor,
                 TotalEmpresa = totalEmpresa,
-                PorcentajeDelTotal = Math.Round(porcentaje, 2), // Redondeado a 2 decimales
-                Mensaje = $"El conductor ha consumido el {porcentaje:F2}% del combustible total de la flotilla."
+                PorcentajeDelTotal = Math.Round(porcentaje, 2),
+                Mensaje = $"El conductor ha consumido el {porcentaje:F2}% del combustible total."
             };
         }
-        // ==========================================
-        // REPORTE GENERAL DE FLOTILLA (Todos los conductores)
-        // ==========================================
+
+        // Reporte general de consumo por conductor para toda la flota
         public async Task<object> ObtenerReporteGeneral()
         {
-            // 1. Obtener todos los registros de uso con datos del conductor
+            // Se obtienen registros con datos del conductor
             var registros = await _context.BitacorasUso
                 .Include(b => b.Conductor)
                 .ToListAsync();
 
-            // 2. Calcular el consumo TOTAL de la empresa
+            // Consumo total de la empresa
             double totalEmpresa = registros.Sum(r => r.LitrosConsumidos);
 
-            if (totalEmpresa == 0) return new { Mensaje = "Aún no hay consumo registrado en la empresa." };
+            // Si no hay consumo registrado
+            if (totalEmpresa == 0) 
+                return new { Mensaje = "Aun no hay consumo registrado." };
 
-            // 3. Agrupar por Conductor
+            // Agrupar consumo por conductor
             var reporte = registros
                 .GroupBy(r => r.Conductor)
                 .Select(grupo => new
@@ -99,10 +99,9 @@ namespace BravoBack.Services
                     Nombre = $"{grupo.Key.FirstName} {grupo.Key.PaternalLastName}",
                     TotalLitros = grupo.Sum(r => r.LitrosConsumidos),
                     TotalKm = grupo.Sum(r => r.KilometrosRecorridos),
-                    // Porcentaje respecto al total global
                     PorcentajeDelTotal = Math.Round((grupo.Sum(r => r.LitrosConsumidos) / totalEmpresa) * 100, 2)
                 })
-                .OrderByDescending(x => x.TotalLitros) // Los que más gastan arriba
+                .OrderByDescending(x => x.TotalLitros)
                 .ToList();
 
             return new
@@ -112,20 +111,19 @@ namespace BravoBack.Services
                 Desglose = reporte
             };
         }
-        // ==========================================
-        // REGISTRAR USO DIARIO (Conductor)
-        // ==========================================
+
+        // Registra el uso diario de un vehiculo por un conductor
         public async Task<string> RegistrarUsoVehiculo(RegistrarUsoDto dto, string conductorId)
         {
-            // 1. Buscar el vehículo
+            // Se valida que el vehiculo exista
             var vehiculo = await _context.Vehiculos.FindAsync(dto.VehiculoId);
-            if (vehiculo == null) return "Error: El vehículo no existe.";
+            if (vehiculo == null) return "Error: El vehiculo no existe.";
 
-            // 2. Crear el registro en BitacoraUso
+            // Crear registro nuevo en la bitacora
             var nuevaBitacora = new BitacoraUso
             {
                 VehiculoId = dto.VehiculoId,
-                ConductorId = conductorId, // El ID viene del Token (seguro)
+                ConductorId = conductorId,
                 KilometrosRecorridos = dto.KilometrosRecorridos,
                 LitrosConsumidos = dto.LitrosConsumidos,
                 FechaUso = DateTime.UtcNow
@@ -133,14 +131,13 @@ namespace BravoBack.Services
 
             _context.BitacorasUso.Add(nuevaBitacora);
 
-            // 3. LÓGICA AUTOMÁTICA: Actualizar el odómetro del vehículo
-            // Al sumar esto, el sistema de "Semáforo" detectará si ya le toca servicio
+            // Se actualiza el kilometraje del vehiculo
             vehiculo.KilometrajeActual += dto.KilometrosRecorridos;
 
-            // 4. Guardar todo
+            // Se guardan los cambios
             await _context.SaveChangesAsync();
 
-            return $"Registro exitoso. El kilometraje del auto {vehiculo.Placa} subió a {vehiculo.KilometrajeActual} Km.";
+            return $"Registro exitoso. El kilometraje del auto {vehiculo.Placa} ahora es {vehiculo.KilometrajeActual} km.";
         }
     }
 }

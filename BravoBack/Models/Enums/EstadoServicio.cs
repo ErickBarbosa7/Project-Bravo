@@ -4,6 +4,6 @@ namespace BravoBack.Models.Enums
     {
         Pendiente = 0,
         Pagado = 1,
-        Cancelado = 2
+        Completado = 2
     }
 }

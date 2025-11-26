@@ -8,7 +8,7 @@ namespace BravoBack.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Tablas
+        // Tablas principales del sistema
         public DbSet<Vehiculo> Vehiculos { get; set; }
         public DbSet<RegistroServicio> RegistrosServicio { get; set; } 
         public DbSet<BitacoraUso> BitacorasUso { get; set; }
@@ -18,38 +18,35 @@ namespace BravoBack.Data
         {
             base.OnModelCreating(builder);
 
-            // RELACIONES
-            
-            // Vehiculo <-> BitacoraViaje
+            // Configuracion de relaciones
+
+            // Relacion entre Vehiculo y sus bitacoras de viaje
             builder.Entity<Vehiculo>()
                 .HasMany(v => v.BitacoraViajes)
                 .WithOne(b => b.Vehiculo)
                 .HasForeignKey(b => b.VehiculoId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); // Evita eliminar viajes al borrar vehiculo
 
-            // Vehiculo <-> RegistroServicio
+            // Relacion entre Vehiculo y registros de servicio
             builder.Entity<Vehiculo>()
                 .HasMany(v => v.RegistrosServicio)
                 .WithOne(s => s.Vehiculo)
                 .HasForeignKey(s => s.VehiculoId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // Borra servicios si se elimina el vehiculo
 
-
-            // CONFIGURACIÓN DE DECIMALES 
-            
+            // Configuracion del tipo decimal en RegistroServicio
             builder.Entity<RegistroServicio>()
                 .Property(s => s.MontoPagado)
                 .HasColumnType("decimal(10, 2)");
 
-            // CONFIGURACIÓN DE ENUMS 
+            // Guardar enums como texto en la BD
             builder.Entity<Vehiculo>()
                 .Property(v => v.Estado)
                 .HasConversion<string>();
 
             builder.Entity<RegistroServicio>()
-                .Property(s => s.Estado)
-                .HasConversion<string>();
-
+                .Property(s => s.Estado);
+                //.HasConversion<string>();
         }
     }
 }
