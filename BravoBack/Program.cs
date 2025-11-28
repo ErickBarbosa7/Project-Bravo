@@ -123,4 +123,18 @@ app.UseAuthorization();  // Que puedes hacer segun el rol
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        // Llamamos al método que acabamos de crear
+        await BravoBack.Data.DbSeeder.SeedUsersAndRolesAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocurrió un error al sembrar datos iniciales.");
+    }
+}
 app.Run();

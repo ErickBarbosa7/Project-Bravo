@@ -241,6 +241,7 @@ namespace BravoBack.Services
                 Mensaje = $"Se recomienda reservar {proyeccion:F2} basado en la actividad del ultimo mes."
             };
         }
+        
         public async Task<List<RecomendacionVehiculoDto>> RecomendarVehiculos(int distanciaViaje)
         {
             // 1. Traemos los vehiculos disponibles

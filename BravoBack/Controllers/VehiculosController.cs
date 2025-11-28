@@ -149,7 +149,7 @@ namespace BravoBack.Controllers
 
         // Recomienda vehiculos para un viaje
         [HttpGet("recomendar")]
-        [Authorize(Roles = "Gerente")]
+        [Authorize(Roles = "Gerente, Conductor")]
         public async Task<ActionResult<List<RecomendacionVehiculoDto>>> GetRecomendacion([FromQuery] int distancia)
         {
             if (distancia <= 0) return BadRequest("La distancia debe ser mayor a 0 km.");
