@@ -95,7 +95,7 @@ Puedes iniciar sesión directamente sin necesidad de registrarte.
 * **Predicción de Gastos:** Una herramienta que revisa cuánto has gastado en el pasado para decirte cuánto dinero deberías apartar para el mantenimiento del próximo mes.
 * **Control de Taller:** Flujo completo para mandar autos a reparación, registrar cuánto costó y que el sistema los ponga como "Disponibles" otra vez automáticamente.
 
-### 📱 App Conductor (Celular)
+### 📱 Vista del Conductor
 * **Asistente de Viaje:** Si tienes que salir a ruta, el sistema te recomienda cuál es el mejor auto disponible para ahorrar gasolina y evitar los que están por necesitar servicio.
 * **Registro de Gasolina:** Los conductores suben su carga de combustible y kilometraje directo desde el celular.
 ---
