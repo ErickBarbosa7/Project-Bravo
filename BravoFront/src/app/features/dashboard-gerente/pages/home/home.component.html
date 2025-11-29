@@ -1,29 +1,65 @@
 <div class="dashboard-header">
-  <h1>Resumen Operativo</h1>
-  <p>Estado actual de la flota en tiempo real.</p>
+  <div class="titles">
+    <h1>Resumen Operativo</h1>
+    <p>Estado actual de la flota en tiempo real.</p>
+  </div>
+
 </div>
 
 <div class="kpi-grid">
+  <app-kpi-card title="Total Flota" [value]="totalFlota()" iconName="car" variant="purple"></app-kpi-card>
+  <app-kpi-card title="Disponibles" [value]="autosDisponibles()" iconName="check" variant="green"></app-kpi-card>
+  <app-kpi-card title="Atención Req." [value]="autosEnServicio()" iconName="tool" variant="red"></app-kpi-card>
+</div>
+
+<div class="dashboard-content-grid">
   
-  <app-kpi-card 
-    title="Total Flota" 
-    [value]="totalFlota()" 
-    iconName="car" 
-    variant="purple">
-  </app-kpi-card>
+  <div class="panel alerts-panel">
+    <div class="panel-header">
+      <h3><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 36 36"><path fill="#FFCC4D" d="M2.653 35C.811 35-.001 33.662.847 32.027L16.456 1.972c.849-1.635 2.238-1.635 3.087 0l15.609 30.056c.85 1.634.037 2.972-1.805 2.972z"/><path fill="#231F20" d="M15.583 28.953a2.42 2.42 0 0 1 2.419-2.418a2.42 2.42 0 0 1 2.418 2.418a2.42 2.42 0 0 1-2.418 2.419a2.42 2.42 0 0 1-2.419-2.419m.186-18.293c0-1.302.961-2.108 2.232-2.108c1.241 0 2.233.837 2.233 2.108v11.938c0 1.271-.992 2.108-2.233 2.108c-1.271 0-2.232-.807-2.232-2.108z"/></svg> Vehículos que requieren atención</h3>
+      <a routerLink="../vehiculos" class="link-more">Ver todos</a>
+    </div>
 
-  <app-kpi-card 
-    title="Disponibles" 
-    [value]="autosDisponibles()" 
-    iconName="check" 
-    variant="green">
-  </app-kpi-card>
+    <div class="alerts-list">
+      @for (v of vehiculosEnAlerta(); track v.id) {
+        <div class="alert-item">
+          <div class="car-info">
+            <span class="placa">{{ v.placa }}</span>
+            <span class="model">{{ v.marca }} {{ v.modelo }}</span>
+          </div>
+          <app-semaforo-badge [estado]="v.estado"></app-semaforo-badge>
+        </div>
+      }
+      @empty {
+        <div class="empty-state">
+          <span class="icon">🎉</span>
+          <p>¡Todo excelente! No hay vehículos con alertas.</p>
+        </div>
+      }
+    </div>
+  </div>
 
-  <app-kpi-card 
-    title="En Mantenimiento" 
-    [value]="autosEnServicio()" 
-    iconName="tool" 
-    variant="red">
-  </app-kpi-card>
+  <div class="panel actions-panel">
+    <div class="panel-header">
+      <h3>Accesos Rápidos</h3>
+    </div>
+    
+    <div class="actions-grid">
+      <button class="action-card purple" routerLink="../vehiculos/nuevo">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg></span>
+        <span>Nuevo Vehículo</span>
+      </button>
+
+      <button class="action-card blue" routerLink="../reportes/proyeccion-gastos">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><defs><path id="IconifyId19acc58e1122788fb1" d="M21.5 11v10h-19V11z"/></defs><g fill="none"><use href="#IconifyId19acc58e1122788fb1"/><path d="M12 13.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m5.136-7.209L19 5.67l1.824 5.333H3.002L3 11.004L14.146 2.1z"/><path stroke="currentColor" stroke-linecap="square" stroke-width="2" d="M21 11.003h-.176L19.001 5.67L3.354 11.003L3 11m-.5.004H3L14.146 2.1l2.817 3.95"/><g stroke="currentColor" stroke-linecap="square" stroke-width="2"><path d="M14.5 16a2.5 2.5 0 1 1-5 0a2.5 2.5 0 0 1 5 0Z"/><use href="#IconifyId19acc58e1122788fb1"/><path d="M2.5 11h2a2 2 0 0 1-2 2zm19 0h-2a2 2 0 0 0 2 2zm-19 10h2.002A2 2 0 0 0 2.5 18.998zm19 0h-2a2 2 0 0 1 2-2z"/></g></g></svg></span>
+        <span>Ver Finanzas</span>
+      </button>
+
+      <button class="action-card green" routerLink="../vehiculos">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0m10 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M5 17H3V6a1 1 0 0 1 1-1h9v12m-4 0h6m4 0h2v-6h-8m0-5h5l3 5"/></g></svg></span>
+        <span>Consultar Flota</span>
+      </button>
+    </div>
+  </div>
 
 </div>

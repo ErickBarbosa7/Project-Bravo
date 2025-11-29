@@ -1,0 +1,80 @@
+<div class="ai-card">
+  
+  <h3>¿Cuál es tu destino?</h3>
+  <p>Ingresa los kilómetros del viaje para asignarte el vehículo ideal.</p>
+  
+  <div class="search-box">
+    <input type="number" [value]="distanciaInput()" (input)="distanciaInput.set($any($event.target).value)" placeholder="Distancia (Km)" [disabled]="buscandoAuto()" (keyup.enter)="buscarAutoIdeal()">
+    <button class="btn-search" (click)="buscarAutoIdeal()" [disabled]="buscandoAuto()">
+        <span *ngIf="!buscandoAuto()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <span *ngIf="buscandoAuto()" class="loader-mini"></span>
+    </button>
+  </div>
+
+  <div class="results-container" *ngIf="recomendaciones().length > 0">
+    
+    <div class="suggestion-card hero">
+      <div class="badge-best">MEJOR OPCIÓN</div>
+      
+      <div class="car-image">
+        <img [src]="recomendaciones()[0].fotoUrl || 'assets/default-car.png'" alt="Car">
+        <div class="overlay-gradient"></div>
+      </div>
+      
+      <div class="car-details">
+        <div class="title-row">
+          <h4>{{ recomendaciones()[0].modelo }}</h4>
+          <span class="placa">{{ recomendaciones()[0].placa }}</span>
+        </div>
+        
+        <div class="stats-row">
+          <div class="stat">
+            <span class="label">Rendimiento</span>
+            <strong class="value text-green">{{ recomendaciones()[0].rendimientoKmPorLitro }} km/l</strong>
+          </div>
+          <div class="stat">
+            <span class="label">Gasto Est.</span>
+            <strong class="value text-blue">{{ recomendaciones()[0].litrosEstimadosParaViaje }} L</strong>
+          </div>
+          <div class="stat">
+            <span class="label">Margen</span>
+            <strong class="value">{{ recomendaciones()[0].kmRestantesParaServicio }} km</strong>
+          </div>
+        </div>
+
+        <button class="btn-action" (click)="seleccionar(recomendaciones()[0])">
+          Seleccionar Principal
+        </button>
+      </div>
+    </div>
+
+    <div class="alternatives-list" *ngIf="recomendaciones().length > 1">
+      <p class="section-title">Otras opciones disponibles</p>
+      
+      <div class="alt-card" *ngFor="let car of recomendaciones().slice(1)">
+        <div class="alt-info">
+          <div class="top">
+            <span class="model">{{ car.modelo }}</span>
+            <span class="placa-mini">{{ car.placa }}</span>
+          </div>
+          <div class="bottom">
+            <span class="efficiency">📉 {{ car.rendimientoKmPorLitro }} km/l</span>
+            <span class="cost">⛽ {{ car.litrosEstimadosParaViaje }} L est.</span>
+          </div>
+        </div>
+        <button class="btn-select-mini" (click)="seleccionar(car)">
+          Usar
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="recomendaciones().length === 0 && !buscandoAuto()" class="empty-state">
+    <span class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+    </span>
+    <p>Ingresa una distancia para comenzar.</p>
+  </div>
+
+</div>

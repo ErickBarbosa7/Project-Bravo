@@ -1,33 +1,57 @@
 <div class="report-container">
-  <div class="header">
-    <h2>Proyección Financiera</h2>
-    <p>Análisis predictivo para el próximo mes.</p>
+  
+  <div class="header-section">
+    <div class="icon-header"><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V3h2v16h16v2zm1-3V9h4v9zm5 0V4h4v14zm5 0v-5h4v5z"/></svg></div>
+    <div class="text">
+      <h2>Proyección Financiera</h2>
+      <p>Análisis predictivo para el próximo mes</p>
+    </div>
   </div>
 
-  <div *ngIf="loading()" class="loader">Calculando...</div>
+  <div *ngIf="loading()" class="loader">
+    <div class="spinner"></div>
+    <span>Calculando tendencias...</span>
+  </div>
 
-  <div *ngIf="!loading() && data()" class="report-content">
+  <div *ngIf="!loading() && data()" class="report-grid">
     
-    <div class="main-card">
-      <h3>Presupuesto Sugerido</h3>
-      <div class="big-number">{{ data()?.presupuestoSugerido | currency:'USD' }}</div>
-      <p class="subtext">Reserva aproximada para mantenimiento</p>
-    </div>
-
-    <div class="details-grid">
-      <div class="detail-item">
-        <span>Costo Histórico / Km</span>
-        <strong>{{ data()?.costoPromedioPorKm | currency:'USD' }}</strong>
-      </div>
-      <div class="detail-item">
-        <span>Actividad Reciente</span>
-        <strong>{{ data()?.kmRecorridosUltimoMes | number }} km</strong>
+    <div class="hero-card">
+      <div class="glow-bg"></div>
+      <div class="content">
+        <h3>Presupuesto Sugerido</h3>
+        <div class="big-number financial-font">
+          {{ data()?.presupuestoSugerido | currency:'USD':'symbol':'1.2-2' }}
+        </div>
+        <div class="trend-badge">
+          <span>Reserva recomendada</span>
+        </div>
       </div>
     </div>
 
-    <div class="ai-insight">
-      <span class="icon">🤖</span>
-      <p>{{ data()?.mensaje }}</p>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="icon-mini"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 2a2 2 0 0 0-2 2v1H9a3 3 0 0 0-2.4 1.2l-2 2.667a3 3 0 0 0-.6 1.8V19a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3V4a2 2 0 0 0-2-2zm3 3V4h-3v1zm-5 7a1 1 0 1 0-2 0v5a1 1 0 1 0 2 0z"/></g></svg></div>
+        <div class="info">
+          <span>Costo Histórico / Km</span>
+          <strong class="financial-font">{{ data()?.costoPromedioPorKm | currency:'USD' }}</strong>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="icon-mini"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 24"><path fill="currentColor" d="M10.449 0c-3.64 0-6.71.201-7.168.468c-.8.273-1.402 2.09-1.404 4.246v1.071h-.218a.5.5 0 0 0-.088-.135a.6.6 0 0 0 .146-.392v-.544a.49.49 0 0 0-.427-.535H.432a.49.49 0 0 0-.428.539v-.002v.544c0 .15.055.288.146.393l-.001-.001a.6.6 0 0 0-.146.392V8.73q-.002.023-.002.048c0 .25.187.457.429.487h.859A.42.42 0 0 0 1.658 9l.001-.003h.218v4.822c0 .191.205.368.536.463v.626c-.473.061-.8.274-.8.518v5.36a2.96 2.96 0 0 0 .542 1.863l-.006-.009v.921c0 .243.197.44.44.44h1.798a.44.44 0 0 0 .44-.44v-.631h11.247v.631c0 .243.197.44.44.44h1.798a.44.44 0 0 0 .44-.44v-.92a2.96 2.96 0 0 0 .536-1.86v.007v-5.36c0-.244-.331-.457-.8-.518v-.626c.331-.095.535-.272.536-.463v-4.82h.218c.06.152.202.259.369.268h.855a.49.49 0 0 0 .428-.539v.002v-2.686a.6.6 0 0 0-.146-.393l.001.001a.6.6 0 0 0 .146-.392V4.72a.49.49 0 0 0-.427-.535h-.859a.49.49 0 0 0-.428.539v-.002v.544c0 .15.055.288.146.393l-.001-.001a.6.6 0 0 0-.087.131l-.001.003h-.218V4.716c0-2.167-.608-3.992-1.414-4.251c-.49-.266-3.545-.463-7.157-.463zM3.101 3.107h14.695c.259 0 .475.184.525.429l.001.003c.102.51.16 1.097.16 1.698v.038v-.002V9c0 .296-.24.536-.536.536H2.949A.536.536 0 0 1 2.413 9V5.238q.001-.903.169-1.756l-.009.057a.536.536 0 0 1 .526-.432zm.651 11.786H4.9c.143 0 .259.112.267.253v.001l.191 3.482v.014c0 .148-.12.268-.268.268H3.752a.27.27 0 0 1-.268-.268v-3.482c0-.148.12-.268.268-.268m12.245 0h1.148c.148 0 .268.12.268.268v3.479c0 .148-.12.268-.268.268h-1.339a.27.27 0 0 1-.268-.268v-.015v.001l.191-3.482c.01-.14.126-.25.267-.25h.001zm-9.968.64h8.84c.074 0 .134.06.134.134v.16c0 .074-.06.134-.134.134h-8.84a.134.134 0 0 1-.134-.134v-.16c0-.074.06-.134.134-.134m.053.964h8.733c.074 0 .134.06.134.134v.16c0 .074-.06.134-.134.134H6.082a.134.134 0 0 1-.134-.134v-.16c0-.074.06-.134.134-.134m.054.964h8.626c.074 0 .134.06.134.134v.16c0 .074-.06.134-.134.134H6.136a.133.133 0 0 1-.133-.128v-.16c0-.074.06-.134.134-.134zm.054.964h8.518c.074 0 .134.06.134.134v.16c0 .074-.06.134-.134.134H6.19a.134.134 0 0 1-.134-.134v-.16c0-.074.06-.134.134-.134"/></svg></div>
+        <div class="info">
+          <span>Actividad Reciente</span>
+          <strong class="financial-font">{{ data()?.kmRecorridosUltimoMes | number }} km</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-box">
+      <div class="ai-header">
+        <span class="dot"></span>
+        <span>Análisis del Sistema</span>
+      </div>
+      <p>"{{ data()?.mensaje }}"</p>
     </div>
 
   </div>

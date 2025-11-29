@@ -4,12 +4,16 @@
     <p class="subtitle">Administra tu flota activa</p>
   </div>
   
-  <button class="btn-primary" routerLink="nuevo"> 
-    <span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 448 512"><path fill="currentColor" d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v160H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h160v160c0 17.7 14.3 32 32 32s32-14.3 32-32V288h160c17.7 0 32-14.3 32-32s-14.3-32-32-32H256z"/></svg>
+  <button class="btn-primary" routerLink="nuevo">
+    <span class="icon-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="16"></line>
+        <line x1="8" y1="12" x2="16" y2="12"></line>
+      </svg>
     </span> 
     Nuevo Vehículo
-    </button>
+  </button>
 </div>
 
 <div class="controls-section">
@@ -31,18 +35,26 @@
         [class.active]="viewMode() === 'grid'" 
         (click)="setViewMode('grid')" 
         title="Vista de Cuadrícula">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
-</svg>
-
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V18A2.25 2.25 0 0 1 20.25 18v-2.25Z" />
+        </svg>
       </button>
     </div>
   </div>
 
-  <app-search-bar
-    [value]="searchTerm()"
-    (valueChange)="searchTerm.set($event)"
-  />
+  <div class="search-wrapper">
+    <span class="icon-search">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </span>
+    <input 
+      type="text" 
+      [ngModel]="searchTerm()" 
+      (ngModelChange)="searchTerm.set($event)" 
+      placeholder="Buscar por placa, marca o modelo...">
+  </div>
 
 </div>
 
@@ -63,7 +75,7 @@
         <td class="fw-bold highlight">{{ v.placa }}</td>
         <td>
           <div class="vehicle-info">
-            <img [src]="v.fotoUrl || 'assets/vehiculos/vehiculo-placeholder.png'" alt="Car" class="mini-img">
+            <img [src]="v.fotoUrl || 'assets/placeholder-car.png'" alt="Car" class="mini-img">
             <span>{{ v.marca }} {{ v.modelo }} ({{v.anio}})</span>
           </div>
         </td>
@@ -75,30 +87,15 @@
         <td class="actions text-end">
           
           <button (click)="checkStatus(v.id)" class="btn-icon" title="Ver Semáforo">
-            <span class="icon-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32">
-                <path fill="#444" d="M9 6a7 7 0 0 1 14 0v20a7 7 0 0 1-14 0z"/>
-                <circle cx="16" cy="11" r="3" fill="#ff5a5f"/>
-                <circle cx="16" cy="19" r="3" fill="#ffce44"/>
-                <circle cx="16" cy="27" r="3" fill="#00ce7c"/>
-            </svg>
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-4"/><path d="M12 18h0"/><rect x="8" y="2" width="8" height="16" rx="4"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="12" cy="14" r="1"/></svg>
           </button>
 
-          <button class="btn-icon" title="Editar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
+          <button (click)="editVehiculo(v.id)" class="btn-icon" title="Editar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
 
           <button (click)="deleteVehiculo(v.id)" class="btn-icon danger" title="Eliminar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-              <line x1="10" y1="11" x2="10" y2="17"/>
-              <line x1="14" y1="11" x2="14" y2="17"/>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
           </button>
 
         </td>
@@ -109,59 +106,104 @@
 
 <div class="grid-container" *ngIf="viewMode() === 'grid'">
   <div class="vehicle-card" *ngFor="let v of vehiculosFiltrados()">
+    
     <div class="card-header">
       <span class="placa">{{ v.placa }}</span>
       <app-semaforo-badge [estado]="v.estado"></app-semaforo-badge>
     </div>
+    
     <div class="card-image">
-      <img [src]="v.fotoUrl || 'assets/vehiculos/vehiculo-placeholder.png'" alt="Foto vehículo">
+      <img [src]="v.fotoUrl || 'assets/default-car.png'" alt="Foto vehículo">
     </div>
+    
     <div class="card-body">
       <h3>{{ v.marca }} {{ v.modelo }}</h3>
       <p class="year">{{ v.anio }}</p>
+      
       <div class="stats">
         <div class="stat">
           <small>Actual</small>
           <strong>{{ v.kilometrajeActual | number }} km</strong>
         </div>
         <div class="stat">
-          <small>Intervalo de Servicio</small>
+          <small>Meta</small>
           <strong>{{ v.intervaloServicioKm | number }} km</strong>
         </div>
       </div>
     </div>
+    
     <div class="card-actions">
-            <td class="actions text-end">
-        
-            <button (click)="checkStatus(v.id)" class="btn-icon" title="Ver Semáforo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32">
-                <path fill="#444" d="M9 6a7 7 0 0 1 14 0v20a7 7 0 0 1-14 0z"/>
-                <circle cx="16" cy="11" r="3" fill="#ff5a5f"/>
-                <circle cx="16" cy="19" r="3" fill="#ffce44"/>
-                <circle cx="16" cy="27" r="3" fill="#00ce7c"/>
-            </svg> </button>
+      
+      <button (click)="checkStatus(v.id)" class="btn-icon" title="Ver Semáforo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-4"/><path d="M12 18h0"/><rect x="8" y="2" width="8" height="16" rx="4"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="12" cy="14" r="1"/></svg>
+      </button>
 
-            <button (click)="editVehiculo(v.id)" class="btn-icon" title="Editar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg> </button>
+      <button (click)="editVehiculo(v.id)" class="btn-icon" title="Editar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
 
-            <button (click)="deleteVehiculo(v.id)" class="btn-icon danger" title="Eliminar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-              <line x1="10" y1="11" x2="10" y2="17"/>
-              <line x1="14" y1="11" x2="14" y2="17"/>
-            </svg>
-         </button>
+      <button (click)="deleteVehiculo(v.id)" class="btn-icon danger" title="Eliminar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+      </button>
 
-        </td>
     </div>
   </div>
 </div>
 
-
 <div *ngIf="vehiculosFiltrados().length === 0" class="empty-state">
+  <span class="icon-empty">🚗</span>
   <p>No se encontraron vehículos.</p>
 </div>
+
+
+<app-modal 
+  *ngIf="isStatusModalOpen()" 
+  title="Diagnóstico de Servicio" 
+  [showFooter]="false" 
+  (onClose)="closeStatusModal()">
+
+  <div class="status-detail">
+    
+    <div *ngIf="!selectedStatus()" class="loader-center">
+      <span class="loader"></span> Cargando...
+    </div>
+    
+    <div *ngIf="selectedStatus()" class="result-box" [ngClass]="selectedStatus()!.color.toLowerCase()">
+      
+      <div class="icon-big">
+        <ng-container [ngSwitch]="selectedStatus()!.color">
+          <span *ngSwitchCase="'ROJO'">⚠️</span>
+          <span *ngSwitchCase="'AMARILLO'">🔧</span>
+          <span *ngSwitchDefault>✅</span>
+        </ng-container>
+      </div>
+      
+      <h4>{{ selectedStatus()!.mensaje }}</h4>
+      
+      <div class="km-data">
+        <span>Diferencia:</span>
+        <strong>{{ selectedStatus()!.kmRestantes | number }} km</strong>
+      </div>
+
+      <div class="mt-4 buttons-row">
+        
+        <button 
+          *ngIf="selectedStatus()?.color === 'ROJO'" 
+          class="btn-workshop" 
+          (click)="sendToMaintenance()">
+          🛠️ Enviar a Taller
+        </button>
+
+        <button 
+          *ngIf="selectedStatus()?.estatus === 2" 
+          class="btn-pay" 
+          (click)="payService()">
+          💰 Registrar Pago y Liberar
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+</app-modal>

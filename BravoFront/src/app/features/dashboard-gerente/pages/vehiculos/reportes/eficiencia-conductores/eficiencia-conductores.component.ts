@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { AlertService } from '../../../../../../shared/services/alert.service';
-import { ConductorService } from '../../../../../dashboard-conductor/services/conductor.service';
 import { CommonModule } from '@angular/common';
+import { ConductorService } from '../../../../../../core/services/conductor.service';
 
 @Component({
   selector: 'app-eficiencia-conductores',

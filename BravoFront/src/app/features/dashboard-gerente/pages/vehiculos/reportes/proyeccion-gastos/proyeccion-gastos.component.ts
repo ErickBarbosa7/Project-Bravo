@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VehiculoService } from '../../../../services/vehiculo.service';
+import { VehiculoService } from '../../../../../../core/services/vehiculo.service';
 
 // Interfaz para la proyeccion de gastos
 interface ProyeccionDto {

@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, throwError, Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
-import { Vehiculo, CreateVehiculoDto, UpdateVehiculoDto } from '../../../core/models/vehiculo.model';
+import { environment } from '../../../environments/environment';
+import { CreateVehiculoDto, UpdateVehiculoDto, Vehiculo } from '../models/vehiculo.model';
 
 @Injectable({
   providedIn: 'root'

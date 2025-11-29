@@ -30,13 +30,14 @@
   }
 }
 
+// --- SECCIÓN DE CONTROLES (Toolbar) ---
 .controls-section {
   margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem; // Espacio vertical entre Toggles y Buscador
+  gap: 1rem;
 
-  // 1. Fila de Toggles
+  // 1. Fila Superior: Toggles de Vista
   .toggles-row {
     display: flex;
     align-items: center;
@@ -60,32 +61,64 @@
         background: none;
         border: none;
         color: $text-muted;
-        padding: 6px 10px;
+        padding: 6px;
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        
+        // Centrar SVG
+        display: flex; align-items: center; justify-content: center;
 
-        svg {
-          width: 20px;
-          height: 20px;
-        }
+        svg { width: 20px; height: 20px; }
 
         &:hover { color: $text-white; }
         
         &.active {
-          background-color: $border-color;
-          color: $primary;
+          background-color: rgba(255,255,255,0.1); // Gris medio para el fondo
+          color: $primary; // Icono morado
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
       }
     }
   }
 
-  // 2. Buscador (Ahora ocupa todo el ancho o un max-width mayor)
-  
+  // 2. Fila Inferior: Buscador
+  .search-wrapper {
+    position: relative;
+    width: 100%;
+    
+    input {
+      width: 100%;
+      background-color: $bg-input;
+      border: 1px solid $border-color;
+      padding: 1rem 1rem 1rem 2.8rem; // Espacio para el icono
+      border-radius: 12px;
+      color: $text-white;
+      outline: none;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      box-sizing: border-box; // Vital para que no se salga del contenedor
+      
+      &:focus { 
+        border-color: $primary; 
+        background-color: lighten($bg-input, 2%);
+      }
+      
+      &::placeholder { color: darken($text-muted, 10%); }
+    }
+
+    .icon-search {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex; // Para que el SVG se alinee bien
+      color: $text-muted;
+      pointer-events: none; // Para que el clic pase al input
+      
+      svg { width: 20px; height: 20px; opacity: 0.5; }
+    }
+  }
 }
 // --- Toolbar (Search + Toggles) ---
 .toolbar {

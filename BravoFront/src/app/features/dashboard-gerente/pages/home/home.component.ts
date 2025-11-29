@@ -1,41 +1,49 @@
 import { Component, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VehiculoService } from '../../services/vehiculo.service';
+import { RouterLink } from '@angular/router'; // Importar esto
+import { VehiculoService } from '../../../../core/services/vehiculo.service';
 import { KpiCardComponent } from '../../components/kpi-card/kpi-card.component';
+import { SemaforoBadgeComponent } from '../../components/semaforo-badge/semaforo-badge.component'; // Reutilizamos el badge
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, KpiCardComponent],
+  imports: [CommonModule, RouterLink, KpiCardComponent, SemaforoBadgeComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  // Inyectamos el servicio de vehiculos para acceder a la flota
   private vehiculoService = inject(VehiculoService);
 
-  // Señal que contiene la lista de vehiculos
   public vehiculos = this.vehiculoService.vehiculos;
 
-  // --- KPIs calculados usando computed ---
-  
-  // Total de autos en la flota
+  // KPIs (Ya los tenías)
   public totalFlota = computed(() => this.vehiculos().length);
   
-  // Autos que estan en mantenimiento o necesitan servicio
   public autosEnServicio = computed(() => 
-    this.vehiculos().filter(v => v.estado === 2 || v.estado === 3).length
+    this.vehiculos().filter(v => 
+      v.estado === 2 || v.estado === 3 || 
+      v.estado.toString() === 'EnTaller' || 
+      v.estado.toString() === 'NecesitaServicio'
+    ).length
   );
 
-  // Autos disponibles para uso
   public autosDisponibles = computed(() => 
-    this.vehiculos().filter(v => v.estado === 0).length
+    this.vehiculos().filter(v => 
+      v.estado === 0 || v.estado.toString() === 'Disponible'
+    ).length
+  );
+
+  // --- NUEVO: LISTA DE ALERTAS ---
+  // Filtramos los autos que NO están disponibles (Rojos, Amarillos, Taller)
+  // Tomamos solo los primeros 5 para no saturar
+  public vehiculosEnAlerta = computed(() => 
+    this.vehiculos()
+      .filter(v => v.estado !== 0) // Todo lo que no sea verde
+      .slice(0, 5)
   );
 
   ngOnInit() {
-    // Si la lista de vehiculos esta vacia, cargamos los datos del backend
-    if (this.vehiculos().length === 0) {
-      this.vehiculoService.loadVehiculos();
-    }
+    this.vehiculoService.loadVehiculos();
   }
 }

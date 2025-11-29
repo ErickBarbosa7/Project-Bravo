@@ -1,0 +1,185 @@
+@import '../../../../../../../styles/_variables.scss'; 
+
+// --- CONTENEDOR VISTA IA ---
+.ai-card {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  
+  h3 { font-size: 1.3rem; color: $text-white; margin-bottom: 0.5rem; }
+  p { color: $text-muted; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.4; }
+
+  // Buscador con botón pegado
+  .search-box {
+    display: flex; gap: 8px; margin-bottom: 2rem;
+    
+    input { 
+      flex: 1; padding: 1rem; border-radius: 12px; 
+      border: 1px solid $border-color; background: $bg-input; 
+      color: white; font-size: 1rem; outline: none;
+      
+      // Eliminar flechas de número
+      &::-webkit-outer-spin-button, &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+      
+      &:focus { border-color: $primary; }
+    }
+    
+    .btn-search { 
+      background: $primary; color: white; border: none; 
+      padding: 0 1.2rem; border-radius: 12px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+      
+      &:hover { background-color: $primary-hover; }
+      &:disabled { opacity: 0.6; }
+    }
+  }
+}
+
+// --- TARJETA DE SUGERENCIA (HERO) ---
+.suggestion-card {
+  background-color: $bg-input;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba($primary, 0.5);
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  .badge-best {
+    position: absolute; top: 12px; right: 12px; z-index: 10;
+    background: #10b981; color: white; font-size: 0.7rem; font-weight: 800;
+    padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  }
+
+  .car-image {
+    position: relative; height: 160px; width: 100%;
+    img { width: 100%; height: 100%; object-fit: cover; }
+    .overlay-gradient {
+      position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+      background: linear-gradient(to top, $bg-input 0%, transparent 100%);
+    }
+  }
+
+  .car-details {
+    padding: 1.5rem;
+    position: relative;
+    margin-top: -20px;
+
+    .title-row {
+      display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;
+      h4 { font-size: 1.5rem; margin: 0; color: white; }
+      .placa { font-family: monospace; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; color: $text-muted; }
+    }
+    
+    .stats-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1.5rem;
+      
+      .stat {
+        background: darken($bg-input, 3%); border-radius: 8px; padding: 10px; text-align: center;
+        .label { display: block; font-size: 0.7rem; color: $text-muted; margin-bottom: 4px; text-transform: uppercase; }
+        .value { font-size: 1rem; font-weight: 700; color: $text-white; }
+        .text-green { color: #10b981; }
+        .text-blue { color: #60a5fa; }
+      }
+    }
+
+    .btn-action {
+      width: 100%; padding: 1rem; background: $primary; color: white;
+      border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer;
+      transition: transform 0.1s;
+      &:active { transform: scale(0.98); }
+    }
+  }
+}
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 1rem;
+}
+
+// Título de sección
+.section-title {
+  text-align: left;
+  font-size: 0.85rem;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.5rem;
+}
+
+// Lista de alternativas
+.alternatives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .alt-card {
+    background-color: darken($bg-input, 2%);
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+
+    &:hover {
+      background-color: lighten($bg-input, 2%);
+    }
+
+    .alt-info {
+      text-align: left;
+      
+      .top {
+        margin-bottom: 4px;
+        .model { font-weight: 700; color: $text-white; font-size: 1rem; margin-right: 8px; }
+        .placa-mini { font-family: monospace; font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: $text-muted; }
+      }
+      
+      .bottom {
+        font-size: 0.85rem;
+        color: $text-muted;
+        display: flex;
+        gap: 12px;
+        
+        .efficiency { color: #10b981; } // Verde
+      }
+    }
+
+    .btn-select-mini {
+      background: transparent;
+      border: 1px solid $primary;
+      color: $primary;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      
+      &:hover {
+        background: $primary;
+        color: white;
+      }
+    }
+  }
+}
+// --- ESTADO VACÍO ---
+.empty-state {
+  padding: 3rem 1rem; text-align: center;
+  .icon { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5; color: $text-muted; }
+  p { color: $text-muted; }
+}
+
+// Animaciones
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+// Loader
+.loader-mini {
+  width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.2); border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

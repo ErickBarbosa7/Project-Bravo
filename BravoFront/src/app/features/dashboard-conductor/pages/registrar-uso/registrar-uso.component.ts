@@ -1,67 +1,62 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../../../shared/services/alert.service';
-import { VehiculoService } from '../../../dashboard-gerente/services/vehiculo.service';
-import { ConductorService } from '../../services/conductor.service';
+
+// Importamos los dos hijos
+import { RecomendarComponent } from './components/recomendar/recomendar.component';
+import { FormularioCargaComponent } from './components/formulario-carga/formulario-carga.component';
 
 @Component({
   selector: 'app-registrar-uso',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, RecomendarComponent, FormularioCargaComponent],
   templateUrl: './registrar-uso.component.html',
   styleUrls: ['./registrar-uso.component.scss']
 })
 export class RegistrarUsoComponent implements OnInit {
-    // Inyeccion de dependencias
-    private fb = inject(FormBuilder);
-    private vehiculoService = inject(VehiculoService);
-    private conductorService = inject(ConductorService);
-    private alert = inject(AlertService);
+  private alert = inject(AlertService);
+
+  // Estado UI
+  activeTab = signal<'recomendar' | 'registrar'>('registrar');
+  
+  // Datos del viaje activo (Persistencia)
+  viajeEnCurso = signal<any>(null);
+
+  ngOnInit() {
+    // Recuperar sesión al recargar página
+    const viajeGuardado = localStorage.getItem('viaje_activo');
+    if (viajeGuardado) {
+      this.viajeEnCurso.set(JSON.parse(viajeGuardado));
+      this.activeTab.set('registrar');
+    }
+  }
+
+  // --- EVENT HANDLERS (Respuestas de los hijos) ---
+
+  // Cuando el hijo "Recomendar" elige un auto
+  iniciarViaje(vehiculo: any) {
+    const datosViaje = {
+      id: vehiculo.vehiculoId,
+      modelo: vehiculo.modelo,
+      placa: vehiculo.placa,
+      inicio: new Date()
+    };
+
+    localStorage.setItem('viaje_activo', JSON.stringify(datosViaje));
+    this.viajeEnCurso.set(datosViaje);
     
-    // Señales / observables para UI
-    vehiculos = this.vehiculoService.vehiculos; // lista de vehiculos disponibles
-    isLoading = this.conductorService.loading; // indicador de carga
+    this.alert.success(`Viaje iniciado con ${vehiculo.modelo}`);
+    this.activeTab.set('registrar'); // Cambio automático de tab
+  }
 
-    // Formulario reactivo
-    form = this.fb.group({
-        vehiculoId: ['', [Validators.required]],
-        kilometrosRecorridos: ['', [Validators.required, Validators.min(1)]],
-        litrosConsumidos: ['', [Validators.required, Validators.min(0.1)]]
-    });
+  // Cuando el hijo "Formulario" termina o cancela
+  limpiarViaje() {
+    localStorage.removeItem('viaje_activo');
+    this.viajeEnCurso.set(null);
+  }
 
-    ngOnInit(): void {
-        // Cargar vehículos al iniciar el componente
-        this.vehiculoService.loadVehiculos();
-    }
-
-    // Metodo para enviar formulario
-    onSubmit() {
-        if (this.form.invalid) {
-            this.form.markAllAsTouched(); // marca todos los campos para mostrar errores
-            this.alert.warning('Completa todos los datos');
-            return;
-        }
-
-        // Preparamos los datos en numeros
-        const data = {
-            vehiculoId: Number(this.form.value.vehiculoId),
-            kilometrosRecorridos: Number(this.form.value.kilometrosRecorridos),
-            litrosConsumidos: Number(this.form.value.litrosConsumidos)
-        };
-
-        // Llamada al servicio para registrar uso
-        this.conductorService.registrarUso(data).subscribe({
-            next: () => {
-                this.alert.success('Carga registrada correctamente.');
-                this.form.reset(); // resetear formulario
-                // Opcional: recargar vehiculos para actualizar kilometraje
-                this.vehiculoService.loadVehiculos();
-            },
-            error: (err) => {
-                console.error(err);
-                this.alert.error('Error al registrar. Intenta de nuevo.');
-            }
-        });
-    }
+  // Cuando el hijo solicita cambiar de tab
+  cambiarTab(tab: 'recomendar' | 'registrar') {
+    this.activeTab.set(tab);
+  }
 }

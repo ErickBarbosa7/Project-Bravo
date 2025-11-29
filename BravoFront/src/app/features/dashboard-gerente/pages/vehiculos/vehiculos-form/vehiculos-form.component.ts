@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { CreateVehiculoDto, UpdateVehiculoDto } from '../../../../../core/models/vehiculo.model';
 import { AlertService } from '../../../../../shared/services/alert.service';
-import { VehiculoService } from '../../../services/vehiculo.service';
+import { VehiculoService } from '../../../../../core/services/vehiculo.service';
 
 @Component({
   selector: 'app-vehiculos-form',

@@ -1,0 +1,62 @@
+@import '../../../../styles/_variables.scss'; 
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); // Fondo semitransparente
+  backdrop-filter: blur(5px); // Efecto vidrio borroso
+  z-index: 9999; // Siempre encima de todo
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-container {
+  background-color: $bg-input; // Tu gris oscuro
+  border: 1px solid $border-color;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px; // Ancho máximo
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; // Para que no se salga de pantalla en móviles
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid $border-color;
+    background-color: rgba(0,0,0,0.2);
+
+    h3 { margin: 0; font-size: 1.2rem; color: $text-white; font-weight: 600; }
+
+    .btn-close {
+      background: none; border: none; color: $text-muted; cursor: pointer;
+      padding: 4px; border-radius: 50%; transition: 0.2s;
+      display: flex; align-items: center; justify-content: center;
+
+      &:hover { background-color: rgba(255,255,255,0.1); color: $text-white; }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    overflow-y: auto; // Scroll si el contenido es muy largo
+    color: $text-white;
+  }
+
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border-color;
+    display: flex; justify-content: flex-end; gap: 10px;
+    background-color: rgba(0,0,0,0.2);
+  }
+}
+
+// Animaciones
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

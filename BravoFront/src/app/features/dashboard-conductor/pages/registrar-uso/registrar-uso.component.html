@@ -1,40 +1,28 @@
-<div class="card-form">
-  <div class="header">
-    <h2>Registrar Carga</h2>
-    <p>Ingresa los datos del ticket y odómetro.</p>
+<div class="mobile-container">
+  
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'recomendar'" (click)="activeTab.set('recomendar')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16.2 7.8l-2 6.3-6.4 2.1 2-6.3z"/></svg>
+      Asignar Unidad
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'registrar'" (click)="activeTab.set('registrar')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M14 11h1a2 2 0 0 1 2 2v3a1.5 1.5 0 0 0 3 0V9l-3-3M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14M3 20h12"/><path d="M18 7v1a1 1 0 0 0 1 1h1M4 11h10"/></g></svg>
+      Registrar Carga
+    </button>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    
-    <div class="input-group">
-      <label>Vehículo</label>
-      <div class="select-wrapper">
-        <select formControlName="vehiculoId">
-          <option value="" disabled selected>Selecciona tu unidad</option>
-          <option *ngFor="let v of vehiculos()" [value]="v.id">
-            {{ v.marca }} {{ v.modelo }} ({{ v.placa }})
-          </option>
-        </select>
-        <div class="chevron">▼</div>
-      </div>
-    </div>
+  <div class="view-content fade-in" *ngIf="activeTab() === 'recomendar'">
+    <app-recomendar 
+      (onVehiculoSeleccionado)="iniciarViaje($event)">
+    </app-recomendar>
+  </div>
 
-    <div class="input-group">
-      <label>Kilómetros Recorridos</label>
-      <input type="number" formControlName="kilometrosRecorridos" placeholder="Ej. 150">
-      <small class="hint">Distancia desde la última carga</small>
-    </div>
+  <div class="view-content fade-in" *ngIf="activeTab() === 'registrar'">
+    <app-formulario-carga
+      [viajeActivo]="viajeEnCurso()"
+      (onViajeTerminado)="limpiarViaje()"
+      (onSolicitarIA)="cambiarTab('recomendar')">
+    </app-formulario-carga>
+  </div>
 
-    <div class="input-group">
-      <label>Litros Cargados</label>
-      <input type="number" formControlName="litrosConsumidos" placeholder="Ej. 40.5">
-      <small class="hint">Según el ticket de la gasolinera</small>
-    </div>
-
-    <button type="submit" class="btn-primary" [disabled]="isLoading()">
-      <span *ngIf="!isLoading()">Registrar Carga</span>
-      <span *ngIf="isLoading()" class="loader"></span>
-    </button>
-
-  </form>
 </div>

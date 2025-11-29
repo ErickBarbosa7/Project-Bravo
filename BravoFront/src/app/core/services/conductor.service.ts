@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -26,11 +26,24 @@ export class ConductorService {
 
     // Lista de todos los conductores (para el gerente)
     getListaConductores() {
-        return this.http.get<any[]>(`${this.apiUrl}`); 
+        return this.http.get<any[]>(`${this.apiUrl}`);
     }
 
     // Reporte de combustible de un conductor especifico
     getReporteIndividual(id: string) {
         return this.http.get<any>(`${this.apiUrl}/${id}/combustible`);
     }
+
+    // Reporte General de Flotilla
+    getReporteGeneral() {
+        return this.http.get<any>(`${this.apiUrl}/reporte-general`);
+    }
+    
+    // Recomendacion
+    pedirRecomendacion(distancia: number) {
+        // NOTA: Apuntamos a 'api/vehiculos', no a 'api/conductores'
+        const url = `${environment.apiUrl}/api/vehiculos/recomendar?distancia=${distancia}`;
+        return this.http.get<any[]>(url);
+    }
+
 }

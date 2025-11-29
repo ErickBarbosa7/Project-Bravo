@@ -67,6 +67,7 @@ export class AlertService {
   success(msg: string) { Notify.success(msg); }
   error(msg: string) { Notify.failure(msg); }
   warning(msg: string) { Notify.warning(msg); }
+  info(msg: string) { Notify.info(msg); }
 
   // Metodo para mostrar un modal de confirmacion y esperar la respuesta
   confirm(title: string, message: string, okText: string = 'Si', cancelText: string = 'Cancelar'): Promise<boolean> {

@@ -7,7 +7,6 @@
 
 <div class="layout-grid">
 
-  <!-- LISTA DE CONDUCTORES -->
   <div class="drivers-list">
     <div class="list-header">
       <h3>Personal</h3>
@@ -15,7 +14,9 @@
 
     <div class="list-body" [class.loading]="isLoadingList()">
       
-      <div *ngIf="isLoadingList()" class="loader-box">Cargando...</div>
+      <div *ngIf="isLoadingList()" class="loader-box">
+        <span class="spinner"></span> Cargando...
+      </div>
 
       <ng-container *ngIf="!isLoadingList()">
         <div 
@@ -31,37 +32,39 @@
             <small>{{ c.email }}</small>
           </div>
 
-          <div class="chevron">›</div>
+          <div class="chevron">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
         </div>
       </ng-container>
 
     </div>
   </div>
 
-  <!-- PANEL DE REPORTE -->
   <div class="report-panel">
 
-    <!-- Estado vacío -->
     <div *ngIf="!selectedConductorId() && !isLoadingReport()" class="empty-state">
-      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h3m6-9v3M7.8 7.8L5.6 5.6m10.6 2.2l2.2-2.2M7.8 16.2l-2.2 2.2M12 12l9 3l-4 2l-2 4z"/></svg></span>
-      <p>Selecciona un conductor para ver su rendimiento.</p>
+      <div class="icon-circle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7" r="4"></circle>
+          <line x1="23" y1="11" x2="17" y2="11"></line>
+        </svg>
+      </div>
+      <p>Selecciona un conductor de la lista<br>para ver su rendimiento detallado.</p>
     </div>
 
-    <!-- Estado cargando -->
     <div *ngIf="isLoadingReport()" class="loader-box">
-      Analizando datos...
+      <span class="spinner"></span> Analizando datos...
     </div>
 
-    <!-- Contenido del reporte -->
     <div *ngIf="reporteData()" class="report-content">
 
-      <!-- Header -->
       <div class="report-header">
         <h3>Reporte de Consumo</h3>
         <span class="driver-name">{{ reporteData().conductor }}</span>
       </div>
 
-      <!-- Barra -->
       <div class="bar-chart-container">
         <div class="bar-label">
           <span>Porcentaje del Total de la Flota</span>
@@ -72,21 +75,22 @@
         </div>
       </div>
 
-      <!-- Stats -->
       <div class="stats-grid">
         <div class="stat-box">
           <small>Consumo Propio</small>
-          <strong>{{ reporteData().litrosConsumidos }} L</strong>
+          <strong>{{ reporteData().litrosConsumidos | number:'1.0-2' }} L</strong>
         </div>
 
         <div class="stat-box muted">
           <small>Total Empresa</small>
-          <strong>{{ reporteData().totalEmpresa }} L</strong>
+          <strong>{{ reporteData().totalEmpresa | number:'1.0-2' }} L</strong>
         </div>
       </div>
 
-      <!-- Mensaje de IA -->
       <div class="ai-message">
+        <span class="ai-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4.32a3 3 0 1 1-2.68-2.68V8"/></svg>
+        </span>
         <p>{{ reporteData().mensaje }}</p>
       </div>
 
