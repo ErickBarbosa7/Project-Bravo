@@ -185,6 +185,7 @@ namespace BravoBack.Services
 
             // Se reinicia el kilometraje para el proximo servicio
             vehiculo.SiguienteServicioKm = vehiculo.KilometrajeActual + vehiculo.IntervaloServicioKm;
+            vehiculo.Estado = EstadoVehiculo.Disponible;
             await _context.SaveChangesAsync();
 
             return "Pago registrado correctamente.";

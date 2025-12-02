@@ -4,6 +4,7 @@ using BravoBack.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using BravoBack.Models.Enums;
 
 namespace BravoBack.Services
 {
@@ -115,11 +116,10 @@ namespace BravoBack.Services
         // Registra el uso diario de un vehiculo por un conductor
         public async Task<string> RegistrarUsoVehiculo(RegistrarUsoDto dto, string conductorId)
         {
-            // Se valida que el vehiculo exista
             var vehiculo = await _context.Vehiculos.FindAsync(dto.VehiculoId);
-            if (vehiculo == null) return "Error: El vehiculo no existe.";
+            if (vehiculo == null) return "Error: El vehículo no existe.";
 
-            // Crear registro nuevo en la bitacora
+            // A. Crear Bitácora
             var nuevaBitacora = new BitacoraUso
             {
                 VehiculoId = dto.VehiculoId,
@@ -131,13 +131,18 @@ namespace BravoBack.Services
 
             _context.BitacorasUso.Add(nuevaBitacora);
 
-            // Se actualiza el kilometraje del vehiculo
+            // B. Actualizar Odómetro
             vehiculo.KilometrajeActual += dto.KilometrosRecorridos;
 
-            // Se guardan los cambios
+            // Si se pasó del kilometraje meta, cambiamos el estado a ROJO (Necesita Servicio)
+            if (vehiculo.KilometrajeActual >= vehiculo.SiguienteServicioKm)
+            {
+                vehiculo.Estado = EstadoVehiculo.NecesitaServicio; // Rojo (3)
+            }
+
             await _context.SaveChangesAsync();
 
-            return $"Registro exitoso. El kilometraje del auto {vehiculo.Placa} ahora es {vehiculo.KilometrajeActual} km.";
+            return $"Registro exitoso. El kilometraje del auto {vehiculo.Placa} subió a {vehiculo.KilometrajeActual} Km.";
         }
     }
 }
