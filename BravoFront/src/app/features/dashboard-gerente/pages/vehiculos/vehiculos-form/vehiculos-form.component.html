@@ -1,78 +1,78 @@
-<div class="form-page">
-  
-  <div class="header">
-    <div class="title-group">
-      <button class="btn-back" routerLink="/gerente/vehiculos">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-        Volver
-      </button>
-      <h2>{{ isEditMode() ? 'Editar Vehículo' : 'Registrar Nuevo Vehículo' }}</h2>
-    </div>
-    <p class="subtitle">Completa la información técnica de la unidad.</p>
-  </div>
-
-  <div class="form-card">
-    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-      
-      <div class="section-label">Datos Generales</div>
-      
-      <div class="form-grid">
-        <div class="input-group">
-          <label for="placa">Placa / Patente</label>
-          <input id="placa" type="text" formControlName="placa" placeholder="Ej. ABC-123" [class.error]="isFieldInvalid('placa')">
-          <span class="error-msg" *ngIf="isFieldInvalid('placa')">La placa es requerida (mín 6 caracteres).</span>
-        </div>
-
-        <div class="input-group">
-          <label for="marca">Marca</label>
-          <input id="marca" type="text" formControlName="marca" placeholder="Ej. Toyota" [class.error]="isFieldInvalid('marca')">
-        </div>
-
-        <div class="input-group">
-          <label for="modelo">Modelo</label>
-          <input id="modelo" type="text" formControlName="modelo" placeholder="Ej. Hilux" [class.error]="isFieldInvalid('modelo')">
-        </div>
-
-        <div class="input-group">
-          <label for="anio">Año</label>
-          <input id="anio" type="number" formControlName="anio" placeholder="2023" [class.error]="isFieldInvalid('anio')">
-        </div>
-      </div>
-
-      <div class="section-label mt-4">Datos Operativos</div>
-
-      <div class="form-grid">
-        <div class="input-group">
-          <label for="km">Kilometraje Actual</label>
-          <div class="input-with-suffix">
-            <input id="km" type="number" formControlName="kilometrajeActual" placeholder="0">
-            <span class="suffix">Km</span>
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label for="intervalo">Intervalo de Servicio</label>
-          <div class="input-with-suffix">
-            <input id="intervalo" type="number" formControlName="intervaloServicioKm" placeholder="10000">
-            <span class="suffix">Km</span>
-          </div>
-          <small class="hint">Cada cuántos km requiere mantenimiento.</small>
-        </div>
-      </div>
-
-      <div class="input-group mt-2">
-        <label for="foto">URL de la Fotografía (Opcional)</label>
-        <input id="foto" type="text" formControlName="fotoUrl" placeholder="https://...">
-      </div>
-
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" routerLink="/gerente/vehiculos">Cancelar</button>
-        <button type="submit" class="btn-save" [disabled]="vehicleForm.invalid || isLoading()">
-          <span *ngIf="isLoading()" class="loader"></span>
-          {{ isEditMode() ? 'Guardar Cambios' : 'Crear Vehículo' }}
+  <div class="form-page">
+    
+    <div class="header">
+      <div class="title-group">
+        <button class="btn-back" routerLink="/gerente/vehiculos">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          Volver
         </button>
+        <h2>{{ isEditMode() ? 'Editar Vehículo' : 'Registrar Nuevo Vehículo' }}</h2>
       </div>
+      <p class="subtitle">Completa la información técnica de la unidad.</p>
+    </div>
 
-    </form>
+    <div class="form-card">
+      <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+        
+        <div class="section-label">Datos Generales</div>
+        
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="placa">Placa / Patente</label>
+            <input id="placa" type="text" formControlName="placa" placeholder="Ej. ABC-123" [class.error]="isFieldInvalid('placa')">
+            <span class="error-msg" *ngIf="isFieldInvalid('placa')">La placa es requerida (mín 6 caracteres).</span>
+          </div>
+
+          <div class="input-group">
+            <label for="marca">Marca</label>
+            <input id="marca" type="text" formControlName="marca" placeholder="Ej. Toyota" [class.error]="isFieldInvalid('marca')">
+          </div>
+
+          <div class="input-group">
+            <label for="modelo">Modelo</label>
+            <input id="modelo" type="text" formControlName="modelo" placeholder="Ej. Hilux" [class.error]="isFieldInvalid('modelo')">
+          </div>
+
+          <div class="input-group">
+            <label for="anio">Año</label>
+            <input id="anio" type="number" formControlName="anio" placeholder="2023" [class.error]="isFieldInvalid('anio')">
+          </div>
+        </div>
+
+        <div class="section-label mt-4">Datos Operativos</div>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="km">Kilometraje Actual</label>
+            <div class="input-with-suffix">
+              <input id="km" type="number" formControlName="kilometrajeActual" placeholder="0">
+              <span class="suffix">Km</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="intervalo">Intervalo de Servicio</label>
+            <div class="input-with-suffix">
+              <input id="intervalo" type="number" formControlName="intervaloServicioKm" placeholder="10000">
+              <span class="suffix">Km</span>
+            </div>
+            <small class="hint">Cada cuántos km requiere mantenimiento.</small>
+          </div>
+        </div>
+
+        <div class="input-group mt-2">
+          <label for="foto">URL de la Fotografía (Opcional)</label>
+          <input id="foto" type="text" formControlName="fotoUrl" placeholder="https://...">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" routerLink="/gerente/vehiculos">Cancelar</button>
+          <button type="submit" class="btn-save" [disabled]="vehicleForm.invalid || isLoading()">
+            <span *ngIf="isLoading()" class="loader"></span>
+            {{ isEditMode() ? 'Guardar Cambios' : 'Crear Vehículo' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
   </div>
-</div>

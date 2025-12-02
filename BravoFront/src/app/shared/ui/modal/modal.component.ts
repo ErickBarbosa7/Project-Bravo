@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,16 +9,25 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent {
-  // Título que aparece arriba
+
+  // Titulo que se muestra en la parte de arriba del modal
   @Input() title: string = '';
-  
-  // Si quieres ocultar los botones de abajo (opcional)
+
+  // Controla si el modal muestra o no el footer con botones
   @Input() showFooter: boolean = true;
 
-  // Evento para avisar al padre que debe cerrarse
+  // Evento que le avisa al componente padre que el modal se cerro
   @Output() onClose = new EventEmitter<void>();
 
+  // Funcion que dispara el evento para cerrar el modal
   close() {
     this.onClose.emit();
+  }
+
+  // Escucha la tecla ESC en toda la pagina
+  // Si el usuario presiona ESC, se cierra el modal
+  @HostListener('document:keydown.escape')
+  onKeydownHandler() {
+    this.close();
   }
 }

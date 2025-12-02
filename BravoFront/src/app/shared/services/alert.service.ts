@@ -11,9 +11,11 @@ export class AlertService {
   constructor() {
     // Inicializamos los toasts (notificaciones pequeñas que aparecen y desaparecen solas)
     Notify.init({
-      position: 'right-top',       // Aparece en la esquina superior derecha
-      timeout: 3000,               // Desaparece despues de 3 segundos
-      cssAnimationStyle: 'zoom',   // Animacion de entrada/salida
+      position: 'right-top',
+      timeout: 3000,           
+      cssAnimationStyle: 'zoom',
+      closeButton: true,       //  botón X
+      pauseOnHover: false,     // No espera al mouse
     });
 
     // Configuracion de los modales de confirmacion
@@ -26,7 +28,7 @@ export class AlertService {
       titleFontSize: '20px',              // Tamano del titulo
       borderRadius: '12px',               // Bordes redondeados
     });
-    
+
     // Estilo comun para los reportes (exito, fallo, info, advertencia)
     const reportCommonStyle = {
       backgroundColor: '#1c1c24',
@@ -43,7 +45,7 @@ export class AlertService {
       backgroundColor: '#1c1c24',
       borderRadius: '12px',
       backOverlayColor: 'rgba(0,0,0,0.6)',
-      
+
       success: {
         ...reportCommonStyle,
         svgColor: '#10b981', // Icono verde para exito
@@ -62,7 +64,7 @@ export class AlertService {
       },
     });
   }
-  
+
   // Atajos para mostrar notificaciones simples
   success(msg: string) { Notify.success(msg); }
   error(msg: string) { Notify.failure(msg); }
