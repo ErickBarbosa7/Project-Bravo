@@ -16,14 +16,24 @@ Este proyecto utiliza una arquitectura desacoplada moderna con **.NET 9** para e
 - **Infraestructura:** Docker  
 ---
 
-## Prerrequisitos
+##  Requerimientos del Sistema
 
-Antes de comenzar, asegúrate de tener instalado:
-1.  **Docker Desktop**: [Descargar aquí](https://www.docker.com/products/docker-desktop/) (Debe estar corriendo).
-2.  **.NET 9.0**: [Descargar aquí](https://dotnet.microsoft.com/download).
+Antes de comenzar, asegúrate de tener instaladas las siguientes herramientas en tu computadora:
+
+1.  **Docker Desktop**: [Descargar aquí](https://www.docker.com/products/docker-desktop/) (Necesario para la base de datos).
+2.  **.NET SDK 9.0**: [Descargar aquí](https://dotnet.microsoft.com/download).
+3.  **Node.js (v18 o superior)**: [Descargar aquí](https://nodejs.org/) (Necesario para el Frontend).
 
 ---
+## Configuración Inicial
 
+El proyecto utiliza las siguientes configuraciones por defecto.
+
+* **Base de Datos:** Se levantará en el puerto **3307** (definido en `docker-compose.yml`).
+* **Variables de Entorno (Backend):** La cadena de conexión a la base de datos se encuentra en `BravoBack/appsettings.json`.
+    * *Nota:* Si necesitas cambiar el usuario o contraseña de la base de datos, edita este archivo.
+
+---
 ## Instrucciones de Instalación
 
 Sigue estos pasos para levantar el proyecto en cualquier localmente.
