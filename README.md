@@ -88,6 +88,19 @@ Sigue estos pasos para levantar el proyecto en cualquier localmente.
 
 ---
 
+## Endpoints Principales
+## Endpoints Principales
+
+A continuación se describen los puntos de conexión más importantes del sistema:
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/auth/login` | POST | Valida credenciales y retorna un token JWT con el rol del usuario. |
+| `/api/vehiculos/recomendar` | GET | Algoritmo que sugiere el mejor vehículo disponible para un viaje basándose en eficiencia y estado. |
+| `/api/conductores/registrar-uso` | POST | Registra carga de combustible y actualiza automáticamente el odómetro del vehículo. |
+| `/api/vehiculos/{id}/estatus-servicio` | GET | Calcula en tiempo real si el vehículo requiere mantenimiento (Semáforo). |
+| `/api/vehiculos/proyeccion-gastos` | GET | Proyección de gastos asociados a los vehículos en un periodo determinado. |
+
 ## Usuario Administrador
 
 El proyecto ya incluye un usuario Administrador(Gerente) preconfigurado en la base de datos.  
