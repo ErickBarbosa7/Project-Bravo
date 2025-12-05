@@ -1,0 +1,656 @@
+{
+	"info": {
+		"_postman_id": "01729ca8-62e7-4dca-897a-05c095553fa1",
+		"name": "Bravo API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37275455"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Registrar usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"conductor@gmail.com\",\r\n  \"password\": \"123456789\",\r\n  \"firstName\": \"Conductor\",\r\n  \"paternalLastName\": \"Erick\",\r\n  \"maternalLastName\": \"Barbosa\",\r\n  \"role\": \"Conductor\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "# **Endpoint de Registro de Usuario**\n\nEste endpoint permite registrar un nuevo usuario en el sistema.\n\n---\n\n## **Parámetros del Cuerpo de la Solicitud (Request Body)**\n\nLa solicitud requiere un cuerpo **JSON** con los siguientes campos:\n\n- **email** (string, requerido): Correo electrónico del usuario. Se usa para autenticación y comunicación.\n    \n    - Ejemplo: `\"bravoconductor@bravo.com\"`\n        \n- **password** (string, requerido): Contraseña que usará el usuario para iniciar sesión.\n    \n    - Ejemplo: `\"123456789\"`\n        \n- **firstName** (string, requerido): Nombre del usuario.\n    \n    - Ejemplo: `\"Miguel\"`\n        \n- **paternalLastName** (string, requerido): Apellido paterno del usuario.\n    \n    - Ejemplo: `\"Robledo\"`\n        \n- **maternalLastName** (string, requerido): Apellido materno del usuario.\n    \n    - Ejemplo: `\"X\"`\n        \n- **role** (string, requerido): Rol del usuario dentro del sistema. Define permisos y capacidades.\n    \n    - Ejemplo: `\"Gerente\"`\n        \n    - Otros rol posible: `\"Conductor\".`\n        \n\n---\n\n## **Notas de Uso**\n\n- Este es un endpoint público para el registro de usuarios, por lo que **no requiere autenticación**.\n    \n- Asegúrate de incluir todos los campos requeridos en el cuerpo de la solicitud.\n    \n- El correo electrónico debe ser único y no estar previamente registrado.\n    \n- La contraseña debe cumplir con las reglas de seguridad establecidas por el sistema.\n    \n- El rol asignado determina los permisos y el nivel de acceso del usuario dentro de la aplicación"
+					},
+					"response": []
+				},
+				{
+					"name": "CONDUCTOR Iniciar sesion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var token = jsonData.token;\r",
+									"pm.collectionVariables.set(\"token_conductor\", token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"conductor@gmail.com\",\r\n  \"password\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "# **Login de Conductor**\n\n## **Descripción General**\n\nEste endpoint autentica a un conductor en el sistema Bravo.\n\nSi las credenciales son correctas, devuelve un token **JWT** que podrá utilizarse en todas las solicitudes posteriores que requieran autorización de conductor.\n\n---\n\n## **Detalles de la Solicitud**\n\n**Método:** `POST`  \n**URL:** `{{base_url}}/api/auth/login`  \n**Content-Type:** `application/json`\n\n---\n\n## **Parámetros del Body**\n\nEl cuerpo de la solicitud debe enviarse en formato **JSON** con los siguientes campos:\n\n| Parámetro | Tipo | Requerido | Descripción |\n| --- | --- | --- | --- |\n| `email` | string | Sí | Correo electrónico registrado del conductor |\n| `password` | string | Sí | Contraseña del conductor |\n\n### **Ejemplo de Body**\n\n```\n{\n  \"email\": \"bravoconductor@bravo.com\",\n  \"password\": \"123456789\"\n}\n\n ```\n\n---\n\n## **Respuesta**\n\nSi la autenticación es exitosa, se devuelve un JSON con:\n\n- `token`: Token JWT de autenticación para el conductor\n    \n\n### **Ejemplo de Respuesta**\n\n```\n{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n---\n\n## **Comportamiento del Post-Response Script**\n\nEste request incluye un script automático que:\n\n1. Extrae el `token` de la respuesta\n    \n2. Lo guarda en la variable de colección `token_conductor`\n    \n3. Hace que el token se aplique automáticamente a las siguientes solicitudes del conductor\n    \n\nEsto evita copiar y pegar el token manualmente.\n\n---\n\n## **Notas de Uso**\n\n- Asegúrate de que la cuenta de conductor exista y esté activa antes de iniciar sesión.\n    \n- El token debe agregarse en el encabezado **Authorization** en las peticiones posteriores.\n    \n- La expiración del token depende de la configuración del servidor.\n    \n- Usa este endpoint solo para el login de conductores."
+					},
+					"response": []
+				},
+				{
+					"name": "GERENTE Iniciar sesion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Extract the token from the response\r",
+									"var token = jsonData.token;\r",
+									"\r",
+									"// Store the token as a collection variable\r",
+									"pm.collectionVariables.set(\"token_gerente\", token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"gerente@gmail.com\",\r\n  \"password\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "# **Login de Gerente**\n\n## **Descripción General**\n\nEste endpoint autentica a un gerente en el sistema Bravo.\n\nSi las credenciales son correctas, devuelve un token **JWT** que podrá utilizarse en todas las solicitudes posteriores que requieran autorización de gerente.\n\n---\n\n## **Detalles de la Solicitud**\n\n**Método:** `POST`  \n**URL:** `{{base_url}}/api/auth/login`  \n**Content-Type:** `application/json`\n\n---\n\n## **Parámetros del Body**\n\nEl cuerpo de la solicitud debe enviarse en formato **JSON** con los siguientes campos:\n\n| Parámetro | Tipo | Requerido | Descripción |\n| --- | --- | --- | --- |\n| `email` | string | Sí | Correo electrónico registrado del gerente |\n| `password` | string | Sí | Contraseña del gerente |\n\n### **Ejemplo de Body**\n\n```\n{\n  \"email\": \"bravogerente@bravo.com\",\n  \"password\": \"123456789\"\n}\n\n ```\n\n---\n\n## **Respuesta**\n\nSi la autenticación es exitosa, se devuelve un JSON con:\n\n- `token`: Token JWT de autenticación para el conductor\n    \n\n### **Ejemplo de Respuesta**\n\n```\n{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n---\n\n## **Comportamiento del Post-Response Script**\n\nEste request incluye un script automático que:\n\n1. Extrae el `token` de la respuesta\n    \n2. Lo guarda en la variable de colección `token_`gerente\n    \n3. Hace que el token se aplique automáticamente a las siguientes solicitudes del conductor\n    \n\nEsto evita copiar y pegar el token manualmente.\n\n---\n\n## **Notas de Uso**\n\n- Asegúrate de que la cuenta de gerente exista antes de iniciar sesión.\n    \n- El token debe agregarse en el encabezado **Authorization** en las peticiones posteriores.\n    \n- La expiración del token depende de la configuración del servidor (dura 8 horas).\n    \n- Usa este endpoint solo para el login de gerentes."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gestion de Vehiculos",
+			"item": [
+				{
+					"name": "Conductores",
+					"item": [
+						{
+							"name": "Registrar Uso de Vehiculo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token_conductor}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"vehiculoId\": 7,\r\n  \"kilometrosRecorridos\": 6000,\r\n  \"litrosConsumidos\": 40\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/conductores/registrar-uso",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"conductores",
+										"registrar-uso"
+									]
+								},
+								"description": "## **Propósito**\n\nEste endpoint registra información del uso de un vehículo, incluyendo los litros de combustible consumidos y los kilómetros recorridos.\n\nPermite que los conductores reporten el uso de su vehículo para llevar un control de la eficiencia de combustible y el rendimiento de la flotilla.\n\n---\n\n## **Autenticación**\n\nRequiere un **token válido de conductor**.\n\nEl token debe incluirse en los headers de la solicitud o según el mecanismo de autenticación definido por la API.\n\n---\n\n## **Parámetros del Cuerpo de la Solicitud (Request Body)**\n\n- **vehiculoId** (integer, requerido): Identificador único del vehículo que se está reportando\n    \n- **kilometrosRecorridos** (integer, requerido): Cantidad de kilómetros recorridos en el periodo de uso reportado\n    \n- **litrosConsumidos** (integer, requerido): Litros de combustible consumidos durante ese periodo\n    \n\n---\n\n## **Caso de Uso**\n\nEste endpoint debe ser utilizado cuando un conductor necesite registrar los datos de uso de su vehículo.\n\nLa información reportada permite:\n\n- Medir la eficiencia de combustible en toda la flotilla\n    \n- Monitorear el rendimiento individual de cada vehículo\n    \n- Calcular tasas de consumo (km por litro)\n    \n- Generar reportes y analíticas de uso\n    \n\n---\n\n## **Ejemplo de Solicitud**\n\n```\n{\n  \"vehiculoId\": 1,\n  \"kilometrosRecorridos\": 6000,\n  \"litrosConsumidos\": 100\n}\n\n ```\n\nEn este ejemplo, el conductor reporta que el vehículo **#2** recorrió **6000 km** y consumió **400 litros** de combustible, resultando en una eficiencia aproximada de **15 km por litro**.\n\nEndFragment"
+							},
+							"response": []
+						},
+						{
+							"name": "Recomendar Vehiculo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token_conductor}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/vehiculos/recomendar?distancia=600",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"vehiculos",
+										"recomendar"
+									],
+									"query": [
+										{
+											"key": "distancia",
+											"value": "600"
+										}
+									]
+								},
+								"description": "# **Recomendar Vehículo**\n\n## **Descripción**\n\nEste endpoint recomienda vehículos disponibles en la flotilla que son adecuados para un viaje, basándose en la distancia proporcionada por el conductor.\n\nEl sistema analiza factores como:\n\n- Rendimiento de combustible\n    \n- Kilómetros restantes antes del próximo servicio\n    \n- Disponibilidad del vehículo\n    \n\nCon esta información ofrece las mejores opciones para completar el viaje de forma segura y eficiente.\n\n---\n\n## **Parámetros de Consulta (Query Parameters)**\n\n### **distancia** (requerido)\n\n- **Tipo:** Number\n    \n- **Descripción:** Distancia del viaje en kilómetros\n    \n- **Ejemplo:** `600`\n    \n- **Uso:** El sistema utiliza este valor para calcular los litros estimados de combustible necesarios y verificar si el vehículo puede completar el viaje antes de requerir servicio de mantenimiento.\n    \n\n---\n\n## **Autenticación**\n\nEste endpoint requiere un token válido de **conductor**.\n\nEl token debe estar guardado en la variable `token_conductor` y se envía automáticamente en las cabeceras de la solicitud.\n\n---\n\n## **Formato de la Respuesta**\n\nLa respuesta es un **array de objetos JSON**, donde cada objeto representa un vehículo recomendado con los siguientes campos:\n\n- **vehiculoId** (Number): Identificador único del vehículo\n    \n- **placa** (String): Número de placa\n    \n- **modelo** (String): Marca y modelo del vehículo\n    \n- **fotoUrl** (String): URL o cadena base64 de la imagen del vehículo\n    \n- **rendimientoKmPorLitro** (Number): Rendimiento de combustible en km/l\n    \n- **litrosEstimadosParaViaje** (Number): Litros estimados necesarios para completar la distancia solicitada\n    \n- **kmRestantesParaServicio** (Number): Kilómetros restantes antes del próximo servicio programado\n    \n\n---\n\n## **Ejemplo de Uso**\n\n**Escenario:**\n\nUn conductor necesita realizar un viaje de **600 km** y quiere saber qué vehículos son adecuados para esta distancia.\n\n**Solicitud:**\n\n``` antlr4\nGET {{base_url}}/api/vehiculos/recomendar?distancia=600\n\n ```\n\n**Respuesta Esperada (200 OK):**\n\n``` json\n[\n  {\n    \"vehiculoId\": 2,\n    \"placa\": \"XYZ-120\",\n    \"modelo\": \"Toyota Hillux\",\n    \"fotoUrl\": \"data:image/jpeg;base64,...\",\n    \"rendimientoKmPorLitro\": 13.85,\n    \"litrosEstimadosParaViaje\": 43.3,\n    \"kmRestantesParaServicio\": 2800\n  },\n  {\n    \"vehiculoId\": 4,\n    \"placa\": \"OLP-092\",\n    \"modelo\": \"Nissan Estaquitas\",\n    \"fotoUrl\": \"https://...\",\n    \"rendimientoKmPorLitro\": 10,\n    \"litrosEstimadosParaViaje\": 60,\n    \"kmRestantesParaServicio\": 10000\n  }\n]\n\n ```\n\n---\n\n## **Notas**\n\n- Los vehículos se ordenan según su nivel de idoneidad para el viaje.\n    \n- El cálculo de litros estimados depende del rendimiento de cada vehículo.\n    \n- Solo se recomiendan vehículos que puedan completar el viaje antes de su próximo servicio de mantenimiento."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Gerente",
+					"item": [
+						{
+							"name": "Vehiculos",
+							"item": [
+								{
+									"name": "3. Obtener Vehiculo por ID",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos/13",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"13"
+											]
+										},
+										"description": "StartFragment\n\n# **Obtener Vehículo por ID**\n\n## **Descripción**\n\nEste endpoint permite recuperar la información detallada de un vehículo específico utilizando su ID único.  \n  \nEs útil para consultar todos los datos asociados a un vehículo registrado dentro del sistema de gestión de flotilla.\n\n---\n\n## **Método HTTP**\n\n`GET`\n\n---\n\n## **Parámetros de Ruta (Path Parameters)**\n\n- **vehicleId**\n    \n    - **Tipo:** Integer\n        \n    - **Requerido:** Sí\n        \n    - **Descripción:** ID numérico del vehículo que se desea consultar\n        \n    - **Ejemplo:** `7`\n        \n    - **Ubicación:** En la URL → `{{base_url}}/api/vehiculos/{vehicleId}`\n        \n\n---\n\n## **Autenticación**\n\nEste endpoint requiere token válido de **Gerente**.\n\n- **Header:**  \n    `Authorization: Bearer {{token_gerente}}`\n    \n- **Variable usada:** `token_gerente`\n    \n- **Rol requerido:** Gerente\n    \n\n---\n\n## **Formato de Respuesta Esperado**\n\n``` json\n{\n  \"id\": 7,\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"año\": 2022,\n  \"placa\": \"ABC-123\",\n  \"kilometraje\": 15000,\n  \"estado\": \"disponible\",\n  \"tipo_combustible\": \"gasolina\",\n  \"capacidad_tanque\": 50,\n  \"consumo_promedio\": 15.5,\n  \"fecha_registro\": \"2023-01-15T10:30:00Z\",\n  \"ultima_actualizacion\": \"2024-01-20T14:45:00Z\"\n}\n\n ```\n\n---\n\n## **Casos de Uso**\n\n1. **Consulta de detalles:** Ver información completa antes de asignar el vehículo a un conductor.\n    \n2. **Verificación de estado:** Revisar la disponibilidad o condición actual del vehículo.\n    \n3. **Auditoría:** Consultar información técnica y de historial para mantenimiento.\n    \n4. **Reportes:** Obtener datos específicos para generar reportes detallados.\n    \n\n---\n\n## **Escenarios de Error**\n\n### **404 – Vehículo No Encontrado**\n\n``` json\n{\n  \"error\": \"Vehicle not found\",\n  \"message\": \"No existe un vehículo con el ID especificado\",\n  \"vehicleId\": 7\n}\n\n ```\n\n### **401 – No Autorizado**\n\n``` json\n{\n  \"error\": \"Unauthorized\",\n  \"message\": \"Token de autenticación inválido o expirado\"\n}\n\n ```\n\n### **403 – Acceso Prohibido**\n\n``` json\n{\n  \"error\": \"Forbidden\",\n  \"message\": \"No tiene permisos suficientes para acceder a este recurso\"\n}\n\n ```\n\n### **500 – Error del Servidor**\n\n``` json\n{\n  \"error\": \"Internal Server Error\",\n  \"message\": \"Error al procesar la solicitud\"\n}\n\n ```\n\n---\n\n## **Notas Adicionales**\n\n- El **ID del vehículo** debe ser un número entero válido.\n    \n- Solo usuarios con **rol Gerente** pueden acceder a este recurso.\n    \n- La información proporcionada corresponde al estado más actualizado del vehículo.\n    \n\nEndFragment"
+									},
+									"response": []
+								},
+								{
+									"name": "1. Crear vehiculo",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"placa\": \"ABC-1234\",\r\n  \"nombre\": \"Toyota Corolla Hatchback\",\r\n  \"marca\": \"Toyota\",\r\n  \"modelo\": \"Corolla\",\r\n  \"anio\": 2024,\r\n  \"fotoUrl\": \"https://www.toyota.com/imgix/responsive/images/gallery/photos-videos/2024/corolla-hatchback/01.jpg\",\r\n  \"kilometrajeActual\": 15000,\r\n  \"intervaloServicioKm\": 10000\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Obtener Todos los Vehiculos",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4. Editar Vehiculo",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"placa\": \"PAT-334\",\r\n  \"nombre\": \"Toyota Hilux Actualizada 2\",\r\n  \"marca\": \"Toyota\",\r\n  \"modelo\": \"Hilux 4x4\",\r\n  \"anio\": 2021,\r\n  \"fotoUrl\": \"/uploads/vehiculos/hilux-v2.png\",\r\n  \"kilometrajeActual\": 26000,\r\n  \"intervaloServicioKm\": 15000\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos/13",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"13"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5. Eliminar vehiculo",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos/13",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"13"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Servicio-Vehiculos",
+							"item": [
+								{
+									"name": "Estatus de Servicio",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos/7/estatus-servicio",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"7",
+												"estatus-servicio"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Simular Pago Servicio",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"vehiculoId\": 7,\r\n  \"monto\": 3500.00,\r\n  \"concepto\": \"Mantenimiento Correctivo\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos/simular-pago",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"simular-pago"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Proyeccion de Gastos",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/vehiculos/proyeccion-gastos",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"vehiculos",
+												"proyeccion-gastos"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Acciones con Conductores",
+							"item": [
+								{
+									"name": "Listar Conductores",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/conductores",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"conductores"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Ver Uso de Combustible de Conductor",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/conductores/a9697f1b-9a37-4429-b197-0798dbbfb6b5/combustible",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"conductores",
+												"a9697f1b-9a37-4429-b197-0798dbbfb6b5",
+												"combustible"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Reporte General de Flotilla",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token_gerente}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/conductores/reporte-general",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"conductores",
+												"reporte-general"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": ""
+		},
+		{
+			"key": "token_gerente",
+			"value": ""
+		},
+		{
+			"key": "token_conductor",
+			"value": ""
+		}
+	]
+}
