@@ -31,22 +31,25 @@ export class RegistrarUsoComponent implements OnInit {
     }
   }
 
-  // --- EVENT HANDLERS (Respuestas de los hijos) ---
+  // Ahora recibimos un objeto compuesto: { vehiculo, distancia }
+  iniciarViaje(evento: { vehiculo: any, distancia: number }) {
+    
+    const vehiculo = evento.vehiculo;
+    const kmEstimados = evento.distancia;
 
-  // Cuando el hijo "Recomendar" elige un auto
-  iniciarViaje(vehiculo: any) {
     const datosViaje = {
       id: vehiculo.vehiculoId,
       modelo: vehiculo.modelo,
       placa: vehiculo.placa,
-      inicio: new Date()
+      inicio: new Date(),
+      distanciaEstimada: kmEstimados 
     };
 
     localStorage.setItem('viaje_activo', JSON.stringify(datosViaje));
     this.viajeEnCurso.set(datosViaje);
     
     this.alert.success(`Viaje iniciado con ${vehiculo.modelo}`);
-    this.activeTab.set('registrar'); // Cambio automático de tab
+    this.activeTab.set('registrar');
   }
 
   // Cuando el hijo "Formulario" termina o cancela

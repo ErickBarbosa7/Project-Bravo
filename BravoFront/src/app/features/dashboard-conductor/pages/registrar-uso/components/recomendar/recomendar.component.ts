@@ -17,8 +17,7 @@ export class RecomendarComponent {
   private alert = inject(AlertService);
 
   // Output: Emite el vehículo elegido al componente padre
-  public onVehiculoSeleccionado = output<any>();
-
+  public onVehiculoSeleccionado = output<{ vehiculo: any, distancia: number }>();
   // Estado Local (Signals)
   public distanciaInput = signal<number | null>(null);
   public recomendaciones = signal<any[]>([]); // Array para guardar toda la lista
@@ -62,8 +61,20 @@ export class RecomendarComponent {
 
   // 2. Seleccionar un vehículo (El botón "Usar")
   seleccionar(vehiculo: any) {
-    if (vehiculo) {
-      this.onVehiculoSeleccionado.emit(vehiculo);
+    const dist = this.distanciaInput(); // Obtenemos lo que escribió el usuario
+
+    if (vehiculo && dist) {
+      // Emitimos el paquete completo
+      this.onVehiculoSeleccionado.emit({ 
+        vehiculo: vehiculo, 
+        distancia: dist 
+      });
+    } else {
+      // Si por alguna razón no hay distancia (raro, pero posible), enviamos 0
+      this.onVehiculoSeleccionado.emit({ 
+        vehiculo: vehiculo, 
+        distancia: 0 
+      });
     }
   }
 }

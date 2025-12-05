@@ -3,6 +3,7 @@
 .form-page {
   max-width: 900px; 
   margin: 0 auto;
+  animation: fadeIn 0.3s ease-out;
 }
 
 // --- Header ---
@@ -10,167 +11,140 @@
   margin-bottom: 2rem;
 
   .title-group {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-
-    h2 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;
+    h2 { margin: 0; font-size: 1.8rem; font-weight: 700; color: $text-white; }
   }
 
   .btn-back {
-    background: none;
-    border: none;
-    color: $text-muted;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0;
-    
+    background: none; border: none; color: $text-muted;
+    display: flex; align-items: center; gap: 5px; cursor: pointer;
+    font-size: 0.9rem; padding: 0;
     &:hover { color: $text-white; }
   }
 
   .subtitle { color: $text-muted; margin-left: 0.5rem; }
 }
 
-// --- Tarjeta del Formulario ---
+// --- Tarjeta ---
 .form-card {
-  background-color: $bg-input; // Fondo gris oscuro
+  background-color: $bg-input;
   border: 1px solid $border-color;
   border-radius: 16px;
   padding: 2rem;
 }
 
-// --- Labels de Sección ---
+// --- Etiquetas de Sección ---
 .section-label {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: $primary;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid rgba($border-color, 0.5);
-  padding-bottom: 0.5rem;
+  font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+  color: $primary; font-weight: 600; margin-bottom: 1rem;
+  border-bottom: 1px solid rgba($border-color, 0.5); padding-bottom: 0.5rem;
   
   &.mt-4 { margin-top: 2rem; }
 }
 
-// --- Grid System ---
+// --- Grid ---
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; // 2 Columnas
-  gap: 1.5rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
 
   @media (max-width: 600px) {
-    grid-template-columns: 1fr; // 1 Columna en móvil
+    grid-template-columns: 1fr;
   }
 }
 
 // --- Inputs ---
 .input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  
+  display: flex; flex-direction: column; gap: 0.5rem;
   &.mt-2 { margin-top: 1.5rem; }
 
-  label {
-    font-size: 0.9rem;
-    color: $text-muted;
-    font-weight: 500;
-  }
+  label { font-size: 0.9rem; color: $text-muted; font-weight: 500; }
 
   input {
-    background-color: darken($bg-input, 3%); // Un poco más oscuro que la tarjeta
+    background-color: darken($bg-input, 3%);
     border: 1px solid $border-color;
-    border-radius: 8px;
-    padding: 0.8rem 1rem;
-    color: $text-white;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s;
+    border-radius: 8px; padding: 0.8rem 1rem;
+    color: $text-white; font-size: 1rem;
+    outline: none; transition: border-color 0.2s;
 
     &:focus { border-color: $primary; }
-    &.error { border-color: #ef4444; }
+    
+    // Estilo de error
+    &.error-border {
+      border-color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.05);
+      animation: shake 0.3s ease-in-out;
+    }
   }
 
-  .error-msg {
-    font-size: 0.8rem;
-    color: #ef4444;
-  }
-
-  .hint {
-    font-size: 0.8rem;
-    color: darken($text-muted, 10%);
-  }
+  .hint { font-size: 0.8rem; color: darken($text-muted, 10%); }
 }
 
-// --- Input con Sufijo (Km) ---
+// --- ALERT BANNER (NUEVO) ---
+.alert-banner {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 4px; padding: 8px 12px;
+  background-color: rgba(239, 68, 68, 0.1); // Rojo transparente
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #f87171; // Texto rojo claro
+  font-size: 0.85rem;
+  animation: slideDown 0.2s ease-out;
+
+  svg { min-width: 16px; }
+}
+
+// --- Input con Suffix ---
 .input-with-suffix {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  input { width: 100%; padding-right: 3rem; } // Espacio para el texto
-
+  position: relative; display: flex; align-items: center;
+  input { width: 100%; padding-right: 3rem; }
   .suffix {
-    position: absolute;
-    right: 1rem;
-    color: $text-muted;
-    font-size: 0.9rem;
-    font-weight: 600;
-    pointer-events: none;
+    position: absolute; right: 1rem; color: $text-muted;
+    font-size: 0.9rem; font-weight: 600; pointer-events: none;
   }
 }
 
-// --- Botones de Acción ---
+// --- Botones ---
 .form-actions {
-  margin-top: 3rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid $border-color;
+  margin-top: 3rem; display: flex; justify-content: flex-end;
+  gap: 1rem; padding-top: 1.5rem; border-top: 1px solid $border-color;
 
   button {
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: transform 0.1s;
-
+    padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600;
+    cursor: pointer; font-size: 1rem; transition: transform 0.1s;
     &:active { transform: scale(0.98); }
   }
 
   .btn-cancel {
-    background: transparent;
-    border: 1px solid $border-color;
-    color: $text-white;
+    background: transparent; border: 1px solid $border-color; color: $text-white;
     &:hover { background-color: rgba(255,255,255,0.05); }
   }
 
   .btn-save {
-    background-color: $primary;
-    color: white;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
+    background-color: $primary; color: white; border: none;
+    display: flex; align-items: center; gap: 8px;
     &:hover { background-color: lighten($primary, 5%); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
   }
 }
 
-// Spinner pequeño para el botón
+// Animaciones
 .loader {
   width: 16px; height: 16px;
   border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
+  border-top-color: white; border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
+
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

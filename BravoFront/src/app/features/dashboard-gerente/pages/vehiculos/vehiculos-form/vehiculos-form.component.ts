@@ -78,7 +78,7 @@ export class VehiculosFormComponent implements OnInit {
   onSubmit() {
     if (this.vehicleForm.invalid) {
       this.vehicleForm.markAllAsTouched();
-      this.alertService.warning('Revisa los campos marcados.');
+      this.alertService.warning('Por favor corrige los errores señalados en rojo.');
       return;
     }
 

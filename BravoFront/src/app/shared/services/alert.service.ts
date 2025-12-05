@@ -14,7 +14,6 @@ export class AlertService {
       position: 'right-top',
       timeout: 3000,           
       cssAnimationStyle: 'zoom',
-      closeButton: true,       //  botón X
       pauseOnHover: false,     // No espera al mouse
     });
 

@@ -1,4 +1,4 @@
-// Enum para el estado del vehiculo (Debe coincidir con el backend: 0,1,2,3)
+// Enum para el estado del vehiculo 
 export enum EstadoVehiculo {
   Disponible = 0,
   EnRuta = 1,
@@ -6,11 +6,11 @@ export enum EstadoVehiculo {
   NecesitaServicio = 3
 }
 
-// Entidad principal (Lo que devuelve el GET)
+// Entidad principal 
 export interface Vehiculo {
   id: number;
   placa: string;
-  nombre: string; // Opcional si en backend se llama igual
+  nombre: string;
   marca: string;
   modelo: string;
   anio: number;
@@ -18,7 +18,7 @@ export interface Vehiculo {
   kilometrajeActual: number;
   intervaloServicioKm: number;
   siguienteServicioKm: number;
-  estado: number;
+  estado: EstadoVehiculo; 
 }
 
 // DTO para crear vehiculo
@@ -33,9 +33,9 @@ export interface CreateVehiculoDto {
   intervaloServicioKm: number;
 }
 
-// DTO para actualizar vehiculo (PUT) - Puede requerir id
+// DTO para actualizar vehiculo (PUT)
 export interface UpdateVehiculoDto {
-  id?: number; // Opcional si va en la URL
+  id?: number;
   placa: string;
   nombre: string;
   marca: string;
@@ -49,7 +49,8 @@ export interface UpdateVehiculoDto {
 // Semaforo (Respuesta del endpoint de estatus)
 export interface ReporteMantenimiento {
   estatus: number; // 0=Verde, 1=Amarillo, 2=Rojo
-  color: string;   // "ROJO", "VERDE"
+  color: string;   // "ROJO", "VERDE", "AMARILLO"
   kmRestantes: number;
   mensaje: string;
+  estadoVehiculo: EstadoVehiculo;
 }

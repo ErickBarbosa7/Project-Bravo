@@ -5,12 +5,6 @@
   <button class="btn-link" (click)="irAAsistente()">
     Ir al Asistente para elegir uno
   </button>
-  
-  <p class="divider">- o -</p>
-  
-  <button class="btn-secondary" (click)="activarManual()">
-    Registro Manual
-  </button>
 </div>
 
 <div *ngIf="viajeActivo() || isManualMode()" class="active-trip-card fade-in">
@@ -36,7 +30,8 @@
         <div class="select-wrapper">
           <select formControlName="vehiculoId">
             <option value="" disabled selected>Elige de la lista...</option>
-            <option *ngFor="let v of vehiculos()" [value]="v.id">
+            
+            <option *ngFor="let v of vehiculosDisponibles()" [value]="v.id">
               {{ v.marca }} {{ v.modelo }} ({{ v.placa }})
             </option>
           </select>
@@ -52,8 +47,17 @@
 
       <div class="input-group">
         <label>Litros Cargados</label>
-        <input type="number" formControlName="litrosConsumidos" placeholder="Ej. 40.5">
+        <input 
+          type="number" 
+          formControlName="litrosConsumidos" 
+          placeholder="Ej. 40.5"
+          [class.error]="form.get('litrosConsumidos')?.invalid && form.get('litrosConsumidos')?.touched">
+        
         <small class="hint">Según ticket de gasolinera</small>
+        
+        <div *ngIf="form.get('litrosConsumidos')?.hasError('max') && form.get('litrosConsumidos')?.touched" class="text-danger">
+          <small> Excede el límite permitido (Max 120L).</small>
+        </div>
       </div>
 
       <button type="submit" class="btn-submit" [disabled]="isLoading()">

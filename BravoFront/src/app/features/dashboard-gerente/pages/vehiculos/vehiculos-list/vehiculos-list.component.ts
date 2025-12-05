@@ -9,6 +9,14 @@ import { SearchBar } from '../../../../../shared/components/search-bar/search-ba
 import { ModalComponent } from '../../../../../shared/ui/modal/modal.component';
 import { SemaforoBadgeComponent } from '../../../components/semaforo-badge/semaforo-badge.component';
 
+// 🔹 Enum equivalente al backend
+export enum EstadoVehiculo {
+  Disponible = 0,
+  EnRuta = 1,
+  EnTaller = 2,
+  NecesitaServicio = 3
+}
+
 @Component({
   selector: 'app-vehiculos-list',
   standalone: true,
@@ -34,7 +42,7 @@ export class VehiculosListComponent implements OnInit {
 
   // Controla si se ve la vista tipo lista o tipo cuadricula
   public viewMode = signal<'list' | 'grid'>('list');
-
+    public EstadoVehiculo = EstadoVehiculo;
   // Filtra los vehiculos en base al texto que busca el usuario
   public vehiculosFiltrados = computed(() => {
     const term = this.searchTerm().toLowerCase();
@@ -177,6 +185,33 @@ export class VehiculosListComponent implements OnInit {
   // Redirige al formulario de edicion
   editVehiculo(id: number) {
     this.router.navigate(['/gerente/vehiculos/editar', id]);
+  }
+
+  // Metodo para obtener el estado del vehículo seleccionado
+  getSelectedVehiculoEstado(): number {
+    const id = this.selectedVehiculoId();
+    if (!id) return -1; // Retorno seguro si no hay ID
+
+    const vehiculo = this.vehiculoService.vehiculos().find(v => v.id === id);
+    if (!vehiculo) return -1;
+
+    const estado = vehiculo.estado;
+
+    // Si ya es un número, lo devolvemos directo
+    if (typeof estado === 'number') return estado;
+
+    // Si es texto, lo traducimos al Enum numérico
+    const estadoStr = String(estado).toLowerCase();
+    switch (estadoStr) {
+      case 'disponible': return 0;       // EstadoVehiculo.Disponible
+      case 'enruta': return 1;           // EstadoVehiculo.EnRuta
+      case 'entaller': return 2;         // EstadoVehiculo.EnTaller
+      case 'necesitaservicio': return 3; // EstadoVehiculo.NecesitaServicio
+      default: 
+        // Por si el backend manda "2" como string
+        const num = Number(estado);
+        return isNaN(num) ? 0 : num;
+    }
   }
 
   // Cambia la vista entre lista y cuadricula
