@@ -29,7 +29,7 @@ namespace BravoBack.Services
                     Anio = v.Anio,
                     FotoUrl = v.FotoUrl,
                     KilometrajeActual = v.KilometrajeActual,
-                    Estado = v.Estado.ToString(),
+                    Estado = v.Estado,
                     IntervaloServicioKm = v.IntervaloServicioKm,
                     SiguienteServicioKm = v.SiguienteServicioKm
                 })
@@ -52,7 +52,7 @@ namespace BravoBack.Services
                 Anio = v.Anio,
                 FotoUrl = v.FotoUrl,
                 KilometrajeActual = v.KilometrajeActual,
-                Estado = v.Estado.ToString(),
+                Estado = v.Estado,
                 IntervaloServicioKm = v.IntervaloServicioKm,
                 SiguienteServicioKm = v.SiguienteServicioKm
             };
@@ -124,46 +124,46 @@ namespace BravoBack.Services
         {
             var vehiculo = await _context.Vehiculos.FindAsync(vehiculoId);
 
-            // Si no existe, devuelve un estado desconocido
             if (vehiculo == null)
             {
                 return new ReporteMantenimientoDto
                 {
                     Mensaje = "Vehiculo no encontrado",
-                    Estatus = EstatusMantenimiento.Desconocido
+                    Estatus = EstatusMantenimiento.Desconocido,
+                    EstadoVehiculo = EstadoVehiculo.Disponible // valor por defecto
                 };
             }
 
-            // Se calcula cuantos kilometros faltan para el servicio
             int kmRestantes = vehiculo.SiguienteServicioKm - vehiculo.KilometrajeActual;
 
             var reporte = new ReporteMantenimientoDto
             {
-                KmRestantes = kmRestantes
+                KmRestantes = kmRestantes,
+                EstadoVehiculo = vehiculo.Estado // 🔹 aquí mandas el estado real
             };
 
-            // Asigna el color e informacion segun el estado del vehiculo
             if (kmRestantes <= 0)
             {
                 reporte.Estatus = EstatusMantenimiento.Vencido;
                 reporte.Color = "ROJO";
-                reporte.Mensaje = $"El servicio ya vencio hace {Math.Abs(kmRestantes)} km.";
+                reporte.Mensaje = $"El servicio ya venció hace {Math.Abs(kmRestantes)} km.";
             }
             else if (kmRestantes <= 1000)
             {
                 reporte.Estatus = EstatusMantenimiento.Preventivo;
                 reporte.Color = "AMARILLO";
-                reporte.Mensaje = $"El servicio esta proximo en {kmRestantes} km.";
+                reporte.Mensaje = $"El servicio está próximo en {kmRestantes} km.";
             }
             else
             {
                 reporte.Estatus = EstatusMantenimiento.Optimo;
                 reporte.Color = "VERDE";
-                reporte.Mensaje = $"Aun faltan {kmRestantes} km para el proximo servicio.";
+                reporte.Mensaje = $"Aún faltan {kmRestantes} km para el próximo servicio.";
             }
 
             return reporte;
         }
+
 
         // Guarda un pago de servicio y reinicia el contador
         public async Task<string> SimularPagoServicio(PagoServicioDTO pagoDto)
@@ -242,7 +242,7 @@ namespace BravoBack.Services
                 Mensaje = $"Se recomienda reservar {proyeccion:F2} basado en la actividad del ultimo mes."
             };
         }
-        
+
         public async Task<List<RecomendacionVehiculoDto>> RecomendarVehiculos(int distanciaViaje)
         {
             // 1. Traemos los vehiculos disponibles

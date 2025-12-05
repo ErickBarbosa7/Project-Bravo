@@ -20,7 +20,10 @@ namespace BravoBack.Validators
             // Validacion basica para litros consumidos
             RuleFor(x => x.LitrosConsumidos)
                 .GreaterThan(0).WithMessage("Los litros deben ser mayor a 0.")
+                .LessThanOrEqualTo(120).WithMessage("El límite máximo de carga por transacción es de 120 Litros.")
                 .LessThan(500).WithMessage("Excede la capacidad maxima probable de un tanque.");
+            
+            
         }
     }
 

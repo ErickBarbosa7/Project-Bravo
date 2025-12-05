@@ -8,5 +8,6 @@ namespace BravoBack.DTOs
         public string Color { get; set; } = string.Empty; // Ayuda visual: "ROJO", "VERDE"
         public int KmRestantes { get; set; }
         public string Mensaje { get; set; } = string.Empty;
+        public EstadoVehiculo EstadoVehiculo { get; set; }
     }
 }

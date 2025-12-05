@@ -1,3 +1,5 @@
+using BravoBack.Models.Enums;
+
 namespace BravoBack.DTOs;
 
 public class CreateVehiculoDto
@@ -23,7 +25,7 @@ public class VehiculoDto
     public int? Anio { get; set; }
     public string? FotoUrl { get; set; }
     public int KilometrajeActual { get; set; }
-    public string Estado { get; set; } = string.Empty; 
+    public EstadoVehiculo Estado { get; set; }
     public int IntervaloServicioKm { get; set; }
     public int SiguienteServicioKm { get; set; }
 }
