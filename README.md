@@ -16,7 +16,7 @@ Este proyecto utiliza una arquitectura desacoplada moderna con **.NET 9** para e
 - **Infraestructura:** Docker  
 ---
 
-## 📋 Prerrequisitos
+## Prerrequisitos
 
 Antes de comenzar, asegúrate de tener instalado:
 1.  **Docker Desktop**: [Descargar aquí](https://www.docker.com/products/docker-desktop/) (Debe estar corriendo).
@@ -24,7 +24,7 @@ Antes de comenzar, asegúrate de tener instalado:
 
 ---
 
-## 🚀 Instrucciones de Instalación
+## Instrucciones de Instalación
 
 Sigue estos pasos para levantar el proyecto en cualquier localmente.
 
@@ -78,7 +78,7 @@ Sigue estos pasos para levantar el proyecto en cualquier localmente.
 
 ---
 
-## 👤 Usuario Administrador
+## Usuario Administrador
 
 El proyecto ya incluye un usuario Administrador(Gerente) preconfigurado en la base de datos.  
 Puedes iniciar sesión directamente sin necesidad de registrarte.
@@ -88,14 +88,14 @@ Puedes iniciar sesión directamente sin necesidad de registrarte.
 
 ---
 
-## 🌟 Funcionalidades Clave
+## Funcionalidades Clave
 
-### 🛡️ Panel de Gerente (Web)
+### Panel de Gerente (Web)
 * **Semáforo Automático:** El sistema revisa el kilometraje de cada auto en tiempo real y te avisa con colores (🟢 Verde / 🔴 Rojo) si ya le toca servicio, para que no tengas que llevar cuentas manuales.
 * **Predicción de Gastos:** Una herramienta que revisa cuánto has gastado en el pasado para decirte cuánto dinero deberías apartar para el mantenimiento del próximo mes.
 * **Control de Taller:** Flujo completo para mandar autos a reparación, registrar cuánto costó y que el sistema los ponga como "Disponibles" otra vez automáticamente.
 
-### 📱 Vista del Conductor
+### Vista del Conductor
 * **Asistente de Viaje:** Si tienes que salir a ruta, el sistema te recomienda cuál es el mejor auto disponible para ahorrar gasolina y evitar los que están por necesitar servicio.
 * **Registro de Gasolina:** Los conductores suben su carga de combustible y kilometraje directo desde el celular.
 ---
