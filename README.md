@@ -88,18 +88,41 @@ Sigue estos pasos para levantar el proyecto en cualquier localmente.
 
 ---
 
-## Endpoints Principales
-## Endpoints Principales
+## 🔌 Endpoints de la API
 
-A continuación se describen los puntos de conexión más importantes del sistema:
+Estos son los más importantes porque hacen los cálculos y automatizaciones del proyecto.
 
-| Endpoint | Método | Descripción |
-|----------|--------|-------------|
-| `/api/auth/login` | POST | Valida credenciales y retorna un token JWT con el rol del usuario. |
-| `/api/vehiculos/recomendar` | GET | Algoritmo que sugiere el mejor vehículo disponible para un viaje basándose en eficiencia y estado. |
-| `/api/conductores/registrar-uso` | POST | Registra carga de combustible y actualiza automáticamente el odómetro del vehículo. |
-| `/api/vehiculos/{id}/estatus-servicio` | GET | Calcula en tiempo real si el vehículo requiere mantenimiento (Semáforo). |
-| `/api/vehiculos/proyeccion-gastos` | GET | Proyección de gastos asociados a los vehículos en un periodo determinado. |
+| Endpoint | Método | ¿Qué hace? (Relevancia) |
+| :--- | :---: | :--- |
+| **`/api/auth/login`** | `POST` | **Seguridad:** Inicia sesión y te da el Token para saber si eres Gerente o Conductor. |
+| **`/api/vehiculos/recomendar`** | `GET` | **Algoritmo:** Te dice cuál es el mejor carro para un viaje (el que gasta menos y no se va a descomponer). |
+| **`/api/conductores/registrar-uso`** | `POST` | **Automatización:** Al subir el ticket de gasolina, actualiza el kilometraje del carro y revisa si se activó una alerta. |
+| **`/api/vehiculos/{id}/estatus-servicio`** | `GET` | **Semáforo:** Calcula en el momento si el auto está en Verde (Bien) o Rojo (Taller) según su uso. |
+| **`/api/vehiculos/proyeccion-gastos`** | `GET` | **Predicción:** Revisa el historial de gastos para calcular cuánto presupuesto necesitas el siguiente mes. |
+
+### Endpoints (Operativos)
+
+Estos son los endpoints para administrar los datos (Altas, Bajas y Consultas).
+
+**Usuarios y Accesos**
+* `POST /api/auth/register`: Crear nuevos usuarios (Choferes o Gerentes).
+* `POST /api/auth/login`: Entrar al sistema.
+
+**Vehículos (Gerente)**
+* `GET /api/vehiculos`: Ver la lista de carros.
+* `POST /api/vehiculos`: Registrar un carro nuevo.
+* `GET /api/vehiculos/{id}`: Ver detalles de un carro.
+* `PUT /api/vehiculos/{id}`: Editar datos del carro.
+* `DELETE /api/vehiculos/{id}`: Borrar un carro.
+
+**Mantenimiento**
+* `POST /api/vehiculos/simular-pago`: Pagar el taller y poner el carro en "Disponible".
+* `GET /api/vehiculos/{id}/estatus-servicio`: Consultar el semáforo de un auto.
+
+**Conductores y Reportes**
+* `GET /api/conductores`: Ver lista de choferes.
+* `GET /api/conductores/{id}/combustible`: Ver cuánto ha gastado un chofer específico.
+* `GET /api/conductores/reporte-general`: Ver el rendimiento de toda la flota.
 
 ## Usuario Administrador
 
@@ -122,5 +145,10 @@ Puedes iniciar sesión directamente sin necesidad de registrarte.
 * **Asistente de Viaje:** Si tienes que salir a ruta, el sistema te recomienda cuál es el mejor auto disponible para ahorrar gasolina y evitar los que están por necesitar servicio.
 * **Registro de Gasolina:** Los conductores suben su carga de combustible y kilometraje directo desde el celular.
 ---
+
+## 🎥 Demostración del Proyecto
+
+
+[![Ver Video en YouTube]()
 
 **Desarrollado por:** Erick Barbosa
