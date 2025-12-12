@@ -148,7 +148,9 @@ Puedes iniciar sesión directamente sin necesidad de registrarte.
 
 ## 🎥 Demostración del Proyecto
 
+[![Ver Video en YouTube](https://img.youtube.com/vi/3mc4v_dtVzE/0.jpg)](https://www.youtube.com/watch?v=3mc4v_dtVzE)
 
-[![Ver Video en YouTube]()
+> **Nota:** Haz clic en la imagen para ver el video en YouTube.
+
 
 **Desarrollado por:** Erick Barbosa
