@@ -102,7 +102,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Configuración de Carpeta de Imágenes (/uploads)
-var uploadsPath = Path.Combine(app.Environment.WebRootPath ?? app.Environment.ContentRootPath, "wwwroot", "uploads");
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads");
 
 if (!Directory.Exists(uploadsPath))
 {
