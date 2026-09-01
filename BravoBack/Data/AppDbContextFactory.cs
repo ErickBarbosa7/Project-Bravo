@@ -16,8 +16,8 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        // Decirle que use MySQL
-        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        // Decirle que use PostgreSQL
+        optionsBuilder.UseNpgsql(connectionString);
 
         return new AppDbContext(optionsBuilder.Options);
     }

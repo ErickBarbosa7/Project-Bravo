@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // CONFIGURACIÓN DE BASE DE DATOS
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+    options.UseNpgsql(connectionString)
 );
 
 
@@ -80,7 +80,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200")
+            var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:4200";
+            policy.WithOrigins(frontendUrl)
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
