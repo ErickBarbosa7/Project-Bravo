@@ -11,10 +11,11 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         // Encontrar el appsettings.json
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddEnvironmentVariables()
             .Build();
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = ConnectionStringResolver.Resolve(configuration);
 
         // Decirle que use PostgreSQL
         optionsBuilder.UseNpgsql(connectionString);

@@ -14,15 +14,17 @@ using FluentValidation.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // CONFIGURACIÓN DE BASE DE DATOS
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Render inyecta DATABASE_URL automaticamente; tambien soportamos
+// ConnectionStrings:DefaultConnection y otras variables comunes.
+var connectionString = ConnectionStringResolver.Resolve(builder.Configuration);
 
-// Convertir URL de Render (postgres://) a formato estándar de Npgsql
-if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
+if (string.IsNullOrWhiteSpace(connectionString))
 {
-    var uri = new Uri(connectionString);
-    var userInfo = uri.UserInfo.Split(':');
-    var port = uri.Port > 0 ? uri.Port : 5432;
-    connectionString = $"Host={uri.Host};Port={port};Database={uri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true;";
+    // No arrancar con una cadena invalida que "explota" tarde al tocar la BD.
+    var logger = LoggerFactory.Create(l => l.AddConsole()).CreateLogger("Startup");
+    logger.LogCritical("No se encontro una connection string valida para PostgreSQL. " +
+                       "Revisa la variable de entorno DATABASE_URL o ConnectionStrings__DefaultConnection en Render.");
+    throw new InvalidOperationException("Falta la connection string de la base de datos.");
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>

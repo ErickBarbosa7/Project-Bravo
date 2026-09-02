@@ -1,5 +1,7 @@
 using BravoBack.DTOs;
 using BravoBack.Services; 
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BravoBack.Controllers
@@ -17,18 +19,28 @@ namespace BravoBack.Controllers
 
         // Registra un nuevo usuario en el sistema
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterDto registerDto,
+            [FromServices] IValidator<RegisterDto> validator)
         {
+            // Validacion de datos (mismas reglas que en RegisterValidator)
+            var validationResult = await validator.ValidateAsync(registerDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.ToDictionary());
+            }
+
             var result = await _authService.RegisterUserAsync(registerDto);
 
             if (!result.Success)
             {
-                // Si el mensaje indica que el correo ya esta en uso, devuelve conflicto
-                if (result.Message.Contains("uso")) 
-                    return StatusCode(StatusCodes.Status409Conflict, new { message = result.Message });
-                
-                // Cualquier otro error es una solicitud invalida
-                return BadRequest(new { message = result.Message });
+                // Mapea el código de error a un estatus HTTP concreto
+                return result.Error switch
+                {
+                    RegisterError.EmailInUse => StatusCode(StatusCodes.Status409Conflict, new { message = result.Message }),
+                    RegisterError.InternalError => StatusCode(StatusCodes.Status500InternalServerError, new { message = result.Message }),
+                    _ => BadRequest(new { message = result.Message })
+                };
             }
 
             return Ok(new { message = result.Message });
@@ -47,6 +59,15 @@ namespace BravoBack.Controllers
             }
 
             return Ok(tokenDto);
+        }
+
+        // Lista los usuarios registrados (solo acceso para Gerente)
+        [Authorize(Roles = "Gerente")]
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _authService.GetUsersAsync();
+            return Ok(users);
         }
     }
 }

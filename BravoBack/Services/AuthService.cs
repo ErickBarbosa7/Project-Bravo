@@ -8,6 +8,23 @@ using System.Text;
 
 namespace BravoBack.Services
 {
+    // Códigos de error para el registro de usuario. El controlador mapea
+    // estos códigos a estatus HTTP concretos sin depender de texto.
+    public enum RegisterError
+    {
+        None,
+        EmailInUse,
+        InvalidUserFields,
+        InternalError
+    }
+
+    // Resultado estructurado del registro para evitar inferir el estatus
+    // HTTP leyendo el texto del mensaje.
+    public sealed record RegisterResult(
+        bool Success,
+        RegisterError Error = RegisterError.None,
+        string Message = "");
+
     // Servicio que maneja registro, login y generacion de tokens
     public class AuthService
     {
@@ -15,78 +32,125 @@ namespace BravoBack.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AuthService> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _logger = logger;
         }
 
         // Registro de usuario
-        public async Task<(bool Success, string Message)> RegisterUserAsync(RegisterDto registerDto)
+        public async Task<RegisterResult> RegisterUserAsync(RegisterDto registerDto)
         {
-            // Revisar si el correo ya existe
-            var userExists = await _userManager.FindByEmailAsync(registerDto.Email);
-            if (userExists != null)
+            try
             {
-                return (false, "El correo ya esta en uso");
+                // Normalizar email antes de usarlo para reducir duplicados por formato
+                var email = registerDto.Email.Trim().ToLowerInvariant();
+
+                // Revisar si el correo ya existe
+                var userExists = await _userManager.FindByEmailAsync(email);
+                if (userExists != null)
+                {
+                    return new RegisterResult(false, RegisterError.EmailInUse, "El correo ya esta en uso");
+                }
+
+                // Construir el usuario (campos recortados)
+                ApplicationUser user = new()
+                {
+                    Email = email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = email,
+                    FirstName = registerDto.FirstName.Trim(),
+                    PaternalLastName = registerDto.PaternalLastName.Trim(),
+                    MaternalLastName = registerDto.MaternalLastName?.Trim() ?? ""
+                };
+
+                // Guardar usuario en la base
+                var result = await _userManager.CreateAsync(user, registerDto.Password);
+                if (!result.Succeeded)
+                {
+                    LogIdentityErrors(result);
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return new RegisterResult(false, RegisterError.InvalidUserFields, $"Error al crear usuario: {errors}");
+                }
+
+                // Crear roles si no existen
+                await EnsureRoleExists("Gerente");
+                await EnsureRoleExists("Conductor");
+
+                // Asignar rol valido, si no, usar Conductor
+                string roleToAssign = (registerDto.Role == "Gerente" || registerDto.Role == "Conductor")
+                                      ? registerDto.Role
+                                      : "Conductor";
+
+                await _userManager.AddToRoleAsync(user, roleToAssign);
+
+                return new RegisterResult(true, Message: "Usuario creado");
             }
-
-            // Construir el usuario
-            ApplicationUser user = new()
+            catch (Exception ex)
             {
-                Email = registerDto.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = registerDto.Email,
-                FirstName = registerDto.FirstName,
-                PaternalLastName = registerDto.PaternalLastName,
-                MaternalLastName = registerDto.MaternalLastName
-            };
-
-            // Guardar usuario en la base
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return (false, $"Error al crear usuario: {errors}");
+                _logger.LogError(ex, "Error de infraestructura al registrar usuario {Email}", registerDto.Email);
+                return new RegisterResult(false, RegisterError.InternalError,
+                    "Ocurrió un error interno al registrar el usuario. Inténtalo de nuevo.");
             }
-
-            // Crear roles si no existen
-            await EnsureRoleExists("Gerente");
-            await EnsureRoleExists("Conductor");
-
-            // Asignar rol valido, si no, usar Conductor
-            string roleToAssign = (registerDto.Role == "Gerente" || registerDto.Role == "Conductor")
-                                  ? registerDto.Role
-                                  : "Conductor";
-
-            await _userManager.AddToRoleAsync(user, roleToAssign);
-
-            return (true, "Usuario creado");
         }
 
         // Login de usuario
         public async Task<UserTokenDto?> LoginUserAsync(LoginDto loginDto)
         {
-            // Buscar usuario por correo
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null) return null;
+            try
+            {
+                // Buscar usuario por correo (normalizado)
+                var email = loginDto.Email.Trim().ToLowerInvariant();
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null) return null;
 
-            // Validar password
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-            if (!result.Succeeded) return null;
+                // Validar password
+                var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+                if (!result.Succeeded) return null;
 
-            // Obtener rol del usuario
-            var userRoles = await _userManager.GetRolesAsync(user);
+                // Obtener rol del usuario
+                var userRoles = await _userManager.GetRolesAsync(user);
 
-            // Crear token
-            return GenerateJwtToken(user, userRoles.FirstOrDefault());
+                // Crear token
+                return GenerateJwtToken(user, userRoles.FirstOrDefault());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error de infraestructura al iniciar sesión de {Email}", loginDto.Email);
+                return null;
+            }
+        }
+
+        // Devuelve la lista de usuarios registrados (uso administrativo).
+        public async Task<IEnumerable<UserInfoDto>> GetUsersAsync()
+        {
+            var users = _userManager.Users.ToList();
+            var items = new List<UserInfoDto>(users.Count);
+
+            foreach (var usr in users)
+            {
+                var roles = await _userManager.GetRolesAsync(usr);
+                items.Add(new UserInfoDto
+                {
+                    Email = usr.Email ?? "",
+                    FirstName = usr.FirstName,
+                    PaternalLastName = usr.PaternalLastName,
+                    MaternalLastName = usr.MaternalLastName,
+                    Role = roles.FirstOrDefault() ?? ""
+                });
+            }
+
+            return items;
         }
 
         // Crea el rol si aun no existe
@@ -95,6 +159,17 @@ namespace BravoBack.Services
             if (!await _roleManager.RoleExistsAsync(roleName))
             {
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
+
+        // Loguea los errores devueltos por Identity con su codigo y descripcion,
+        // para facilitar el diagnostico desde los logs del servidor.
+        private void LogIdentityErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                _logger.LogWarning("Identity error al crear usuario. Code={Code}, Description={Description}",
+                    error.Code, error.Description);
             }
         }
 
