@@ -1,6 +1,6 @@
 export const environment = {
-  production: false,
+  production: true,
 
   // URL base de la API
-  apiUrl: 'http://localhost:5079'
+  apiUrl: 'https://bravo-back.onrender.com'
 };
