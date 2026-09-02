@@ -8,6 +8,7 @@ using System.Text.Json.Serialization; // Agregado para JsonOptions
 using BravoBack.Data; 
 using BravoBack.Models;
 using BravoBack.Services; // Importante para tus servicios
+using BravoBack.Middleware;
 using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -90,9 +91,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins(
+                    "https://bravofleet.vercel.app",
+                    "http://localhost:4200",
+                    "http://localhost:5000"
+                  )
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
 
@@ -107,6 +113,11 @@ if (app.Environment.IsDevelopment())
     // app.UseSwagger();
     // app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
+// CORS debe ejecutarse antes de redirección HTTPS y antes de los endpoints
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
 
@@ -126,7 +137,6 @@ app.UseStaticFiles();
 // });
 
 app.UseRouting();
-app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthentication(); // Quien inicio sesion
 app.UseAuthorization();  // Que puedes hacer segun el rol
