@@ -1,4 +1,4 @@
-@import '../../../../../styles/_variables.scss'; 
+@use 'variables' as *;
 
 .badge {
   display: inline-flex;
@@ -28,23 +28,23 @@
 
   // 0. Disponible (Verde Tech)
   &.green {
-    background-color: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-    border-color: rgba(16, 185, 129, 0.2);
+    background-color: rgba($color-success, 0.15);
+    color: $color-success;
+    border-color: rgba($color-success, 0.2);
   }
 
   // 1. En Ruta (Azul Tech)
   &.blue {
-    background-color: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-    border-color: rgba(59, 130, 246, 0.2);
+    background-color: rgba($color-info, 0.15);
+    color: $color-info;
+    border-color: rgba($color-info, 0.2);
   }
 
   // 2. En Taller (Naranja Tech)
   &.orange {
-    background-color: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-    border-color: rgba(245, 158, 11, 0.2);
+    background-color: rgba($color-warning, 0.15);
+    color: $color-warning;
+    border-color: rgba($color-warning, 0.2);
     
     // En taller no parpadea, es estático
     .glow-dot { animation: none; opacity: 0.8; }
@@ -52,10 +52,10 @@
 
   // 3. Urgente (Rojo Alerta)
   &.red {
-    background-color: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.3);
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.1); // Glow externo suave
+    background-color: rgba($color-danger, 0.15);
+    color: $color-danger;
+    border-color: rgba($color-danger, 0.3);
+    box-shadow: 0 0 15px rgba($color-danger, 0.1); // Glow externo suave
 
     // Animación rápida para urgencia
     .glow-dot { animation: pulse 1s infinite; }
@@ -63,8 +63,8 @@
 
   // Default
   &.gray {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #9ca3af;
+    background-color: $white-10;
+    color: $text-muted;
   }
 }
 

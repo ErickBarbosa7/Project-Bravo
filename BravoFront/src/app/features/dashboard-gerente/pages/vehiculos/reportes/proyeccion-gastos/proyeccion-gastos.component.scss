@@ -1,4 +1,4 @@
-@import '../../../../../../../styles/_variables.scss'; 
+@use 'variables' as *;
 
 .report-container {
   max-width: 600px; // Más estrecho para que parezca reporte móvil/app
@@ -44,7 +44,7 @@
   padding: 2.5rem;
   text-align: center;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 40px -10px $black-50;
 
   // Fondo Brillante (Glow)
   .glow-bg {
@@ -71,8 +71,8 @@
 
     .trend-badge {
       display: inline-block;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: $white-05;
+      border: 1px solid $white-10;
       padding: 6px 12px; border-radius: 20px;
       font-size: 0.8rem; color: $text-muted;
     }
@@ -138,7 +138,7 @@
   padding: 4rem; color: $text-muted;
   
   .spinner {
-    width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1);
+    width: 30px; height: 30px; border: 3px solid $white-10;
     border-top-color: $primary; border-radius: 50%; animation: spin 1s infinite linear;
   }
 }

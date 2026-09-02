@@ -1,4 +1,4 @@
-@import '../../../../../styles/_variables.scss'; 
+@use 'variables' as *;
 
 .mobile-container {
   max-width: 100%;
@@ -44,8 +44,8 @@
     &.active {
       background-color: $bg-dark;
       color: $text-white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 2px 8px $black-20;
+      border: 1px solid $white-05;
       
       svg { color: $primary; }
     }

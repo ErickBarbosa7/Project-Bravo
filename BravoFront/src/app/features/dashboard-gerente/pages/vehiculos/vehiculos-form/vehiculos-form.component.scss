@@ -1,4 +1,4 @@
-@import '../../../../../../styles/_variables.scss'; 
+@use 'variables' as *;
 
 .form-page {
   max-width: 900px; 
@@ -69,8 +69,8 @@
     
     // Estilo de error
     &.error-border {
-      border-color: #ef4444;
-      background-color: rgba(239, 68, 68, 0.05);
+      border-color: $color-danger;
+      background-color: rgba($color-danger, 0.05);
       animation: shake 0.3s ease-in-out;
     }
   }
@@ -82,10 +82,10 @@
 .alert-banner {
   display: flex; align-items: center; gap: 8px;
   margin-top: 4px; padding: 8px 12px;
-  background-color: rgba(239, 68, 68, 0.1); // Rojo transparente
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: rgba($color-danger, 0.1); // Rojo transparente
+  border: 1px solid rgba($color-danger, 0.3);
   border-radius: 8px;
-  color: #f87171; // Texto rojo claro
+  color: $color-danger-soft; // Texto rojo claro
   font-size: 0.85rem;
   animation: slideDown 0.2s ease-out;
 
@@ -115,7 +115,7 @@
 
   .btn-cancel {
     background: transparent; border: 1px solid $border-color; color: $text-white;
-    &:hover { background-color: rgba(255,255,255,0.05); }
+    &:hover { background-color: $white-05; }
   }
 
   .btn-save {
@@ -129,7 +129,7 @@
 // Animaciones
 .loader {
   width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid $white-30;
   border-top-color: white; border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

@@ -1,5 +1,4 @@
-
-@import './../../../../styles/_variables.scss';
+@use 'variables' as *;
 .search-wrapper {
     position: relative;
     width: 100%;

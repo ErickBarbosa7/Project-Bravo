@@ -1,4 +1,4 @@
-@import '../../../../styles/_variables.scss'; 
+@use 'variables' as *;
 
 // Componente host
 :host {
@@ -20,7 +20,7 @@
   display: none; 
   width: 50%;
   position: relative;
-  background-color: #000;
+  background-color: $bg-dark;
   
   @media (min-width: 1024px) {
     display: flex;
@@ -149,7 +149,7 @@
     }
 
     &.ng-invalid.ng-touched {
-      border-color: rgba(239, 68, 68, 0.5); // Rojo suave si hay error
+      border-color: rgba($color-danger, 0.5); // Rojo suave si hay error
     }
   }
 
@@ -235,7 +235,7 @@
 // --- Spinner ---
 .loader {
   width: 20px; height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid $white-30;
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

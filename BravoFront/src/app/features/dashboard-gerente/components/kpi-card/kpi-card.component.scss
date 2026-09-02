@@ -1,4 +1,4 @@
-@import '../../../../../styles/_variables.scss'; 
+@use 'variables' as *;
 
 .card {
   // Contenedor principal de la tarjeta
@@ -51,7 +51,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background: $white-03;
   backdrop-filter: blur(4px);
   transition: transform 0.3s ease;
 
@@ -84,34 +84,31 @@
 
   // Verde (disponibles)
   &.green {
-    $color-green: #10b981;
-    .icon-wrapper svg { color: $color-green; }
+    .icon-wrapper svg { color: $color-success; }
     
     &:hover {
-      border-color: $color-green;
-      box-shadow: 0 8px 24px rgba($color-green, 0.15);
+      border-color: $color-success;
+      box-shadow: 0 8px 24px rgba($color-success, 0.15);
     }
   }
 
   // Rojo (mantenimiento)
   &.red {
-    $color-red: #ef4444;
-    .icon-wrapper svg { color: $color-red; }
+    .icon-wrapper svg { color: $color-danger; }
     
     &:hover {
-      border-color: $color-red;
-      box-shadow: 0 8px 24px rgba($color-red, 0.15);
+      border-color: $color-danger;
+      box-shadow: 0 8px 24px rgba($color-danger, 0.15);
     }
   }
 
   // Azul (opcional)
   &.blue {
-    $color-blue: #3b82f6;
-    .icon-wrapper svg { color: $color-blue; }
+    .icon-wrapper svg { color: $color-info; }
     
     &:hover {
-      border-color: $color-blue;
-      box-shadow: 0 8px 24px rgba($color-blue, 0.15);
+      border-color: $color-info;
+      box-shadow: 0 8px 24px rgba($color-info, 0.15);
     }
   }
 }

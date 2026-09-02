@@ -1,4 +1,4 @@
-@use '../../../../../styles/variables' as *;
+@use 'variables' as *;
 
 .mobile-layout {
     min-height: 100vh;
@@ -12,7 +12,7 @@
     align-items: center;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid $border-color;
-    background-color: #000;
+    background-color: $bg-dark;
 }
 
 .brand {
@@ -34,7 +34,7 @@
 .btn-logout {
     background: none;
     border: none;
-    color: #ef4444;
+    color: $color-danger;
     cursor: pointer;
 }
 
