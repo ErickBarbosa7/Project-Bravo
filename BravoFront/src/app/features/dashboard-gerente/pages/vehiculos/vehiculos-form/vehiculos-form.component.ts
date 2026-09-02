@@ -27,6 +27,7 @@ export class VehiculosFormComponent implements OnInit {
   public isLoading = signal(false);      // Indica si estamos cargando datos
   public isEditMode = signal(false);     // Saber si es edicion o creacion
   public currentId = signal<number | null>(null); // ID del vehiculo en edicion
+  public catalogo = signal<any[]>([]);   // Lista de vehiculos del catalogo
 
   // --- Formulario de vehiculo ---
   public vehicleForm: FormGroup = this.fb.group({
@@ -36,10 +37,14 @@ export class VehiculosFormComponent implements OnInit {
     anio: [new Date().getFullYear(), [Validators.required, Validators.min(1990), Validators.max(new Date().getFullYear() + 1)]],
     fotoUrl: [''], 
     kilometrajeActual: [0, [Validators.required, Validators.min(0)]],
-    intervaloServicioKm: [10000, [Validators.required, Validators.min(1000)]]
+    intervaloServicioKm: [10000, [Validators.required, Validators.min(1000)]],
+    guardarEnCatalogo: [false]
   });
 
   ngOnInit(): void {
+    // Cargar catalogo
+    this.vehiculoService.getCatalogo().subscribe(cat => this.catalogo.set(cat));
+
     // Revisamos si la ruta tiene ID (editar)
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -72,6 +77,23 @@ export class VehiculosFormComponent implements OnInit {
         this.router.navigate(['/gerente/vehiculos']);
       }
     });
+  }
+
+  // Cuando se selecciona un vehiculo del catalogo, auto-rellenamos
+  onCatalogoChange(event: any) {
+    const id = Number(event.target.value);
+    if (!id) return;
+    
+    const cat = this.catalogo().find(c => c.id === id);
+    if (cat) {
+      this.vehicleForm.patchValue({
+        marca: cat.marca,
+        modelo: cat.modelo,
+        anio: cat.anio,
+        intervaloServicioKm: cat.intervaloServicioKm,
+        fotoUrl: cat.fotoUrl
+      });
+    }
   }
 
   // Manejo del submit

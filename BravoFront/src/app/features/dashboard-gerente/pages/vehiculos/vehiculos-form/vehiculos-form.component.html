@@ -12,6 +12,16 @@
   </div>
 
   <div class="form-card">
+    <div class="catalogo-section" *ngIf="!isEditMode()">
+      <label for="catalogo">Seleccionar desde Catálogo Rápido (Opcional)</label>
+      <select id="catalogo" class="form-select" (change)="onCatalogoChange($event)">
+        <option value="">-- Autocompletar desde modelo predefinido --</option>
+        <option *ngFor="let c of catalogo()" [value]="c.id">
+          {{ c.marca }} {{ c.modelo }} ({{ c.anio }}) - {{ c.categoria }}
+        </option>
+      </select>
+    </div>
+
     <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
       
       <div class="section-label">Datos Generales</div>
@@ -98,6 +108,14 @@
       <div class="input-group mt-2">
         <label for="foto">URL de la Fotografía (Opcional)</label>
         <input id="foto" type="text" formControlName="fotoUrl" placeholder="https://...">
+      </div>
+
+      <div class="input-group mt-2 check-group" *ngIf="!isEditMode()">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="guardarEnCatalogo">
+          <span class="checkmark"></span>
+          Guardar este modelo como plantilla en el Catálogo Rápido
+        </label>
       </div>
 
       <div class="form-actions">

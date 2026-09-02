@@ -1,0 +1,141 @@
+@use 'variables' as *;
+
+.page-header {
+  margin-bottom: 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  .title-group {
+    h2 { font-size: 1.8rem; font-weight: 700; color: $text-main; margin: 0; }
+    .subtitle { color: $text-muted; font-size: 1rem; margin-top: 5px; }
+  }
+}
+
+.catalogo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+// Estilos identicos a vehiculos-list
+.vehicle-card {
+  background-color: $bg-card; border: none; box-shadow: $shadow-md;
+  border-radius: $radius-lg; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;
+  display: flex; flex-direction: column;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+  }
+
+  .card-header {
+    padding: 1rem; display: flex; justify-content: space-between; align-items: center;
+    .placa {
+      font-family: monospace; font-weight: 700; color: $primary;
+      background: rgba($primary, 0.1); padding: 4px 8px; border-radius: 4px;
+    }
+  }
+
+  .card-image {
+    height: 160px; width: 100%; background-color: $bg-input;
+    img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: opacity 0.3s; }
+  }
+  &:hover .card-image img { opacity: 1; }
+
+  .card-body {
+    padding: 1.2rem; flex: 1;
+    h3 { font-size: 1.1rem; margin-bottom: 0.2rem; color: $text-main; }
+    .year { color: $text-muted; font-size: 0.9rem; margin-bottom: 1rem; }
+
+    .stats {
+      display: flex; justify-content: space-between; background-color: $bg-page;
+      padding: 0.8rem; border-radius: 8px;
+      .stat {
+        display: flex; flex-direction: column;
+        small { color: $text-muted; font-size: 0.75rem; }
+        strong { color: $text-main; font-size: 0.95rem; }
+      }
+    }
+  }
+
+  .card-actions {
+    padding: 1rem; border-top: 1px solid $border-color;
+    display: flex; justify-content: flex-end; gap: 8px;
+  }
+}
+
+.btn-icon {
+  background: transparent; border: none; cursor: pointer; padding: 8px;
+  border-radius: 6px; transition: $transition-fast; color: $text-muted;
+
+  &:hover {
+    background-color: $bg-input; color: $primary;
+  }
+  
+  &.danger:hover {
+    color: $color-danger; background-color: rgba($color-danger, 0.1);
+  }
+}
+
+.btn-primary {
+  background: $primary; color: white; border: none; padding: 0.8rem 1.5rem;
+  border-radius: $radius-pill; font-weight: 600; cursor: pointer;
+  &:hover { filter: brightness(1.2); }
+}
+
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: $bg-card; padding: 2rem; border-radius: $radius-lg; width: 400px; max-width: 90%;
+  h3 { margin-top: 0; margin-bottom: 1.5rem; color: $text-main; }
+}
+.form-group {
+  margin-bottom: 1rem;
+  label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; font-weight: 600; color: $text-main; }
+  .form-control {
+    width: 100%; padding: 0.8rem; border: 1px solid $border-color;
+    border-radius: $radius-md; background: $bg-input; color: $text-main;
+    outline: none;
+    &:focus { border-color: $primary; }
+  }
+}
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;
+  button { padding: 0.8rem 1.5rem; border-radius: $radius-pill; font-weight: 600; cursor: pointer; border: none; }
+  .btn-cancel { background: transparent; border: 1px solid $border-color; color: $text-main; }
+  .btn-save { background: $primary; color: white; }
+}
+
+.text-center { text-align: center; }
+.justify-center { justify-content: center !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+
+.btn-delete-confirm {
+  background: $color-danger !important; color: white !important; border: none !important;
+  padding: 0.8rem 1.5rem; border-radius: $radius-pill; font-weight: 600; cursor: pointer;
+  &:hover { filter: brightness(1.2); }
+}
+
+.categoria-input-group {
+  display: flex; gap: 8px; align-items: center;
+  .form-control { flex: 1; }
+}
+
+.btn-icon-small {
+  background: transparent; border: 1px solid $border-color; cursor: pointer; padding: 6px;
+  border-radius: 6px; transition: $transition-fast; color: $text-muted;
+  display: flex; align-items: center; justify-content: center;
+
+  &:hover { background-color: $bg-input; color: $primary; }
+  
+  &.primary {
+    color: $primary; border-color: $primary;
+    &:hover { background-color: $primary; color: white; }
+  }
+  
+  &.danger {
+    color: $color-danger; border-color: $color-danger;
+    &:hover { background-color: $color-danger; color: white; }
+  }
+}

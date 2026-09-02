@@ -10,11 +10,15 @@ public class Vehiculo
     public string? Modelo { get; set; }
     public int? Anio { get; set; }
     public string? FotoUrl { get; set; }
+    
+    [System.ComponentModel.DataAnnotations.ConcurrencyCheck]
     public int KilometrajeActual { get; set; }
+    
+    [System.ComponentModel.DataAnnotations.ConcurrencyCheck]
     public EstadoVehiculo Estado { get; set; }
     public int IntervaloServicioKm { get; set; }
     public int SiguienteServicioKm { get; set; }
-    public List<BitacoraViaje> BitacoraViajes { get; set; } = new();
     public List<RegistroServicio> RegistrosServicio { get; set; } = new();
+    //public List<IncidenteReporte> Incidentes { get; set; } = new();
     //public List<IncidenteReporte> Incidentes { get; set; } = new();
 }

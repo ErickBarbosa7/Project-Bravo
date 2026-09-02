@@ -7,7 +7,7 @@ import { KpiCardComponent } from '../../components/kpi-card/kpi-card.component';
 @Component({
   selector: 'app-gerente-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, KpiCardComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './gerente-layout.component.html',
   styleUrls: ['./gerente-layout.component.scss']
 })

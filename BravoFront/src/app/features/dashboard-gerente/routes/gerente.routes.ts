@@ -23,6 +23,10 @@ export const GERENTE_ROUTES: Routes = [
         loadComponent: () => import('../pages/vehiculos/vehiculos-form/vehiculos-form.component').then(m => m.VehiculosFormComponent) // Formulario para editar vehiculo existente
       },
       {
+        path: 'catalogo',
+        loadComponent: () => import('../pages/vehiculos/catalogo-list/catalogo-list.component').then(m => m.CatalogoListComponent)
+      },
+      {
         path: 'reportes/proyeccion',
         loadComponent: () => import('./../pages/vehiculos/reportes/proyeccion-gastos/proyeccion-gastos.component').then(m => m.ProyeccionGastosComponent) // Reporte de proyeccion de gastos
       },

@@ -11,8 +11,6 @@ import { SidebarComponent } from "../../layout/sidebar/sidebar.component";
     imports: [
         CommonModule,
         RouterOutlet,
-        RouterLink,
-        RouterLinkActive,
         SidebarComponent
     ],
     templateUrl: './dashboard-gerente.component.html',

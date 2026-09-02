@@ -68,7 +68,7 @@
         <td class="fw-bold highlight">{{ v.placa }}</td>
         <td>
           <div class="vehicle-info">
-            <img [src]="v.fotoUrl || 'assets/placeholder-car.png'" alt="Car" class="mini-img">
+            <img [src]="v.fotoUrl || 'assets/vehiculos/vehiculo-placeholder.png'" alt="Car" class="mini-img">
             <span>{{ v.marca }} {{ v.modelo }} ({{v.anio}})</span>
           </div>
         </td>
@@ -108,7 +108,7 @@
       <app-semaforo-badge [estado]="v.estado"></app-semaforo-badge>
     </div>
     <div class="card-image">
-      <img [src]="v.fotoUrl || 'assets/default-car.png'" alt="Foto vehículo">
+      <img [src]="v.fotoUrl || 'assets/vehiculos/vehiculo-placeholder.png'" alt="Foto vehículo">
     </div>
     <div class="card-body">
       <h3>{{ v.marca }} {{ v.modelo }}</h3>
@@ -203,7 +203,16 @@
           class="btn-action btn-primary" 
           (click)="payService()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-          Registrar Pago y Liberar
+          Registrar Pago
+        </button>
+
+        <button 
+          *ngIf="getSelectedVehiculoEstado() === 2" 
+          class="btn-action btn-success" 
+          style="background-color: #28a745; color: white; border: none; margin-left: 10px;"
+          (click)="releaseFromMaintenance()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Liberar de Taller
         </button>
 
       </div>

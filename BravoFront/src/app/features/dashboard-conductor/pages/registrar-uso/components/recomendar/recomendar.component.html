@@ -17,7 +17,7 @@
       <div class="badge-best">MEJOR OPCIÓN</div>
       
       <div class="car-image">
-        <img [src]="recomendaciones()[0].fotoUrl || 'assets/default-car.png'" alt="Car">
+        <img [src]="recomendaciones()[0].fotoUrl || 'assets/vehiculos/vehiculo-placeholder.png'" alt="Car">
         <div class="overlay-gradient"></div>
       </div>
       
@@ -58,8 +58,8 @@
             <span class="placa-mini">{{ car.placa }}</span>
           </div>
           <div class="bottom">
-            <span class="efficiency">📉 {{ car.rendimientoKmPorLitro }} km/l</span>
-            <span class="cost">⛽ {{ car.litrosEstimadosParaViaje }} L est.</span>
+            <span class="efficiency">Rendimiento: {{ car.rendimientoKmPorLitro }} km/l</span>
+            <span class="cost">Est. Lts: {{ car.litrosEstimadosParaViaje }} L</span>
           </div>
         </div>
         <button class="btn-select-mini" (click)="seleccionar(car)">

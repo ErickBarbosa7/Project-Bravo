@@ -3,20 +3,21 @@
 .card {
   // Contenedor principal de la tarjeta
   position: relative;
-  background: linear-gradient(145deg, lighten($bg-input, 2%) 0%, $bg-input 100%); // Gradiente sutil para dar volumen
-  border: 1px solid $border-color;
-  border-radius: 16px;
+  background: $bg-card;
+  border: none;
+  box-shadow: $shadow-md;
+  border-radius: $radius-lg;
   padding: 1.5rem;
   display: flex;
   justify-content: space-between; // Separa info y icono a los extremos
   align-items: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Animacion suave
+  transition: $transition-slow;
   overflow: hidden; // Para efectos de brillo
 
   // --- Hover general ---
   &:hover {
     transform: translateY(-4px); // Levanta la tarjeta
-    background: lighten($bg-input, 2%); // Aclara un poco
+    box-shadow: $shadow-lg;
   }
 
   // --- Info izquierda ---
@@ -35,7 +36,7 @@
     }
 
     .number {
-      color: $text-white;
+      color: $text-main;
       font-size: 2.5rem;
       font-weight: 700;
       line-height: 1;
@@ -50,9 +51,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background: $white-03;
-  backdrop-filter: blur(4px);
+  border-radius: $radius-md;
+  background: $bg-input;
   transition: transform 0.3s ease;
 
   svg {

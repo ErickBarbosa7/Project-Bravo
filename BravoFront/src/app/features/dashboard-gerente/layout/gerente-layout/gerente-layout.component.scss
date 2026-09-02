@@ -3,8 +3,8 @@
 .dashboard-container {
   display: flex;
   height: 100vh;
-  background-color: $bg-dark;
-  color: $text-white;
+  background: $bg-page;
+  color: $text-main;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
 }
@@ -14,12 +14,13 @@
 /* ---------------------------- */
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, $bg-dark 0%, $bg-dark 100%);
+  background: $bg-card;
   border-right: 1px solid $border-color;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
   z-index: 10;
+  box-shadow: $shadow-md;
 
   .logo-area {
     margin-bottom: 2.5rem;
@@ -49,7 +50,7 @@
       .brand {
         font-weight: 700;
         font-size: 1.1rem;
-        color: white;
+        color: $text-main;
       }
 
       .badge {
@@ -72,7 +73,7 @@
       margin-bottom: 0.5rem;
       padding-left: 1rem;
       font-size: 0.7rem;
-      color: darken($text-muted, 10%);
+      color: $text-sub;
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 700;
@@ -85,7 +86,7 @@
       padding: 0.75rem 1rem;
       color: $text-muted;
       text-decoration: none;
-      border-radius: 8px;
+      border-radius: $radius-pill;
       transition: all 0.2s;
       font-weight: 500;
       font-size: 0.95rem;
@@ -98,8 +99,8 @@
       }
 
       &:hover {
-        background-color: $white-03;
-        color: $text-white;
+        background-color: $bg-input;
+        color: $text-main;
 
         svg {
           opacity: 1;
@@ -107,10 +108,9 @@
       }
 
       &.active {
-        background-color: rgba($primary, 0.15);
-        color: $primary;
-        border-left: 3px solid $primary;
-        border-radius: 0 8px 8px 0;
+        background-color: $primary;
+        color: white;
+        border-radius: $radius-pill;
 
         svg {
           opacity: 1;
@@ -127,33 +127,32 @@
     margin-top: 2rem;
     padding: 0.9rem 1.1rem;
 
-    background: $white-03;
-    border: 1px solid $white-06;
-    border-radius: 14px;
+    background: $bg-input;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
 
     display: flex;
     align-items: center;
     gap: 1rem;
 
-    transition: background 0.25s ease, border 0.25s ease;
+    transition: $transition-fast;
 
     &:hover {
-      background: $white-06;
-      border-color: $white-15;
+      background: $bg-card;
+      box-shadow: $shadow-sm;
     }
 
     .avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: linear-gradient(135deg, $primary, lighten($primary, 12%));
+      background: $primary;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 1.3rem;
-      box-shadow: 0 0 10px rgba($primary, 0.4);
     }
 
     .info {
@@ -164,16 +163,16 @@
       .name {
         font-size: 1rem;
         font-weight: 600;
-        color: $text-white;
+        color: $text-main;
       }
 
       .role-chip {
         padding: 2px 8px;
         border-radius: 8px;
         font-size: 0.75rem;
-        background: rgba($primary, 0.15);
-        border: 1px solid rgba($primary, 0.35);
-        color: lighten($primary, 20%);
+        background: rgba($primary, 0.1);
+        border: 1px solid rgba($primary, 0.2);
+        color: $primary;
         font-weight: 500;
         display: inline-block;
       }
@@ -193,13 +192,12 @@
       justify-content: center;
 
       svg {
-        stroke: $text-muted;
+        stroke: $color-danger;
         transition: stroke 0.2s;
       }
 
       &:hover {
-        background: $white-08;
-
+        background: rgba($color-danger, 0.1);
       }
 
       &:active {
@@ -231,10 +229,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-
-  background-image: radial-gradient($white-05 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-color: $bg-dark;
+  background: transparent;
 
   .top-bar {
     height: 64px;
@@ -243,7 +238,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    background-color: rgba($bg-dark, 0.7);
+    background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
     z-index: 5;
 
@@ -251,16 +246,17 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background-color: $white-03;
+      background-color: $bg-input;
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: $radius-pill;
+      border: 1px solid $border-color;
       width: 300px;
       transition: all 0.2s;
 
       &:focus-within {
-        background-color: $bg-input;
+        background-color: $bg-card;
         border-color: $primary;
-        box-shadow: 0 0 0 2px rgba($primary, 0.2);
+        box-shadow: 0 0 0 2px rgba($primary, 0.1);
       }
 
       svg {
@@ -271,18 +267,18 @@
         background: none;
         border: none;
         outline: none;
-        color: $text-white;
+        color: $text-main;
         width: 100%;
         font-size: 0.9rem;
 
         &::placeholder {
-          color: darken($text-muted, 10%);
+          color: $text-sub;
         }
       }
 
       .shortcut {
         font-size: 0.7rem;
-        color: darken($text-muted, 10%);
+        color: $text-sub;
         border: 1px solid $border-color;
         padding: 2px 6px;
         border-radius: 4px;
@@ -291,7 +287,7 @@
 
     .actions {
       .btn-icon {
-        background: none;
+        background: $bg-card;
         border: 1px solid $border-color;
         width: 36px;
         height: 36px;
@@ -306,7 +302,7 @@
 
         &:hover {
           background-color: $bg-input;
-          color: $text-white;
+          color: $text-main;
         }
 
         .dot {
@@ -315,7 +311,7 @@
           right: 10px;
           width: 6px;
           height: 6px;
-          background-color: $primary;
+          background-color: $color-danger;
           border-radius: 50%;
         }
       }

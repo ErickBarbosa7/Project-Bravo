@@ -31,6 +31,7 @@ export interface CreateVehiculoDto {
   fotoUrl: string;
   kilometrajeActual: number;
   intervaloServicioKm: number;
+  guardarEnCatalogo?: boolean;
 }
 
 // DTO para actualizar vehiculo (PUT)
@@ -53,4 +54,14 @@ export interface ReporteMantenimiento {
   kmRestantes: number;
   mensaje: string;
   estadoVehiculo: EstadoVehiculo;
+}
+
+export interface CatalogoVehiculo {
+  id: number;
+  marca: string;
+  modelo: string;
+  anio: number;
+  categoria: string;
+  intervaloServicioKm: number;
+  fotoUrl: string;
 }

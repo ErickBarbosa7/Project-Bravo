@@ -29,10 +29,10 @@
     font-size: 0.85rem;
     padding-bottom: 1rem;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid lighten($bg-card, 10%);
+    border-bottom: 1px solid $border-color;
 
     strong {
-      color: $text-white;
+      color: $text-main;
     }
   }
 
@@ -47,11 +47,11 @@
       align-items: center;
       gap: 1rem;
       padding: 0.9rem 1rem;
-      color: $text-muted;
+      color: $text-main;
       text-decoration: none;
-      border-radius: 10px;
+      border-radius: $radius-pill;
       font-weight: 500;
-      transition: $transition-slow;
+      transition: $transition-fast;
       font-size: 0.95rem;
 
       i {
@@ -59,13 +59,13 @@
       }
 
       &:hover {
-        background: lighten($bg-card, 8%);
-        color: $text-white;
+        background: $bg-input;
+        color: $text-main;
       }
 
       &.active-link {
         background: $primary;
-        color: $text-white;
+        color: #ffffff;
       }
     }
   }
@@ -75,18 +75,18 @@
     padding: 0.9rem 1rem;
     font-size: 1rem;
     font-weight: 600;
-    background: $primary-dark;
-    color: $text-white;
-    border: none;
-    border-radius: 10px;
+    background: transparent;
+    color: $color-danger;
+    border: 1px solid $color-danger;
+    border-radius: $radius-pill;
     cursor: pointer;
-    transition: $transition-slow;
+    transition: $transition-fast;
     display: flex;
     align-items: center;
     gap: 0.75rem;
 
     &:hover {
-      background: $primary-hover;
+      background: rgba($color-danger, 0.1);
     }
   }
 }

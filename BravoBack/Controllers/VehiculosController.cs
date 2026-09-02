@@ -1,4 +1,5 @@
 using BravoBack.DTOs;
+using BravoBack.Models;
 using BravoBack.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,7 @@ namespace BravoBack.Controllers
         }
 
         // Obtiene un vehiculo por id
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         [Authorize(Roles = "Gerente,Conductor")]
         public async Task<ActionResult<VehiculoDto>> GetVehiculo(int id)
         {
@@ -38,6 +39,15 @@ namespace BravoBack.Controllers
                 return NotFound();
 
             return Ok(vehiculo);
+        }
+
+        // Obtiene el catalogo de vehiculos
+        [HttpGet("catalogo")]
+        [Authorize(Roles = "Gerente,Conductor")]
+        public async Task<ActionResult<IEnumerable<CatalogoVehiculo>>> GetCatalogo()
+        {
+            var catalogo = await _vehiculoService.ObtenerCatalogo();
+            return Ok(catalogo);
         }
 
         // Crea un vehiculo nuevo
@@ -61,7 +71,7 @@ namespace BravoBack.Controllers
         }
 
         // Actualiza un vehiculo
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> UpdateVehiculo(
             int id,
@@ -87,7 +97,7 @@ namespace BravoBack.Controllers
         }
 
         // Elimina un vehiculo
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> DeleteVehiculo(int id)
         {
@@ -100,7 +110,7 @@ namespace BravoBack.Controllers
         }
 
         // Obtiene el estado de mantenimiento
-        [HttpGet("{id}/estatus-servicio")]
+        [HttpGet("{id:int}/estatus-servicio")]
         [Authorize(Roles = "Gerente,Conductor")]
         public async Task<ActionResult<ReporteMantenimientoDto>> GetEstatusServicio(int id)
         {
@@ -135,7 +145,7 @@ namespace BravoBack.Controllers
         }
 
         // Envia un vehiculo al taller
-        [HttpPut("{id}/enviar-taller")]
+        [HttpPut("{id:int}/enviar-taller")]
         [Authorize(Roles = "Gerente")]
         public async Task<IActionResult> SendToWorkshop(int id)
         {
@@ -145,6 +155,19 @@ namespace BravoBack.Controllers
                 return NotFound("Vehiculo no encontrado");
 
             return Ok(new { message = "Vehiculo enviado a taller" });
+        }
+
+        // Libera un vehiculo del taller
+        [HttpPut("{id:int}/liberar-taller")]
+        [Authorize(Roles = "Gerente")]
+        public async Task<IActionResult> ReleaseFromWorkshop(int id)
+        {
+            var result = await _vehiculoService.LiberarDeTaller(id);
+
+            if (!result)
+                return NotFound("Vehiculo no encontrado");
+
+            return Ok(new { message = "Vehiculo liberado y disponible" });
         }
 
         // Recomienda vehiculos para un viaje

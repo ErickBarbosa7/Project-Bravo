@@ -25,8 +25,7 @@ export enum EstadoVehiculo {
     RouterLink,
     FormsModule,
     SemaforoBadgeComponent,
-    ModalComponent,
-    SearchBar
+    ModalComponent
   ],
   templateUrl: './vehiculos-list.component.html',
   styleUrls: ['./vehiculos-list.component.scss']
@@ -111,6 +110,31 @@ export class VehiculosListComponent implements OnInit {
             this.vehiculoService.enviarATaller(id).subscribe({
               next: () => this.alertService.success('Vehiculo enviado al taller'),
               error: () => this.alertService.error('No se pudo actualizar')
+            });
+          }
+        });
+    }, 200);
+  }
+
+  releaseFromMaintenance() {
+    const id = this.selectedVehiculoId();
+    if (!id) return;
+
+    this.closeModal();
+
+    setTimeout(() => {
+      this.alertService
+        .confirm(
+          'Liberar de Taller',
+          '¿El vehículo ya terminó su mantenimiento y está listo para operar?',
+          'Liberar',
+          'Cancelar'
+        )
+        .then(confirmado => {
+          if (confirmado) {
+            this.vehiculoService.liberarDeTaller(id).subscribe({
+              next: () => this.alertService.success('Vehiculo liberado con éxito'),
+              error: () => this.alertService.error('No se pudo liberar el vehículo')
             });
           }
         });

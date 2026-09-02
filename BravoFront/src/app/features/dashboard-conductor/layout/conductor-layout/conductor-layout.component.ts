@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject } from "@angular/core";
-import { RouterLink, RouterOutlet } from "@angular/router";
+import { RouterOutlet } from "@angular/router";
 import { AuthService } from "../../../auth/services/auth.service";
 
 @Component({
     selector: 'app-conductor-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink],
+    imports: [CommonModule, RouterOutlet],
     templateUrl: './conductor-layout.component.html',
     styleUrls: ['./conductor-layout.component.scss']
 })

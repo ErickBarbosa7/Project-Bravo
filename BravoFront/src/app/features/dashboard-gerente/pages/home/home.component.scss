@@ -57,9 +57,10 @@
 /*        PANEL BASE         */
 /* ------------------------- */
 .panel {
-  background-color: $bg-input;
-  border: 1px solid $border-color;
-  border-radius: 16px;
+  background-color: $bg-card;
+  border: none;
+  box-shadow: $shadow-lg;
+  border-radius: $radius-lg;
   padding: 1.5rem;
   height: 100%;
 
@@ -68,12 +69,12 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid $white-05;
+    border-bottom: 1px solid $border-color;
     padding-bottom: 1rem;
 
     h3 {
       font-size: 1.1rem;
-      color: $text-white;
+      color: $text-main;
       margin: 0;
 
       /* ICONOS DEL PANEL */
@@ -92,6 +93,7 @@
       color: $primary;
       text-decoration: none;
       font-size: 0.9rem;
+      font-weight: 500;
 
       &:hover {
         text-decoration: underline;
@@ -112,13 +114,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: $black-20;
+    background-color: $bg-input;
     padding: 1rem;
-    border-radius: 12px;
-    transition: background 0.2s;
+    border-radius: $radius-md;
+    border: 1px solid $border-color;
+    transition: background 0.2s, box-shadow 0.2s;
 
     &:hover {
-      background-color: $white-02;
+      background-color: $bg-card;
+      box-shadow: $shadow-sm;
     }
 
     .car-info {
@@ -127,7 +131,7 @@
 
       .placa {
         font-family: monospace;
-        color: $text-white;
+        color: $text-main;
         font-weight: 700;
       }
 
@@ -147,6 +151,7 @@
       font-size: 2rem;
       display: block;
       margin-bottom: 0.5rem;
+      color: $color-success;
     }
   }
 }
@@ -163,29 +168,32 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1.2rem;
-    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    border-radius: $radius-pill;
     border: 1px solid $border-color;
-    background: transparent;
-    color: $text-white;
+    background: $bg-card;
+    color: $text-main;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: $transition-fast;
     text-align: left;
 
     &:hover {
       transform: translateX(5px);
-      border-color: $text-muted;
+      border-color: $primary;
+      box-shadow: $shadow-sm;
     }
 
     /* Caja del icono */
     .icon {
       width: 42px;
       height: 42px;
-      border-radius: 8px;
+      border-radius: $radius-sm;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: $white-05;
+      background: $bg-input;
+      color: $text-main;
 
       /* SVGs dentro de los botones */
       svg {
@@ -197,17 +205,17 @@
 
     /* Variantes */
     &.purple:hover .icon {
-      background: rgba($primary, 0.2);
+      background: rgba($primary, 0.1);
       color: $primary;
     }
 
     &.blue:hover .icon {
-      background: rgba($color-info, 0.2);
+      background: rgba($color-info, 0.1);
       color: $color-info;
     }
 
     &.green:hover .icon {
-      background: rgba($color-success, 0.2);
+      background: rgba($color-success, 0.1);
       color: $color-success;
     }
   }

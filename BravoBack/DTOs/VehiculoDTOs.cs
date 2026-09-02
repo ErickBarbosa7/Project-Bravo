@@ -12,6 +12,7 @@ public class CreateVehiculoDto
     public string? FotoUrl {get; set;}
     public int KilometrajeActual { get; set; }
     public int IntervaloServicioKm { get; set; }
+    public bool GuardarEnCatalogo { get; set; }
 }
 
 // DTO para mostrar un vehículo (la respuesta de la API)

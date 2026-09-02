@@ -1,0 +1,106 @@
+<div class="page-header">
+  <div class="title-group">
+    <h2>Catálogo de Modelos (Plantillas)</h2>
+    <p class="subtitle">Administra los modelos predefinidos de vehículos disponibles para auto-completar rápidamente al registrar nuevas unidades.</p>
+  </div>
+  <div class="actions">
+    <button class="btn-primary" (click)="abrirModalNuevo()">+ Nueva Plantilla</button>
+  </div>
+</div>
+
+<div class="catalogo-grid" *ngIf="!isLoading()">
+  <div class="vehicle-card" *ngFor="let item of catalogo()">
+    <div class="card-header">
+      <span class="placa">{{ item.categoria }}</span>
+    </div>
+    <div class="card-image">
+      <img [src]="item.fotoUrl || 'assets/vehiculos/vehiculo-placeholder.png'" alt="Foto plantilla">
+    </div>
+    <div class="card-body">
+      <h3>{{ item.marca }} {{ item.modelo }}</h3>
+      <p class="year">{{ item.anio }}</p>
+      <div class="stats">
+        <div class="stat"><small>Mantenimiento (Meta)</small><strong>{{ item.intervaloServicioKm | number }} km</strong></div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn-icon" (click)="abrirModalEditar(item)" title="Editar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      </button>
+      <button class="btn-icon danger" (click)="confirmarEliminar(item.id)" title="Eliminar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="isLoading()">
+  Cargando catálogo...
+</div>
+
+<!-- Modal para Crear / Editar -->
+<div class="modal-overlay" *ngIf="showModal()">
+  <div class="modal-content">
+    <h3>{{ isEdit() ? 'Editar Plantilla' : 'Nueva Plantilla' }}</h3>
+    <div class="form-group">
+      <label>Marca</label>
+      <input type="text" [(ngModel)]="currentItem().marca" class="form-control" placeholder="Ej. Ford">
+    </div>
+    <div class="form-group">
+      <label>Modelo</label>
+      <input type="text" [(ngModel)]="currentItem().modelo" class="form-control" placeholder="Ej. Explorer">
+    </div>
+    <div class="form-group">
+      <label>Año</label>
+      <input type="number" [(ngModel)]="currentItem().anio" class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label>Categoría</label>
+      <div class="categoria-input-group" *ngIf="!isCreatingCategoria()">
+        <select class="form-control" [(ngModel)]="currentItem().categoria">
+          <option *ngFor="let cat of categorias()" [value]="cat.nombre">{{ cat.nombre }}</option>
+        </select>
+        <button class="btn-icon-small" (click)="toggleCrearCategoria()" title="Nueva Categoría">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </div>
+
+      <div class="categoria-input-group" *ngIf="isCreatingCategoria()">
+        <input type="text" [(ngModel)]="nuevaCategoriaNombre" class="form-control" placeholder="Nombre de categoría">
+        <button class="btn-icon-small primary" (click)="guardarCategoria()" title="Guardar Categoría">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+        <button class="btn-icon-small danger" (click)="toggleCrearCategoria()" title="Cancelar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Mantenimiento (km)</label>
+      <input type="number" [(ngModel)]="currentItem().intervaloServicioKm" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>URL Foto (Opcional)</label>
+      <input type="text" [(ngModel)]="currentItem().fotoUrl" class="form-control" placeholder="https://...">
+    </div>
+    
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-save" (click)="guardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Confirmacion de Eliminacion -->
+<div class="modal-overlay" *ngIf="showDeleteModal()">
+  <div class="modal-content text-center">
+    <h3>¿Eliminar Plantilla?</h3>
+    <p>Esta acción eliminará el vehículo del catálogo rápido. Los vehículos que ya fueron registrados con esta plantilla no se verán afectados.</p>
+    <div class="modal-actions justify-center mt-4">
+      <button class="btn-cancel" (click)="cerrarDeleteModal()">Cancelar</button>
+      <button class="btn-delete-confirm" (click)="eliminarDefinitivo()">Sí, Eliminar</button>
+    </div>
+  </div>
+</div>

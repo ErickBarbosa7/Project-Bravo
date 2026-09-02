@@ -79,37 +79,40 @@ namespace BravoBack.Services
         // Reporte general de consumo por conductor para toda la flota
         public async Task<object> ObtenerReporteGeneral()
         {
-            // Se obtienen registros con datos del conductor
-            var registros = await _context.BitacorasUso
-                .Include(b => b.Conductor)
-                .ToListAsync();
+            // Consumo total de la empresa (calculado en SQL)
+            double totalEmpresa = await _context.BitacorasUso.SumAsync(r => r.LitrosConsumidos);
 
-            // Consumo total de la empresa
-            double totalEmpresa = registros.Sum(r => r.LitrosConsumidos);
-
-            // Si no hay consumo registrado
             if (totalEmpresa == 0) 
                 return new { Mensaje = "Aun no hay consumo registrado." };
 
-            // Agrupar consumo por conductor
-            var reporte = registros
-                .GroupBy(r => r.Conductor)
-                .Select(grupo => new
+            // Agrupación y suma directamente en SQL para evitar cargar toda la tabla en memoria
+            var reporte = await _context.BitacorasUso
+                .GroupBy(b => new { b.ConductorId, b.Conductor.FirstName, b.Conductor.PaternalLastName })
+                .Select(g => new
                 {
-                    ConductorId = grupo.Key.Id,
-                    Nombre = $"{grupo.Key.FirstName} {grupo.Key.PaternalLastName}",
-                    TotalLitros = grupo.Sum(r => r.LitrosConsumidos),
-                    TotalKm = grupo.Sum(r => r.KilometrosRecorridos),
-                    PorcentajeDelTotal = Math.Round((grupo.Sum(r => r.LitrosConsumidos) / totalEmpresa) * 100, 2)
+                    ConductorId = g.Key.ConductorId,
+                    Nombre = $"{g.Key.FirstName} {g.Key.PaternalLastName}",
+                    TotalLitros = g.Sum(r => r.LitrosConsumidos),
+                    TotalKm = g.Sum(r => r.KilometrosRecorridos)
                 })
                 .OrderByDescending(x => x.TotalLitros)
-                .ToList();
+                .ToListAsync();
+
+            // Cálculo de porcentajes
+            var desglose = reporte.Select(x => new 
+            {
+                x.ConductorId,
+                x.Nombre,
+                x.TotalLitros,
+                x.TotalKm,
+                PorcentajeDelTotal = Math.Round((x.TotalLitros / totalEmpresa) * 100, 2)
+            }).ToList();
 
             return new
             {
                 TotalEmpresaLitros = totalEmpresa,
-                TotalConductores = reporte.Count,
-                Desglose = reporte
+                TotalConductores = desglose.Count,
+                Desglose = desglose
             };
         }
 
@@ -118,6 +121,9 @@ namespace BravoBack.Services
         {
             var vehiculo = await _context.Vehiculos.FindAsync(dto.VehiculoId);
             if (vehiculo == null) return "Error: El vehículo no existe.";
+
+            if (vehiculo.Estado == EstadoVehiculo.EnTaller) 
+                return "Error: No se puede registrar uso de un vehículo que está en el taller.";
 
             // A. Crear Bitácora
             var nuevaBitacora = new BitacoraUso

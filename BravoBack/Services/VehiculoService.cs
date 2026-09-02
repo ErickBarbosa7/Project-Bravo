@@ -39,9 +39,19 @@ namespace BravoBack.Services
         // Busca un vehiculo por su id y lo convierte en DTO
         public async Task<VehiculoDto?> ObtenerPorId(int id)
         {
-            var v = await _context.Vehiculos.FindAsync(id);
-            if (v == null) return null;
+            var vehiculo = await _context.Vehiculos.FindAsync(id);
+            if (vehiculo == null) return null;
+            return MapToDto(vehiculo);
+        }
 
+        // Obtiene el catalogo de vehiculos predefinidos
+        public async Task<List<CatalogoVehiculo>> ObtenerCatalogo()
+        {
+            return await _context.CatalogoVehiculos.ToListAsync();
+        }
+
+        private VehiculoDto MapToDto(Vehiculo v)
+        {
             return new VehiculoDto
             {
                 Id = v.Id,
@@ -80,7 +90,25 @@ namespace BravoBack.Services
             _context.Vehiculos.Add(vehiculo);
             await _context.SaveChangesAsync();
 
-            return await ObtenerPorId(vehiculo.Id)!;
+            if (dto.GuardarEnCatalogo)
+            {
+                var existe = await _context.CatalogoVehiculos.AnyAsync(c => c.Marca == dto.Marca && c.Modelo == dto.Modelo && c.Anio == dto.Anio);
+                if (!existe)
+                {
+                    _context.CatalogoVehiculos.Add(new CatalogoVehiculo
+                    {
+                        Marca = dto.Marca ?? "Desconocido",
+                        Modelo = dto.Modelo ?? "Desconocido",
+                        Anio = dto.Anio,
+                        Categoria = "General",
+                        IntervaloServicioKm = dto.IntervaloServicioKm,
+                        FotoUrl = dto.FotoUrl ?? "assets/vehiculos/vehiculo-placeholder.png"
+                    });
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            return MapToDto(vehiculo);
         }
 
         // Actualiza un vehiculo existente
@@ -183,12 +211,33 @@ namespace BravoBack.Services
 
             _context.RegistrosServicio.Add(nuevoRegistro);
 
-            // Se reinicia el kilometraje para el proximo servicio
-            vehiculo.SiguienteServicioKm = vehiculo.KilometrajeActual + vehiculo.IntervaloServicioKm;
-            vehiculo.Estado = EstadoVehiculo.Disponible;
+            // CORRECCIÓN DRIFT: Calcular sobre la meta original. 
+            vehiculo.SiguienteServicioKm += vehiculo.IntervaloServicioKm;
+
+            // Si el kilometraje actual aún supera el siguiente servicio (por ej. si omitió varios mantenimientos)
+            if (vehiculo.SiguienteServicioKm <= vehiculo.KilometrajeActual)
+            {
+                vehiculo.SiguienteServicioKm = vehiculo.KilometrajeActual + vehiculo.IntervaloServicioKm;
+            }
+            
+            // DESACOPLAMIENTO: El pago NO libera el auto automáticamente.
+            // vehiculo.Estado = EstadoVehiculo.Disponible; 
+
             await _context.SaveChangesAsync();
 
-            return "Pago registrado correctamente.";
+            return "Pago registrado correctamente. El auto permanecerá en el taller hasta que sea liberado operativamente.";
+        }
+
+        // Libera un vehiculo del taller
+        public async Task<bool> LiberarDeTaller(int id)
+        {
+            var vehiculo = await _context.Vehiculos.FindAsync(id);
+            if (vehiculo == null) return false;
+
+            vehiculo.Estado = EstadoVehiculo.Disponible;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         // Cambia el estado de un vehiculo para enviarlo al taller
@@ -206,84 +255,103 @@ namespace BravoBack.Services
         // Calcula una proyeccion mensual de mantenimiento
         public async Task<ProyeccionGastosDto> CalcularProyeccionMensual()
         {
-            // Suma del dinero gastado en toda la historia de servicios
-            decimal totalGastado = await _context.RegistrosServicio.SumAsync(r => r.MontoPagado);
+            var vehiculos = await _context.Vehiculos.ToListAsync();
+            
+            DateTime haceUnMes = DateTime.UtcNow.AddDays(-30);
+            
+            // Consumo del ultimo mes por vehiculo
+            var usoUltimoMes = await _context.BitacorasUso
+                .Where(b => b.FechaUso >= haceUnMes)
+                .GroupBy(b => b.VehiculoId)
+                .Select(g => new {
+                    VehiculoId = g.Key,
+                    KmRecorridos = g.Sum(b => b.KilometrosRecorridos)
+                }).ToDictionaryAsync(x => x.VehiculoId);
 
-            // Suma del total de kilometros recorridos historicos
-            int totalKmRecorridos = await _context.BitacorasUso.SumAsync(b => b.KilometrosRecorridos);
+            // Costo promedio de servicio por vehiculo
+            var costosServicio = await _context.RegistrosServicio
+                .GroupBy(r => r.VehiculoId)
+                .Select(g => new {
+                    VehiculoId = g.Key,
+                    CostoPromedio = g.Average(r => r.MontoPagado)
+                }).ToDictionaryAsync(x => x.VehiculoId);
 
-            // Si no hay datos no se pueden generar proyecciones
-            if (totalKmRecorridos == 0)
+            decimal costoGlobalPromedio = await _context.RegistrosServicio.AnyAsync() 
+                ? await _context.RegistrosServicio.AverageAsync(r => r.MontoPagado) 
+                : 0m;
+
+            decimal presupuestoSugerido = 0m;
+            int totalKmUltimoMes = 0;
+            int autosMantenimientoProximo = 0;
+
+            foreach(var v in vehiculos)
             {
-                return new ProyeccionGastosDto
+                int kmMes = usoUltimoMes.TryGetValue(v.Id, out var uso) ? uso.KmRecorridos : 0;
+                totalKmUltimoMes += kmMes;
+
+                // Si el vehiculo necesita servicio ahora o lo necesitara en los proximos 30 dias (asumiendo uso constante)
+                if (v.KilometrajeActual + kmMes >= v.SiguienteServicioKm)
                 {
-                    Mensaje = "No hay datos suficientes para generar una proyeccion."
-                };
+                    decimal costoEstimado = costosServicio.TryGetValue(v.Id, out var costo) 
+                        ? costo.CostoPromedio 
+                        : costoGlobalPromedio;
+                    
+                    presupuestoSugerido += costoEstimado;
+                    autosMantenimientoProximo++;
+                }
             }
 
-            // Costo por kilometro basado en la historia completa
-            decimal costoPorKm = totalGastado / (decimal)totalKmRecorridos;
-
-            // Se obtienen los kilometros del ultimo mes
-            DateTime haceUnMes = DateTime.UtcNow.AddDays(-30);
-
-            int kmUltimoMes = await _context.BitacorasUso
-                .Where(b => b.FechaUso >= haceUnMes)
-                .SumAsync(b => b.KilometrosRecorridos);
-
-            // Multiplica lo recorrido por el costo promedio
-            decimal proyeccion = costoPorKm * kmUltimoMes;
+            // Calculo para estadistica general (CostoPorKm)
+            decimal totalGastado = await _context.RegistrosServicio.SumAsync(r => r.MontoPagado);
+            int totalKmRecorridos = await _context.BitacorasUso.SumAsync(b => b.KilometrosRecorridos);
+            decimal costoPorKm = totalKmRecorridos > 0 ? totalGastado / (decimal)totalKmRecorridos : 0;
 
             return new ProyeccionGastosDto
             {
                 CostoPromedioPorKm = Math.Round(costoPorKm, 2),
-                KmRecorridosUltimoMes = kmUltimoMes,
-                PresupuestoSugerido = Math.Round(proyeccion, 2),
-                Mensaje = $"Se recomienda reservar {proyeccion:F2} basado en la actividad del ultimo mes."
+                KmRecorridosUltimoMes = totalKmUltimoMes,
+                PresupuestoSugerido = Math.Round(presupuestoSugerido, 2),
+                Mensaje = autosMantenimientoProximo > 0 
+                    ? $"Se proyectan {autosMantenimientoProximo} auto(s) para mantenimiento el próximo mes." 
+                    : "No se proyectan mantenimientos para el próximo mes con el uso actual."
             };
         }
 
         public async Task<List<RecomendacionVehiculoDto>> RecomendarVehiculos(int distanciaViaje)
         {
-            // 1. Traemos los vehiculos disponibles
-            // Incluimos las bitacoras para calcular eficiencia despues
-            var candidatos = await _context.Vehiculos
-                .Where(v => v.Estado == EstadoVehiculo.Disponible)
-                .Include(v => v.BitacoraViajes) // O BitacorasUso segun como tengas la relacion
+            // 1. Traemos los vehiculos disponibles que puedan completar el viaje con un margen de seguridad de 100km
+            var vehiculosAprobados = await _context.Vehiculos
+                .Where(v => v.Estado == EstadoVehiculo.Disponible && 
+                           (v.KilometrajeActual + distanciaViaje + 100) < v.SiguienteServicioKm)
                 .ToListAsync();
+
+            if (!vehiculosAprobados.Any()) return new List<RecomendacionVehiculoDto>();
+
+            var vehiculoIds = vehiculosAprobados.Select(v => v.Id).ToList();
+
+            // 2. Traemos el historial de consumo agregado por vehiculo en una sola consulta
+            var rendimientos = await _context.BitacorasUso
+                .Where(b => vehiculoIds.Contains(b.VehiculoId))
+                .GroupBy(b => b.VehiculoId)
+                .Select(g => new
+                {
+                    VehiculoId = g.Key,
+                    TotalKm = g.Sum(b => b.KilometrosRecorridos),
+                    TotalLitros = g.Sum(b => b.LitrosConsumidos)
+                })
+                .ToDictionaryAsync(x => x.VehiculoId);
 
             var recomendaciones = new List<RecomendacionVehiculoDto>();
 
-            foreach (var v in candidatos)
+            foreach (var v in vehiculosAprobados)
             {
-                // Evitamos autos que puedan pasar el proximo servicio o queden muy justos
-                int kmAlFinalizarViaje = v.KilometrajeActual + distanciaViaje;
-                if (kmAlFinalizarViaje + 100 >= v.SiguienteServicioKm)
+                double rendimientoPromedio = 10.0; // Valor por defecto si no hay datos
+
+                if (rendimientos.TryGetValue(v.Id, out var stats) && stats.TotalLitros > 0)
                 {
-                    continue; // Saltamos este auto, no es seguro para el viaje
+                    rendimientoPromedio = (double)stats.TotalKm / stats.TotalLitros;
                 }
 
-                // Traemos historial de consumo de este auto
-                var logs = await _context.BitacorasUso
-                    .Where(b => b.VehiculoId == v.Id)
-                    .ToListAsync();
-
-                double rendimientoPromedio = 0;
-
-                if (logs.Any())
-                {
-                    double totalKm = logs.Sum(l => l.KilometrosRecorridos);
-                    double totalLitros = logs.Sum(l => l.LitrosConsumidos);
-                    // Evitamos division entre cero
-                    rendimientoPromedio = totalLitros > 0 ? totalKm / totalLitros : 0;
-                }
-                else
-                {
-                    // Si no hay datos, usamos un promedio estimado (10 km/l)
-                    rendimientoPromedio = 10;
-                }
-
-                // Agregamos el auto a la lista de aprobados
                 recomendaciones.Add(new RecomendacionVehiculoDto
                 {
                     VehiculoId = v.Id,
@@ -291,15 +359,11 @@ namespace BravoBack.Services
                     Modelo = $"{v.Marca} {v.Modelo}",
                     FotoUrl = v.FotoUrl ?? "",
                     KmRestantesParaServicio = v.SiguienteServicioKm - v.KilometrajeActual,
-
-                    // Datos calculados
                     RendimientoKmPorLitro = Math.Round(rendimientoPromedio, 2),
-                    // Estimacion de litros para el viaje
-                    LitrosEstimadosParaViaje = Math.Round(distanciaViaje / (rendimientoPromedio > 0 ? rendimientoPromedio : 10), 1)
+                    LitrosEstimadosParaViaje = Math.Round(distanciaViaje / rendimientoPromedio, 1)
                 });
             }
 
-            // Ordenamos los autos por mayor rendimiento primero
             return recomendaciones.OrderByDescending(r => r.RendimientoKmPorLitro).ToList();
         }
 

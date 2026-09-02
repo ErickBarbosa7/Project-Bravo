@@ -22,9 +22,9 @@ export class SemaforoBadgeComponent {
     // switch principal por numero
     switch (estadoNumero) {
       case 0: return { label: 'Disponible', class: 'green', icon: '●' };
-      case 1: return { label: 'En Ruta', class: 'blue', icon: '➤' };
-      case 2: return { label: 'En Taller', class: 'orange', icon: '🔧' };
-      case 3: return { label: 'Servicio Urgente', class: 'red', icon: '⚠️' };
+      case 1: return { label: 'En Ruta', class: 'blue', icon: '►' };
+      case 2: return { label: 'En Taller', class: 'orange', icon: '[T]' };
+      case 3: return { label: 'Servicio Urgente', class: 'red', icon: '[!]' };
       default: return this.handleStringState(this.estado); // si no es numero, revisamos si es string
     }
   }
@@ -33,9 +33,9 @@ export class SemaforoBadgeComponent {
   private handleStringState(val: any) {
     const texto = String(val).toLowerCase(); // lowercase para comparar sin errores
     if (texto === 'disponible') return { label: 'Disponible', class: 'green', icon: '●' };
-    if (texto === 'enruta') return { label: 'En Ruta', class: 'blue', icon: '➤' };
-    if (texto === 'entaller') return { label: 'En Taller', class: 'orange', icon: '🔧' };
-    if (texto === 'necesitaservicio') return { label: 'Servicio Urgente', class: 'red', icon: '⚠️' };
+    if (texto === 'enruta') return { label: 'En Ruta', class: 'blue', icon: '►' };
+    if (texto === 'entaller') return { label: 'En Taller', class: 'orange', icon: '[T]' };
+    if (texto === 'necesitaservicio') return { label: 'Servicio Urgente', class: 'red', icon: '[!]' };
     
     // fallback por si no coincide ningun estado
     return { label: 'Desconocido', class: 'gray', icon: '?' };

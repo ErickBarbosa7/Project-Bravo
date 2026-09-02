@@ -1,10 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 // ============================================================
-//   TEMA ÚNICO DE LA APLICACIÓN (BRAVO FLEET)
+//   TEMA ÚNICO DE LA APLICACIÓN (NUEVO DISEÑO FLOATING CARDS)
 //   ----------------------------------------------------------
-//   Cambia aquí los valores para reestilizar TODA la app.
-//   Paleta base: AZUL SLATE (identidad del sidebar).
 // ============================================================
 
 // ------------------------------------------------------------
@@ -15,43 +13,45 @@ $font-main: 'Inter', sans-serif;
 // ------------------------------------------------------------
 // COLORES PRIMARIOS (acento / botones / highlights)
 // ------------------------------------------------------------
-$primary: #2563eb;           // Azul Royal vibrante
-$primary-hover: #60a5fa;     // Azul cielo (hover)
-$primary-dark: #1e40af;      // Azul oscuro (secundario)
+$primary: #111827;           // Negro casi puro (principal activo)
+$primary-hover: #374151;     // Gris oscuro (hover)
+$primary-dark: #000000;      // Negro absoluto
 
 // ------------------------------------------------------------
 // FONDOS
 // ------------------------------------------------------------
-$bg-page: #0f172a;           // Fondo general intenso (slate oscuro)
-$bg-dark: #09090b;           // Fondo muy oscuro (degradados extremos)
-$bg-card: #1e293b;           // Fondo de cards / sidebar
-$bg-input: #1e293b;          // Fondo de inputs y formularios
-$bg-overlay: rgba(0, 0, 0, 0.75);   // Overlay de modales
+// Fondo general con gradiente suave lavanda/rosado hacia blanco
+$bg-page: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+$bg-gradient: linear-gradient(145deg, #f9f5fa 0%, #f3f4f6 100%);
+$bg-dark: #f8fafc;           // Fondo claro alternativo
+$bg-card: #ffffff;           // Fondo de cards (blanco solido)
+$bg-input: #f9fafb;          // Fondo de inputs y formularios (gris muy claro)
+$bg-overlay: rgba(255, 255, 255, 0.6);   // Overlay translúcido brillante
 
 // ------------------------------------------------------------
 // TEXTOS
 // ------------------------------------------------------------
-$text-white: #f1f5f9;        // Texto principal (blanco hielo)
-$text-muted: #94a3b8;        // Texto secundario (gris acero)
-$text-main: #ffffff;         // Texto blanco puro
-$text-sub: #a1a1aa;          // Texto gris de apoyo
+$text-main: #111827;         // Texto principal (casi negro)
+$text-white: #1f2937;        // Mantenemos el nombre pero es oscuro
+$text-muted: #6b7280;        // Texto secundario (gris medio)
+$text-sub: #9ca3af;          // Texto gris claro de apoyo
 
 // ------------------------------------------------------------
 // BORDES Y SEPARADORES
 // ------------------------------------------------------------
-$border-color: #334155;      // Borde de cajas / separadores
+$border-color: #e5e7eb;      // Borde muy sutil
 
 // ------------------------------------------------------------
 // COLORES DE ESTADO / SEMÁNTICOS
 // ------------------------------------------------------------
-$color-success: #10b981;     // Verde esmeralda (disponible / éxito)
-$color-info: #3b82f6;        // Azul tecnológico (en ruta / info)
-$color-warning: #f59e0b;     // Ámbar / naranja (en taller / aviso)
-$color-danger: #ef4444;      // Rojo (urgente / error)
-$color-danger-soft: #f87171; // Rojo claro (texto de error)
+$color-success: #10b981;     // Verde 
+$color-info: #3b82f6;        // Azul 
+$color-warning: #f59e0b;     // Naranja 
+$color-danger: #ef4444;      // Rojo
+$color-danger-soft: #fca5a5; // Rojo claro 
 
 // ------------------------------------------------------------
-// BLANCOS TRANSLÚCIDOS (fondos y brillos sobre superficies oscuras)
+// BLANCOS TRANSLÚCIDOS (fondos y brillos)
 // ------------------------------------------------------------
 $white-02: rgba(255, 255, 255, 0.02);
 $white-03: rgba(255, 255, 255, 0.03);
@@ -66,7 +66,7 @@ $white-40: rgba(255, 255, 255, 0.40);
 $white-70: rgba(255, 255, 255, 0.70);
 
 // ------------------------------------------------------------
-// NEGROS TRANSLÚCIDOS (sombras y superposiciones)
+// NEGROS TRANSLÚCIDOS (sombras y fondos)
 // ------------------------------------------------------------
 $black-15: rgba(0, 0, 0, 0.15);
 $black-20: rgba(0, 0, 0, 0.20);
@@ -80,18 +80,19 @@ $black-75: rgba(0, 0, 0, 0.75);
 // RADIOS DE BORDE
 // ------------------------------------------------------------
 $radius-sm: 8px;
-$radius-md: 12px;
-$radius-lg: 20px;
+$radius-md: 16px;
+$radius-lg: 24px; // rounded-3xl
 $radius-pill: 999px;
 
 // ------------------------------------------------------------
-// SOMBRAS
+// SOMBRAS (Soft Shadows amplias)
 // ------------------------------------------------------------
-$shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
-$shadow-lg: 0 20px 60px -10px rgba(0, 0, 0, 0.6);
+$shadow-md: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 20px 60px -15px rgba(0, 0, 0, 0.08);
+$shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.03);
 
 // ------------------------------------------------------------
 // TRANSICIONES
 // ------------------------------------------------------------
-$transition-fast: all 0.2s ease;
-$transition-slow: all 0.3s ease;
+$transition-fast: all 0.2s ease-in-out;
+$transition-slow: all 0.3s ease-in-out;

@@ -3,6 +3,7 @@ using System;
 using BravoBack.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BravoBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260902181127_AddCatalogoVehiculo")]
+    partial class AddCatalogoVehiculo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,45 +222,6 @@ namespace BravoBack.Migrations
                             IntervaloServicioKm = 10000,
                             Marca = "Nissan",
                             Modelo = "Sentra"
-                        });
-                });
-
-            modelBuilder.Entity("BravoBack.Models.CategoriaVehiculo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CategoriasVehiculo");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Escolta"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Ejecutivo"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Carga"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Utilitario"
                         });
                 });
 

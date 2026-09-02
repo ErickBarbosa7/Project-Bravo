@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CreateVehiculoDto, UpdateVehiculoDto, Vehiculo } from '../models/vehiculo.model';
+import { CreateVehiculoDto, UpdateVehiculoDto, Vehiculo, CatalogoVehiculo } from '../models/vehiculo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +40,48 @@ export class VehiculoService {
   // Obtener vehiculo por id
   getVehiculoById(id: number): Observable<Vehiculo> {
     return this.http.get<Vehiculo>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Obtener catalogo de vehiculos
+  getCatalogo(): Observable<CatalogoVehiculo[]> {
+    return this.http.get<CatalogoVehiculo[]>(`${environment.apiUrl}/api/catalogovehiculos`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Eliminar del catalogo
+  eliminarDelCatalogo(id: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/api/catalogovehiculos/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Crear en catalogo
+  crearEnCatalogo(catalogo: Partial<CatalogoVehiculo>): Observable<CatalogoVehiculo> {
+    return this.http.post<CatalogoVehiculo>(`${environment.apiUrl}/api/catalogovehiculos`, catalogo).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Editar en catalogo
+  editarEnCatalogo(id: number, catalogo: Partial<CatalogoVehiculo>): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/api/catalogovehiculos/${id}`, catalogo).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Obtener Categorias de Vehiculos
+  getCategoriasVehiculo(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/categoriasvehiculos`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Crear Categoria de Vehiculo
+  crearCategoriaVehiculo(categoria: { nombre: string }): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/api/categoriasvehiculos`, categoria).pipe(
       catchError(this.handleError)
     );
   }
@@ -116,6 +158,14 @@ export class VehiculoService {
   // Enviar a taller
   enviarATaller(id: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/enviar-taller`, {}).pipe(
+      tap(() => this.loadVehiculos()),
+      catchError(this.handleError)
+    );
+  }
+
+  // Liberar de taller
+  liberarDeTaller(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/liberar-taller`, {}).pipe(
       tap(() => this.loadVehiculos()),
       catchError(this.handleError)
     );
