@@ -14,6 +14,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // CONFIGURACIÓN DE BASE DE DATOS
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Convertir URL de Render (postgres://) a formato estándar de Npgsql
+if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
+{
+    var uri = new Uri(connectionString);
+    var userInfo = uri.UserInfo.Split(':');
+    connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true;";
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString)
 );
