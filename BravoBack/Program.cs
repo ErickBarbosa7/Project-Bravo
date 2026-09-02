@@ -128,6 +128,10 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        // Aplicar migraciones pendientes automáticamente
+        var context = services.GetRequiredService<AppDbContext>();
+        await context.Database.MigrateAsync();
+
         // Llamamos al método que acabamos de crear
         await BravoBack.Data.DbSeeder.SeedUsersAndRolesAsync(services);
     }
